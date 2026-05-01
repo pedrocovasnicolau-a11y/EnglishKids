@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>English Kids</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  
+  :root {
+    --bg: #0f0c29;
+    --bg2: #1a1548;
+    --surface: rgba(255,255,255,0.07);
+    --surface2: rgba(255,255,255,0.12);
+    --border: rgba(255,255,255,0.15);
+    --text: #ffffff;
+    --text2: rgba(255,255,255,0.6);
+    --text3: rgba(255,255,255,0.35);
+    --accent1: #ff6b9d;
+    --accent2: #ffd93d;
+    --accent3: #6bcb77;
+    --accent4: #4d96ff;
+    --accent5: #c77dff;
+    --radius: 20px;
+    --nav-h: 72px;
+    --status-h: 28px;
+  }
+
+  html, body { 
+    height: 100%; 
+    width: 100%;
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    overflow: hidden;
+  }
+
+  #root {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pop {
+    0% { transform: scale(0.85); opacity: 0; }
+    70% { transform: scale(1.06); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  @keyframes bounce {
+    0%, 100% { transform: scale(1); }
+    40% { transform: scale(1.25) rotate(-5deg); }
+    70% { transform: scale(1.1) rotate(3deg); }
+  }
+  @keyframes shimmer {
+    0% { background-position: -200% center; }
+    100% { background-position: 200% center; }
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+  @keyframes starFly {
+    0% { transform: translateY(0) scale(1) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-280px) scale(0.1) rotate(720deg); opacity: 0; }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes wave {
+    0%, 100% { height: 6px; }
+    50% { height: 22px; }
+  }
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to   { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes correct {
+    0% { background: transparent; }
+    30% { background: rgba(107, 203, 119, 0.3); }
+    100% { background: transparent; }
+  }
+  @keyframes wrong {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-8px); }
+    75% { transform: translateX(8px); }
+  }
+  @keyframes floatBg {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    33% { transform: translate(30px, -20px) scale(1.05); }
+    66% { transform: translate(-20px, 15px) scale(0.97); }
+  }
+
+  .fade-up { animation: fadeUp 0.4s ease both; }
+  .pop-in  { animation: pop 0.35s cubic-bezier(.34,1.56,.64,1) both; }
+
+  /* Background blobs */
+  .bg-blobs {
+    position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden;
+  }
+  .bg-blob {
+    position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.18;
+    animation: floatBg 12s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback, useMemo } = React;
+
+// ─── TWEMOJI helper ───────────────────────────────────────────────
+const TW = 'https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/72x72/';
+function emojiToUrl(code) {
+  return `${TW}${code.toLowerCase()}.png`;
+}
+
+// ─── DATA ────────────────────────────────────────────────────────
+const LEVELS = [
+  { id: 'basic',    label: 'Básico',   stars: 1, color: '#6bcb77', icon: '🌱' },
+  { id: 'medium',   label: 'Medio',    stars: 2, color: '#4d96ff', icon: '🚀' },
+  { id: 'advanced', label: 'Frases',   stars: 3, color: '#ff6b9d', icon: '💬' },
+];
+
+const CATEGORIES = {
+  basic: [
+    { id: 'animals',   label: 'Animales',  icon: '🐾', color: '#ff6b6b',
+      items: [
+        {en:'Cat',    es:'Gato',      e:'1f431'},{en:'Dog',   es:'Perro',    e:'1f436'},
+        {en:'Bird',   es:'Pájaro',    e:'1f426'},{en:'Fish',  es:'Pez',      e:'1f41f'},
+        {en:'Rabbit', es:'Conejo',    e:'1f430'},{en:'Bear',  es:'Oso',      e:'1f43b'},
+        {en:'Lion',   es:'León',      e:'1f981'},{en:'Elephant',es:'Elefante',e:'1f418'},
+        {en:'Duck',   es:'Pato',      e:'1f986'},{en:'Frog',  es:'Rana',     e:'1f438'},
+        {en:'Cow',    es:'Vaca',      e:'1f404'},{en:'Horse', es:'Caballo',  e:'1f434'},
+      ]},
+    { id: 'colors',    label: 'Colores',   icon: '🌈', color: '#fbbf24',
+      items: [
+        {en:'Red',    es:'Rojo',      e:'2764'},{en:'Blue',   es:'Azul',     e:'1f499'},
+        {en:'Yellow', es:'Amarillo',  e:'1f49b'},{en:'Green', es:'Verde',    e:'1f49a'},
+        {en:'Orange', es:'Naranja',   e:'1f9e1'},{en:'Pink',  es:'Rosa',     e:'1f497'},
+        {en:'Purple', es:'Morado',    e:'1f49c'},{en:'White', es:'Blanco',   e:'1f90d'},
+        {en:'Black',  es:'Negro',     e:'1f5a4'},
+      ]},
+    { id: 'fruits',    label: 'Frutas',    icon: '🍎', color: '#6bcb77',
+      items: [
+        {en:'Apple',      es:'Manzana',   e:'1f34e'},{en:'Banana',     es:'Plátano',  e:'1f34c'},
+        {en:'Orange',     es:'Naranja',   e:'1f34a'},{en:'Strawberry', es:'Fresa',    e:'1f353'},
+        {en:'Grapes',     es:'Uvas',      e:'1f347'},{en:'Watermelon', es:'Sandía',   e:'1f349'},
+        {en:'Peach',      es:'Melocotón', e:'1f351'},{en:'Pear',       es:'Pera',     e:'1f350'},
+        {en:'Cherry',     es:'Cereza',    e:'1f352'},{en:'Lemon',      es:'Limón',    e:'1f34b'},
+      ]},
+    { id: 'numbers',   label: 'Números',   icon: '🔢', color: '#4d96ff',
+      items: [
+        {en:'One',   es:'Uno',    e:'0031-20e3'},{en:'Two',   es:'Dos',    e:'0032-20e3'},
+        {en:'Three', es:'Tres',   e:'0033-20e3'},{en:'Four',  es:'Cuatro', e:'0034-20e3'},
+        {en:'Five',  es:'Cinco',  e:'0035-20e3'},{en:'Six',   es:'Seis',   e:'0036-20e3'},
+        {en:'Seven', es:'Siete',  e:'0037-20e3'},{en:'Eight', es:'Ocho',   e:'0038-20e3'},
+        {en:'Nine',  es:'Nueve',  e:'0039-20e3'},{en:'Ten',   es:'Diez',   e:'1f51f'},
+      ]},
+    { id: 'greetings', label: 'Saludos',   icon: '👋', color: '#c77dff',
+      items: [
+        {en:'Hello',    es:'Hola',       e:'1f44b'},{en:'Goodbye',  es:'Adiós',     e:'1f44d'},
+        {en:'Please',   es:'Por favor',  e:'1f64f'},{en:'Thank you',es:'Gracias',   e:'1f60a'},
+        {en:'Yes',      es:'Sí',         e:'2705'}, {en:'No',       es:'No',        e:'274c'},
+        {en:'Sorry',    es:'Lo siento',  e:'1f972'},{en:'Help!',    es:'¡Ayuda!',   e:'1f198'},
+      ]},
+  ],
+  medium: [
+    { id: 'food',    label: 'Comida',    icon: '🍕', color: '#f97316',
+      items: [
+        {en:'Bread',     es:'Pan',       e:'1f35e'},{en:'Milk',      es:'Leche',    e:'1f95b'},
+        {en:'Egg',       es:'Huevo',     e:'1f95a'},{en:'Pizza',     es:'Pizza',    e:'1f355'},
+        {en:'Cookie',    es:'Galleta',   e:'1f36a'},{en:'Cake',      es:'Tarta',    e:'1f370'},
+        {en:'Ice cream', es:'Helado',    e:'1f368'},{en:'Soup',      es:'Sopa',     e:'1f35c'},
+        {en:'Cheese',    es:'Queso',     e:'1f9c0'},{en:'Sandwich',  es:'Bocadillo',e:'1f96a'},
+      ]},
+    { id: 'clothes', label: 'Ropa',      icon: '👕', color: '#ec4899',
+      items: [
+        {en:'Shirt',   es:'Camiseta',  e:'1f455'},{en:'Pants',  es:'Pantalón', e:'1f456'},
+        {en:'Shoes',   es:'Zapatos',   e:'1f45f'},{en:'Socks',  es:'Calcetines',e:'1f9e6'},
+        {en:'Hat',     es:'Sombrero',  e:'1f9e2'},{en:'Dress',  es:'Vestido',  e:'1f457'},
+        {en:'Jacket',  es:'Chaqueta',  e:'1f9e5'},{en:'Scarf',  es:'Bufanda',  e:'1f9e3'},
+      ]},
+    { id: 'home',    label: 'Casa',      icon: '🏠', color: '#14b8a6',
+      items: [
+        {en:'House',  es:'Casa',    e:'1f3e0'},{en:'Door',  es:'Puerta', e:'1f6aa'},
+        {en:'Bed',    es:'Cama',    e:'1f6cf'},{en:'Chair', es:'Silla',  e:'1fa91'},
+        {en:'Table',  es:'Mesa',    e:'1f6cb'},{en:'Book',  es:'Libro',  e:'1f4da'},
+        {en:'Ball',   es:'Pelota', e:'26bd'}, {en:'Toy',   es:'Juguete',e:'1f9f8'},
+      ]},
+    { id: 'family',  label: 'Familia',   icon: '👨‍👩‍👧', color: '#8b5cf6',
+      items: [
+        {en:'Mum',     es:'Mamá',   e:'1f469'},{en:'Dad',     es:'Papá',   e:'1f468'},
+        {en:'Baby',    es:'Bebé',   e:'1f476'},{en:'Sister',  es:'Hermana',e:'1f467'},
+        {en:'Brother', es:'Hermano',e:'1f466'},{en:'Grandma', es:'Abuela', e:'1f475'},
+        {en:'Grandpa', es:'Abuelo', e:'1f474'},
+      ]},
+    { id: 'weather', label: 'Tiempo',    icon: '🌤', color: '#0ea5e9',
+      items: [
+        {en:'Sun',     es:'Sol',     e:'2600'},{en:'Rain',    es:'Lluvia',  e:'1f327'},
+        {en:'Cloud',   es:'Nube',    e:'2601'},{en:'Snow',    es:'Nieve',   e:'2744'},
+        {en:'Rainbow', es:'Arcoíris',e:'1f308'},{en:'Hot',    es:'Caliente',e:'1f975'},
+        {en:'Cold',    es:'Frío',    e:'1f976'},{en:'Wind',   es:'Viento',  e:'1f32c'},
+      ]},
+  ],
+  advanced: [
+    { id: 'iam',       label: 'Yo soy',    icon: '💬', color: '#f59e0b',
+      items: [
+        {en:'I am happy', es:'Estoy feliz',  e:'1f601',p:true},
+        {en:'I am sad',   es:'Estoy triste', e:'1f622',p:true},
+        {en:'I am hungry',es:'Tengo hambre', e:'1f974',p:true},
+        {en:'I am tired', es:'Estoy cansado',e:'1f971',p:true},
+        {en:'I am big',   es:'Soy grande',   e:'1f4aa',p:true},
+        {en:'I am small', es:'Soy pequeño',  e:'1f424',p:true},
+        {en:'I am cold',  es:'Tengo frío',   e:'1f976',p:true},
+        {en:'I am hot',   es:'Tengo calor',  e:'1f975',p:true},
+      ]},
+    { id: 'this',      label: 'Esto es',   icon: '🧸', color: '#10b981',
+      items: [
+        {en:'This is a cat', es:'Esto es un gato',  e:'1f431',p:true},
+        {en:'This is a dog', es:'Esto es un perro', e:'1f436',p:true},
+        {en:'This is red',   es:'Esto es rojo',     e:'2764', p:true},
+        {en:'This is big',   es:'Esto es grande',   e:'1f4a5',p:true},
+        {en:'This is my mum',es:'Esta es mi mamá',  e:'1f469',p:true},
+        {en:'This is a ball',es:'Esto es una pelota',e:'26bd',p:true},
+      ]},
+    { id: 'questions', label: 'Preguntas', icon: '❓', color: '#6366f1',
+      items: [
+        {en:'What is this?', es:'¿Qué es esto?',  e:'2753',p:true},
+        {en:'Where is it?',  es:'¿Dónde está?',   e:'1f4cd',p:true},
+        {en:'How are you?',  es:'¿Cómo estás?',   e:'1f91d',p:true},
+        {en:'What colour?',  es:'¿Qué color?',    e:'1f3a8',p:true},
+        {en:'Can I have?',   es:'¿Me das?',       e:'1f64c',p:true},
+        {en:'Where is mum?', es:'¿Dónde está mamá?',e:'1f469',p:true},
+      ]},
+    { id: 'songs',     label: 'Canciones', icon: '🎵', color: '#ef4444',
+      items: [
+        {en:'One two three',  es:'Uno dos tres',    e:'1f3b6',p:true},
+        {en:'Up and down',    es:'Arriba y abajo',  e:'1f199',p:true},
+        {en:'Clap your hands',es:'Da palmitas',     e:'1f44f',p:true},
+        {en:'Touch your nose',es:'Toca tu nariz',   e:'1f443',p:true},
+        {en:'Jump jump jump', es:'Salta salta salta',e:'1f3c3',p:true},
+        {en:'Open and close', es:'Abre y cierra',   e:'1f91c',p:true},
+      ]},
+  ],
+};
+
+const BADGES = [
+  { id: 'first_word',   icon: '🌟', label: 'Primera Palabra',  desc: 'Di tu primera palabra en inglés', threshold: 1, type: 'words' },
+  { id: 'five_words',   icon: '🔥', label: '5 Palabras',       desc: 'Pronunciaste 5 palabras correctas', threshold: 5, type: 'words' },
+  { id: 'ten_words',    icon: '💪', label: '10 Palabras',      desc: '¡10 palabras dominadas!',           threshold: 10, type: 'words' },
+  { id: 'twenty_five',  icon: '🏆', label: 'Campeón',          desc: '25 palabras correctas en total',    threshold: 25, type: 'words' },
+  { id: 'fifty',        icon: '👑', label: 'Rey del Inglés',   desc: '50 palabras pronunciadas',          threshold: 50, type: 'words' },
+  { id: 'first_quiz',   icon: '🎯', label: 'Primer Quiz',      desc: 'Completaste tu primer quiz',        threshold: 1, type: 'quizzes' },
+  { id: 'quiz_master',  icon: '🧠', label: 'Quiz Master',      desc: '5 quizzes completados',             threshold: 5, type: 'quizzes' },
+  { id: 'perfect_quiz', icon: '💎', label: 'Quiz Perfecto',    desc: '10/10 en un quiz',                  threshold: 1, type: 'perfectQuizzes' },
+  { id: 'streak_3',     icon: '⚡', label: 'Racha x3',         desc: '3 días seguidos practicando',       threshold: 3, type: 'streak' },
+];
+
+const AVATARS = ['🦁','🐯','🦊','🐸','🐼','🦄','🐲','🐺','🦋','🐬'];
+
+// ─── STORAGE ─────────────────────────────────────────────────────
+function loadState() {
+  try {
+    const s = localStorage.getItem('englishkids_v2');
+    if (s) return JSON.parse(s);
+  } catch(e) {}
+  return {
+    avatar: '🦁',
+    name: '',
+    xp: 0,
+    wordsCorrect: 0,
+    quizzesCompleted: 0,
+    perfectQuizzes: 0,
+    streak: 0,
+    lastDate: null,
+    unlockedBadges: [],
+    learnedWords: {},
+  };
+}
+function saveState(state) {
+  try { localStorage.setItem('englishkids_v2', JSON.stringify(state)); } catch(e) {}
+}
+
+// ─── EMOJI IMAGE ─────────────────────────────────────────────────
+function EmojiImg({ code, size = 72, style = {} }) {
+  const [err, setErr] = useState(false);
+  const url = emojiToUrl(code);
+  
+  // fallback to native emoji
+  if (err) {
+    const emoji = (() => {
+      try { return String.fromCodePoint(...code.split('-').map(p => parseInt(p, 16))); }
+      catch { return '🔵'; }
+    })();
+    return (
+      <span style={{ fontSize: size * 0.7, lineHeight: 1, display: 'block', textAlign: 'center', ...style }}>
+        {emoji}
+      </span>
+    );
+  }
+  
+  return (
+    <img
+      src={url}
+      alt=""
+      width={size}
+      height={size}
+      onError={() => setErr(true)}
+      style={{ objectFit: 'contain', display: 'block', imageRendering: 'crisp-edges', ...style }}
+      draggable={false}
+    />
+  );
+}
+
+// ─── XP / LEVEL ──────────────────────────────────────────────────
+function getPlayerLevel(xp) {
+  const lvls = [
+    { lvl: 1, min: 0,   label: 'Principiante', color: '#6bcb77' },
+    { lvl: 2, min: 50,  label: 'Aprendiz',     color: '#4d96ff' },
+    { lvl: 3, min: 150, label: 'Explorador',   color: '#c77dff' },
+    { lvl: 4, min: 300, label: 'Aventurero',   color: '#ffd93d' },
+    { lvl: 5, min: 500, label: 'Campeón',       color: '#ff6b9d' },
+    { lvl: 6, min: 800, label: 'Maestro',       color: '#ff6b6b' },
+  ];
+  let cur = lvls[0];
+  for (const l of lvls) { if (xp >= l.min) cur = l; else break; }
+  const next = lvls[lvls.indexOf(cur)+1];
+  const pct = next ? ((xp - cur.min) / (next.min - cur.min)) * 100 : 100;
+  return { ...cur, next, pct };
+}
+
+// ─── STARS EFFECT ────────────────────────────────────────────────
+function launchStars(count = 12) {
+  const ems = ['⭐','🌟','✨','🎊','🎉','💫','🥳','🏆'];
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.style.cssText = `position:fixed;bottom:80px;left:${15+Math.random()*70}%;font-size:${1.5+Math.random()}rem;pointer-events:none;z-index:9999;animation:starFly ${0.8+Math.random()*0.7}s ease-out forwards;`;
+      el.textContent = ems[Math.floor(Math.random() * ems.length)];
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1800);
+    }, i * 60);
+  }
+}
+
+// ─── BACKGROUND BLOBS ────────────────────────────────────────────
+function BgBlobs() {
+  return (
+    <div className="bg-blobs">
+      <div className="bg-blob" style={{ width: 400, height: 400, background: '#4d96ff', top: '-100px', left: '-100px', animationDuration: '14s' }} />
+      <div className="bg-blob" style={{ width: 300, height: 300, background: '#c77dff', top: '30%', right: '-50px', animationDuration: '18s', animationDelay: '-5s' }} />
+      <div className="bg-blob" style={{ width: 350, height: 350, background: '#ff6b9d', bottom: '-80px', left: '30%', animationDuration: '16s', animationDelay: '-9s' }} />
+    </div>
+  );
+}
+
+// ─── ONBOARDING ───────────────────────────────────────────────────
+function Onboarding({ onDone }) {
+  const [step, setStep] = useState(0);
+  const [name, setName] = useState('');
+  const [avatar, setAvatar] = useState('🦁');
+
+  const finish = () => {
+    if (!name.trim()) return;
+    onDone({ name: name.trim(), avatar });
+  };
+
+  return (
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', height:'100%', padding:'32px 24px', background:'linear-gradient(160deg,#0f0c29 0%,#1a1548 50%,#0f2457 100%)', position:'relative', overflow:'hidden' }}>
+      <BgBlobs />
+      <div style={{ position:'relative', zIndex:1, textAlign:'center', animation:'fadeUp .5s ease both', maxWidth: 340, width:'100%' }}>
+        {step === 0 && (
+          <>
+            <div style={{ fontSize: '5rem', marginBottom: 16, animation:'pop .4s ease both' }}>🌍</div>
+            <h1 style={{ fontFamily:'Fredoka One', fontSize:'2.4rem', color:'#fff', marginBottom: 8, lineHeight:1.1 }}>
+              English Kids
+            </h1>
+            <p style={{ color:'rgba(255,255,255,0.65)', fontSize:'1.1rem', marginBottom: 40, fontWeight: 700 }}>
+              ¡Aprende inglés con diversión! 🎉
+            </p>
+            <button onClick={() => setStep(1)} style={btnStyle('#4d96ff')}>
+              ¡Empezamos! 🚀
+            </button>
+          </>
+        )}
+        {step === 1 && (
+          <>
+            <p style={{ color:'rgba(255,255,255,0.6)', fontWeight:800, marginBottom:8, fontSize:'0.9rem', letterSpacing:'0.1em', textTransform:'uppercase' }}>Paso 1 de 2</p>
+            <h2 style={{ fontFamily:'Fredoka One', fontSize:'1.8rem', color:'#fff', marginBottom: 24 }}>
+              ¿Cómo te llamas?
+            </h2>
+            <input
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              onKeyDown={e => { if (e.key==='Enter' && name.trim()) setStep(2); }}
+              placeholder="Tu nombre..."
+              autoFocus
+              style={{ width:'100%', padding:'14px 20px', borderRadius: 16, border:'2px solid rgba(255,255,255,0.2)', background:'rgba(255,255,255,0.1)', color:'#fff', fontSize:'1.1rem', fontFamily:'Nunito', fontWeight:800, outline:'none', marginBottom:20, textAlign:'center' }}
+            />
+            <button onClick={() => { if(name.trim()) setStep(2); }} style={btnStyle('#4d96ff')} disabled={!name.trim()}>
+              Siguiente →
+            </button>
+          </>
+        )}
+        {step === 2 && (
+          <>
+            <p style={{ color:'rgba(255,255,255,0.6)', fontWeight:800, marginBottom:8, fontSize:'0.9rem', letterSpacing:'0.1em', textTransform:'uppercase' }}>Paso 2 de 2</p>
+            <h2 style={{ fontFamily:'Fredoka One', fontSize:'1.8rem', color:'#fff', marginBottom: 6 }}>
+              Elige tu avatar
+            </h2>
+            <p style={{ color:'rgba(255,255,255,0.5)', marginBottom: 24, fontWeight:700 }}>¿Quién eres tú?</p>
+            <div style={{ display:'grid', gridTemplateColumns:'repeat(5,1fr)', gap:10, marginBottom:32 }}>
+              {AVATARS.map(av => (
+                <button key={av} onClick={() => setAvatar(av)} style={{
+                  fontSize:'2.2rem', padding:'10px', borderRadius:16,
+                  border: av===avatar ? '3px solid #ffd93d' : '3px solid transparent',
+                  background: av===avatar ? 'rgba(255,217,61,0.2)' : 'rgba(255,255,255,0.08)',
+                  cursor:'pointer', transition:'all .2s', transform: av===avatar ? 'scale(1.15)' : 'scale(1)'
+                }}>
+                  {av}
+                </button>
+              ))}
+            </div>
+            <button onClick={finish} style={btnStyle('#6bcb77')}>
+              ¡Listo, {name}! 🎉
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function btnStyle(bg) {
+  return {
+    width:'100%', padding:'15px', borderRadius:50, border:'none',
+    background: bg, color:'#fff', fontFamily:'Nunito', fontWeight:900,
+    fontSize:'1.1rem', cursor:'pointer', boxShadow:`0 6px 24px ${bg}55`,
+    transition:'all .15s'
+  };
+}
+
+// ─── BOTTOM NAV ───────────────────────────────────────────────────
+const NAV_ITEMS = [
+  { id:'home',     icon:'🏠', label:'Inicio'   },
+  { id:'learn',    icon:'📚', label:'Aprender' },
+  { id:'quiz',     icon:'🎯', label:'Quiz'     },
+  { id:'badges',   icon:'🏆', label:'Logros'   },
+];
+
+function BottomNav({ active, onChange }) {
+  return (
+    <div style={{
+      display:'flex', alignItems:'stretch', justifyContent:'space-around',
+      background:'rgba(15,12,41,0.95)', backdropFilter:'blur(20px)',
+      borderTop:'1px solid rgba(255,255,255,0.1)',
+      height: 'var(--nav-h)', paddingBottom: 'env(safe-area-inset-bottom)',
+      flexShrink: 0, zIndex: 100,
+    }}>
+      {NAV_ITEMS.map(item => {
+        const isActive = active === item.id;
+        return (
+          <button key={item.id} onClick={() => onChange(item.id)} style={{
+            flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center',
+            gap:3, border:'none', background:'transparent', cursor:'pointer',
+            transition:'all .2s', color: isActive ? '#ffd93d' : 'rgba(255,255,255,0.4)',
+          }}>
+            <span style={{ fontSize:'1.5rem', filter: isActive ? 'drop-shadow(0 0 8px #ffd93daa)' : 'none', transition:'all .2s', transform: isActive ? 'translateY(-2px) scale(1.1)' : 'scale(1)' }}>
+              {item.icon}
+            </span>
+            <span style={{ fontSize:'0.65rem', fontWeight:800, letterSpacing:'0.03em', textTransform:'uppercase', transition:'all .2s' }}>
+              {item.label}
+            </span>
+            {isActive && <div style={{ width:4, height:4, borderRadius:'50%', background:'#ffd93d', marginTop:1 }} />}
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
+// ─── HOME SCREEN ─────────────────────────────────────────────────
+function HomeScreen({ state, onNavigate }) {
+  const pl = getPlayerLevel(state.xp);
+  const allLevelCats = Object.values(CATEGORIES).flat();
+  const totalWords = allLevelCats.reduce((a, c) => a + c.items.length, 0);
+  const learnedCount = Object.keys(state.learnedWords).length;
+  
+  const recentBadges = BADGES.filter(b => state.unlockedBadges.includes(b.id)).slice(-3);
+
+  return (
+    <div style={{ flex:1, overflow:'auto', padding:'20px 16px', display:'flex', flexDirection:'column', gap:16 }}>
+      {/* Profile card */}
+      <div className="fade-up" style={{
+        background:'linear-gradient(135deg,rgba(77,150,255,0.25),rgba(199,125,255,0.25))',
+        border:'1px solid rgba(255,255,255,0.15)', borderRadius:24, padding:'20px',
+        display:'flex', alignItems:'center', gap:16
+      }}>
+        <div style={{ fontSize:'3.5rem', width:64, height:64, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.1)', borderRadius:20, flexShrink:0 }}>
+          {state.avatar}
+        </div>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontFamily:'Fredoka One', fontSize:'1.4rem', color:'#fff', marginBottom:2 }}>
+            ¡Hola, {state.name}! 👋
+          </div>
+          <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:8 }}>
+            <span style={{ fontSize:'0.78rem', fontWeight:800, color: pl.color, background:`${pl.color}22`, padding:'3px 10px', borderRadius:50 }}>
+              Nv.{pl.lvl} {pl.label}
+            </span>
+            <span style={{ fontSize:'0.78rem', color:'rgba(255,255,255,0.5)', fontWeight:700 }}>
+              {state.xp} XP
+            </span>
+          </div>
+          {/* XP bar */}
+          <div style={{ height:8, background:'rgba(255,255,255,0.1)', borderRadius:50, overflow:'hidden' }}>
+            <div style={{ height:'100%', width:`${pl.pct}%`, background:`linear-gradient(90deg,${pl.color},${pl.next?.color||pl.color})`, borderRadius:50, transition:'width .5s ease' }} />
+          </div>
+          {pl.next && (
+            <div style={{ fontSize:'0.7rem', color:'rgba(255,255,255,0.4)', marginTop:4, fontWeight:700 }}>
+              {pl.next.min - state.xp} XP para {pl.next.label}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Stats row */}
+      <div className="fade-up" style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10, animationDelay:'.05s' }}>
+        {[
+          { icon:'🎯', val: state.wordsCorrect,       label:'Correctas' },
+          { icon:'🏆', val: state.unlockedBadges.length, label:'Logros' },
+          { icon:'📚', val: learnedCount,             label:'Palabras' },
+        ].map((s, i) => (
+          <div key={i} style={{ background:'rgba(255,255,255,0.07)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:16, padding:'14px 10px', textAlign:'center' }}>
+            <div style={{ fontSize:'1.5rem', marginBottom:4 }}>{s.icon}</div>
+            <div style={{ fontFamily:'Fredoka One', fontSize:'1.5rem', color:'#fff' }}>{s.val}</div>
+            <div style={{ fontSize:'0.68rem', color:'rgba(255,255,255,0.4)', fontWeight:800, textTransform:'uppercase', letterSpacing:'0.05em' }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick play */}
+      <div className="fade-up" style={{ animationDelay:'.1s' }}>
+        <h3 style={{ fontFamily:'Fredoka One', color:'rgba(255,255,255,0.7)', fontSize:'0.85rem', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:10 }}>
+          Acceso rápido
+        </h3>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+          <button onClick={() => onNavigate('learn')} style={{
+            background:'linear-gradient(135deg,#4d96ff,#c77dff)', border:'none', borderRadius:20,
+            padding:'18px 16px', cursor:'pointer', textAlign:'left', color:'#fff', transition:'transform .15s'
+          }}
+            onMouseDown={e=>e.currentTarget.style.transform='scale(0.96)'}
+            onMouseUp={e=>e.currentTarget.style.transform='scale(1)'}
+          >
+            <div style={{ fontSize:'2rem', marginBottom:6 }}>📚</div>
+            <div style={{ fontFamily:'Fredoka One', fontSize:'1rem' }}>Aprender</div>
+            <div style={{ fontSize:'0.72rem', opacity:0.7, fontWeight:700 }}>{totalWords} palabras</div>
+          </button>
+          <button onClick={() => onNavigate('quiz')} style={{
+            background:'linear-gradient(135deg,#ff6b9d,#ffd93d)', border:'none', borderRadius:20,
+            padding:'18px 16px', cursor:'pointer', textAlign:'left', color:'#fff', transition:'transform .15s'
+          }}
+            onMouseDown={e=>e.currentTarget.style.transform='scale(0.96)'}
+            onMouseUp={e=>e.currentTarget.style.transform='scale(1)'}
+          >
+            <div style={{ fontSize:'2rem', marginBottom:6 }}>🎯</div>
+            <div style={{ fontFamily:'Fredoka One', fontSize:'1rem' }}>Quiz</div>
+            <div style={{ fontSize:'0.72rem', opacity:0.7, fontWeight:700 }}>¡Pon a prueba!</div>
+          </button>
+        </div>
+      </div>
+
+      {/* Progress */}
+      <div className="fade-up" style={{ animationDelay:'.15s' }}>
+        <h3 style={{ fontFamily:'Fredoka One', color:'rgba(255,255,255,0.7)', fontSize:'0.85rem', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:10 }}>
+          Tu progreso
+        </h3>
+        <div style={{ background:'rgba(255,255,255,0.06)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:20, padding:16 }}>
+          <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+            <span style={{ color:'rgba(255,255,255,0.7)', fontWeight:800, fontSize:'0.9rem' }}>Palabras aprendidas</span>
+            <span style={{ fontFamily:'Fredoka One', color:'#ffd93d', fontSize:'1rem' }}>{learnedCount} / {totalWords}</span>
+          </div>
+          <div style={{ height:10, background:'rgba(255,255,255,0.08)', borderRadius:50, overflow:'hidden' }}>
+            <div style={{ height:'100%', width:`${(learnedCount/totalWords)*100}%`, background:'linear-gradient(90deg,#ffd93d,#ff6b9d)', borderRadius:50, transition:'width .6s ease' }} />
+          </div>
+        </div>
+      </div>
+
+      {/* Recent badges */}
+      {recentBadges.length > 0 && (
+        <div className="fade-up" style={{ animationDelay:'.2s', paddingBottom:8 }}>
+          <h3 style={{ fontFamily:'Fredoka One', color:'rgba(255,255,255,0.7)', fontSize:'0.85rem', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:10 }}>
+            Últimos logros
+          </h3>
+          <div style={{ display:'flex', gap:10 }}>
+            {recentBadges.map(b => (
+              <div key={b.id} style={{ flex:1, background:'rgba(255,217,61,0.1)', border:'1px solid rgba(255,217,61,0.3)', borderRadius:16, padding:'12px 10px', textAlign:'center' }}>
+                <div style={{ fontSize:'1.8rem' }}>{b.icon}</div>
+                <div style={{ fontSize:'0.68rem', fontWeight:800, color:'#ffd93d', marginTop:4, lineHeight:1.2 }}>{b.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── LEARN SCREEN ────────────────────────────────────────────────
+function LearnScreen({ state, onStateChange }) {
+  const [levelId, setLevelId] = useState('basic');
+  const [catId, setCatId]     = useState(CATEGORIES.basic[0].id);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [feedback, setFeedback] = useState(null); // {type, text}
+  const [isListening, setIsListening] = useState(false);
+  const [isCountdown, setIsCountdown] = useState(false);
+  const [countdown, setCountdown]     = useState(3);
+  const [selectedCardEl, setSelectedCardEl] = useState(null);
+
+  const hasSynth = typeof speechSynthesis !== 'undefined';
+  const hasSpeechRec = !!(window.SpeechRecognition || window.webkitSpeechRecognition) && hasSynth;
+
+  const level = LEVELS.find(l => l.id === levelId);
+  const cats  = CATEGORIES[levelId];
+  const cat   = cats.find(c => c.id === catId) || cats[0];
+
+  const speak = useCallback((item) => {
+    if (!hasSynth) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(item.en);
+    u.lang = 'en-GB'; u.rate = item.p ? 0.7 : 0.75; u.pitch = 1.1;
+    const voices = speechSynthesis.getVoices();
+    const v = voices.find(v=>v.lang==='en-GB') || voices.find(v=>v.lang.startsWith('en'));
+    if (v) u.voice = v;
+    speechSynthesis.speak(u);
+  }, [hasSynth]);
+
+  const selectItem = (item) => {
+    if (selectedItem === item) { speak(item); return; }
+    setSelectedItem(item);
+    setFeedback(null);
+    setIsListening(false);
+    setIsCountdown(false);
+    speak(item);
+  };
+
+  const startRepeatFlow = () => {
+    if (!selectedItem) return;
+    speak(selectedItem);
+    setFeedback({ type:'info', text:'🎧 Escucha... luego repite' });
+    const dur = Math.max(1300, selectedItem.en.length * 75);
+    setTimeout(() => beginCountdown(), dur);
+  };
+
+  const beginCountdown = () => {
+    setIsCountdown(true);
+    setCountdown(3);
+    setFeedback({ type:'info', text:'⏳ ¡Prepárate!' });
+    let rem = 3;
+    const t = setInterval(() => {
+      rem--;
+      setCountdown(rem);
+      if (rem <= 0) { clearInterval(t); setIsCountdown(false); startListening(); }
+    }, 1000);
+  };
+
+  const startListening = () => {
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR || !selectedItem) return;
+    setIsListening(true);
+    setFeedback({ type:'info', text:'🎤 ¡Habla ahora!' });
+    const rec = new SR();
+    rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 6;
+    const safe = setTimeout(() => { try { rec.stop(); } catch(e) {} }, 8000);
+
+    rec.onresult = (ev) => {
+      clearTimeout(safe); setIsListening(false);
+      const alts = Array.from(ev.results[0]).map(r => r.transcript.trim().toLowerCase());
+      const target = selectedItem.en.toLowerCase();
+      const ok = alts.some(a => a === target || a.includes(target) ||
+        target.split(' ').filter(w=>w.length>2).some(t=>a.includes(t)));
+      if (ok) {
+        setFeedback({ type:'good', text: ['🎉 ¡Perfecto!','🌟 ¡Brillante!','⭐ ¡Genial!','🏆 ¡Campeón!','💫 ¡Increíble!'][Math.floor(Math.random()*5)] });
+        launchStars();
+        const newState = {
+          ...state,
+          xp: state.xp + 10,
+          wordsCorrect: state.wordsCorrect + 1,
+          learnedWords: { ...state.learnedWords, [selectedItem.en]: true }
+        };
+        // check badges
+        const newBadges = checkBadges(newState);
+        newState.unlockedBadges = newBadges;
+        onStateChange(newState);
+      } else {
+        const heard = alts[0] || '';
+        setFeedback({ type:'bad', text: `🙊 ¡Casi! "${heard}" — ¡otra vez!` });
+      }
+    };
+    rec.onerror = () => { clearTimeout(safe); setIsListening(false); setFeedback({ type:'bad', text:'🙈 No te oí. ¡Inténtalo de nuevo!' }); };
+    rec.onend   = () => { clearTimeout(safe); setIsListening(false); };
+    try { rec.start(); } catch(e) { setIsListening(false); }
+  };
+
+  const fColor = { good:'#6bcb77', bad:'#ff6b9d', info:'#4d96ff' };
+
+  return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
+      {/* Level selector */}
+      <div style={{ padding:'12px 16px 0', flexShrink:0 }}>
+        <div style={{ display:'flex', gap:8 }}>
+          {LEVELS.map(lv => (
+            <button key={lv.id} onClick={() => { setLevelId(lv.id); setCatId(CATEGORIES[lv.id][0].id); setSelectedItem(null); setFeedback(null); }} style={{
+              flex:1, padding:'8px 4px', borderRadius:14, border: lv.id===levelId ? 'none' : '2px solid rgba(255,255,255,0.15)',
+              background: lv.id===levelId ? lv.color : 'rgba(255,255,255,0.05)',
+              color: lv.id===levelId ? '#fff' : 'rgba(255,255,255,0.5)',
+              fontFamily:'Nunito', fontWeight:900, fontSize:'0.75rem', cursor:'pointer',
+              transition:'all .2s'
+            }}>
+              {lv.icon} {lv.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Category tabs */}
+      <div style={{ display:'flex', gap:8, padding:'10px 16px', overflowX:'auto', flexShrink:0, scrollbarWidth:'none' }}>
+        {cats.map(c => (
+          <button key={c.id} onClick={() => { setCatId(c.id); setSelectedItem(null); setFeedback(null); }} style={{
+            padding:'7px 16px', borderRadius:50, border: c.id===catId ? 'none' : '2px solid rgba(255,255,255,0.12)',
+            background: c.id===catId ? c.color : 'rgba(255,255,255,0.05)',
+            color: c.id===catId ? '#fff' : 'rgba(255,255,255,0.5)',
+            fontFamily:'Nunito', fontWeight:800, fontSize:'0.8rem', cursor:'pointer',
+            whiteSpace:'nowrap', flexShrink:0, transition:'all .2s'
+          }}>
+            {c.icon} {c.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Grid */}
+      <div style={{ flex:1, overflowY:'auto', padding:'4px 12px 12px', display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(130px,1fr))', gap:12, alignContent:'start' }}>
+        {cat.items.map((item, idx) => {
+          const isSelected = selectedItem?.en === item.en;
+          const isLearned  = !!state.learnedWords[item.en];
+          return (
+            <button key={item.en} onClick={() => selectItem(item)} style={{
+              background: isSelected ? `${cat.color}22` : 'rgba(255,255,255,0.06)',
+              border: `2px solid ${isSelected ? cat.color : (isLearned ? cat.color+'55' : 'rgba(255,255,255,0.1)')}`,
+              borderRadius:20, padding:'14px 10px 12px', cursor:'pointer',
+              display:'flex', flexDirection:'column', alignItems:'center', gap:8,
+              transition:'all .2s', transform: isSelected ? 'translateY(-4px) scale(1.04)' : 'scale(1)',
+              boxShadow: isSelected ? `0 8px 24px ${cat.color}44` : 'none',
+              position:'relative', animationDelay:`${idx * 0.03}s`, animation:'fadeUp .3s ease both'
+            }}>
+              {isLearned && (
+                <div style={{ position:'absolute', top:6, right:6, width:16, height:16, borderRadius:'50%', background:cat.color, display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.55rem', color:'#fff', fontWeight:900 }}>✓</div>
+              )}
+              <div style={{ width:72, height:72, display:'flex', alignItems:'center', justifyContent:'center', borderRadius:50, background: `${cat.color}18`, overflow:'hidden' }}>
+                <EmojiImg code={item.e} size={60} />
+              </div>
+              <div style={{ fontFamily:'Fredoka One', fontSize:'0.95rem', color:'#fff', lineHeight:1.2, textAlign:'center' }}>{item.en}</div>
+              <div style={{ fontSize:'0.72rem', color:'rgba(255,255,255,0.4)', fontWeight:700, textAlign:'center' }}>{item.es}</div>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Bottom action panel */}
+      {selectedItem && (
+        <div style={{ flexShrink:0, background:'rgba(10,8,35,0.96)', backdropFilter:'blur(20px)', borderTop:'1px solid rgba(255,255,255,0.1)', padding:'12px 16px 16px' }}>
+          {isCountdown && (
+            <div style={{ textAlign:'center', marginBottom:8, fontFamily:'Fredoka One', fontSize:'2rem', color:'#6bcb77', animation:'pulse .5s ease infinite' }}>
+              {countdown}
+            </div>
+          )}
+          {feedback && (
+            <div style={{ textAlign:'center', fontWeight:900, fontSize:'1rem', color:fColor[feedback.type]||'#fff', marginBottom:8, minHeight:28 }}
+              dangerouslySetInnerHTML={{ __html: feedback.text }} />
+          )}
+          <div style={{ display:'flex', gap:8 }}>
+            <ActionBtn color="#4d96ff" onClick={() => speak(selectedItem)} label="🔊 Escuchar" />
+            {hasSpeechRec && (
+              <ActionBtn color="#6bcb77" onClick={startRepeatFlow} disabled={isListening || isCountdown}
+                label={isListening ? <MicWaves /> : '🎤 ¡Repite!'} />
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ActionBtn({ color, onClick, disabled, label }) {
+  return (
+    <button onClick={onClick} disabled={disabled} style={{
+      flex:1, padding:'12px', borderRadius:50, border:'none', background: color,
+      color:'#fff', fontFamily:'Nunito', fontWeight:900, fontSize:'0.95rem',
+      cursor: disabled ? 'not-allowed' : 'pointer', opacity: disabled ? 0.5 : 1,
+      boxShadow:`0 4px 16px ${color}55`, transition:'all .15s',
+      display:'flex', alignItems:'center', justifyContent:'center', gap:6
+    }}>
+      {label}
+    </button>
+  );
+}
+
+function MicWaves() {
+  return (
+    <span style={{ display:'inline-flex', gap:3, alignItems:'flex-end', height:20, verticalAlign:'middle' }}>
+      <span style={{ width:4, borderRadius:3, background:'#fff', animation:'wave .65s ease-in-out infinite', animationDelay:'0s' }} />
+      <span style={{ width:4, borderRadius:3, background:'#fff', animation:'wave .65s ease-in-out infinite', animationDelay:'.15s' }} />
+      <span style={{ width:4, borderRadius:3, background:'#fff', animation:'wave .65s ease-in-out infinite', animationDelay:'.3s' }} />
+      <span style={{ width:4, borderRadius:3, background:'#fff', animation:'wave .65s ease-in-out infinite', animationDelay:'.45s' }} />
+    </span>
+  );
+}
+
+// ─── QUIZ SCREEN ─────────────────────────────────────────────────
+function QuizScreen({ state, onStateChange }) {
+  const [phase, setPhase]         = useState('setup'); // setup | playing | result
+  const [levelId, setLevelId]     = useState('basic');
+  const [questions, setQuestions] = useState([]);
+  const [qIdx, setQIdx]           = useState(0);
+  const [score, setScore]         = useState(0);
+  const [chosen, setChosen]       = useState(null);
+  const [showAns, setShowAns]     = useState(false);
+
+  const QUIZ_LEN = 10;
+
+  const startQuiz = () => {
+    const cats = CATEGORIES[levelId];
+    const allItems = cats.flatMap(c => c.items.map(it => ({ ...it, catColor: c.color })));
+    // shuffle and pick QUIZ_LEN
+    const shuffled = [...allItems].sort(() => Math.random() - .5).slice(0, QUIZ_LEN);
+    const qs = shuffled.map(item => {
+      // 4 options: correct + 3 wrong from same level
+      const others = allItems.filter(i => i.en !== item.en).sort(() => Math.random() - .5).slice(0, 3);
+      const opts = [...others, item].sort(() => Math.random() - .5);
+      return { item, opts };
+    });
+    setQuestions(qs); setQIdx(0); setScore(0); setChosen(null); setShowAns(false);
+    setPhase('playing');
+  };
+
+  const pick = (opt) => {
+    if (showAns) return;
+    setChosen(opt);
+    setShowAns(true);
+    const correct = opt.en === questions[qIdx].item.en;
+    if (correct) {
+      setScore(s => s + 1);
+      launchStars(6);
+    }
+    setTimeout(() => {
+      if (qIdx + 1 >= questions.length) {
+        finishQuiz(correct ? score + 1 : score);
+      } else {
+        setQIdx(i => i + 1);
+        setChosen(null);
+        setShowAns(false);
+      }
+    }, 1200);
+  };
+
+  const finishQuiz = (finalScore) => {
+    const perfect = finalScore === QUIZ_LEN;
+    const newState = {
+      ...state,
+      xp: state.xp + finalScore * 5,
+      quizzesCompleted: state.quizzesCompleted + 1,
+      perfectQuizzes: state.perfectQuizzes + (perfect ? 1 : 0),
+    };
+    newState.unlockedBadges = checkBadges(newState);
+    onStateChange(newState);
+    setScore(finalScore);
+    setPhase('result');
+  };
+
+  const q = questions[qIdx];
+  const pct = questions.length ? ((qIdx) / questions.length) * 100 : 0;
+
+  if (phase === 'setup') return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'32px 24px', gap:24 }}>
+      <div style={{ fontSize:'4rem', animation:'pop .4s ease both' }}>🎯</div>
+      <h2 style={{ fontFamily:'Fredoka One', fontSize:'2rem', color:'#fff', textAlign:'center' }}>
+        ¡Hora del Quiz!
+      </h2>
+      <p style={{ color:'rgba(255,255,255,0.5)', textAlign:'center', fontWeight:700 }}>
+        10 preguntas · ¿Puedes acertar todas?
+      </p>
+      <div style={{ width:'100%', maxWidth:320 }}>
+        <p style={{ color:'rgba(255,255,255,0.6)', fontWeight:800, marginBottom:10, fontSize:'0.85rem' }}>Elige nivel:</p>
+        {LEVELS.map(lv => (
+          <button key={lv.id} onClick={() => setLevelId(lv.id)} style={{
+            width:'100%', padding:'13px 20px', borderRadius:16, border: lv.id===levelId ? 'none' : '2px solid rgba(255,255,255,0.15)',
+            background: lv.id===levelId ? lv.color : 'rgba(255,255,255,0.06)',
+            color: '#fff', fontFamily:'Nunito', fontWeight:900, fontSize:'1rem',
+            cursor:'pointer', marginBottom:8, textAlign:'left', transition:'all .2s'
+          }}>
+            {lv.icon} {lv.label}
+          </button>
+        ))}
+      </div>
+      <button onClick={startQuiz} style={{ ...btnStyle('#ff6b9d'), maxWidth:320, marginTop:8 }}>
+        ¡Empezar Quiz! 🚀
+      </button>
+    </div>
+  );
+
+  if (phase === 'result') {
+    const pct100 = (score / QUIZ_LEN) * 100;
+    const msg = score === QUIZ_LEN ? ['¡PERFECTO! 🏆','¡Eres increíble!'] :
+                score >= 7 ? ['¡Muy bien! ⭐','¡Casi perfecto!'] :
+                score >= 5 ? ['¡Bien hecho! 👍','¡Sigue practicando!'] :
+                             ['¡Sigue así! 💪','La práctica hace al maestro'];
+    if (score === QUIZ_LEN) launchStars(20);
+    return (
+      <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:'32px 24px', gap:20 }}>
+        <div style={{ fontSize:'5rem', animation:'pop .5s ease both' }}>
+          {score===QUIZ_LEN?'🏆':score>=7?'⭐':score>=5?'👍':'💪'}
+        </div>
+        <h2 style={{ fontFamily:'Fredoka One', fontSize:'2.2rem', color:'#fff', textAlign:'center' }}>{msg[0]}</h2>
+        <p style={{ color:'rgba(255,255,255,0.5)', fontWeight:700 }}>{msg[1]}</p>
+        <div style={{ background:'rgba(255,255,255,0.08)', border:'1px solid rgba(255,255,255,0.15)', borderRadius:24, padding:'28px 40px', textAlign:'center' }}>
+          <div style={{ fontFamily:'Fredoka One', fontSize:'3.5rem', color: score===QUIZ_LEN?'#ffd93d':score>=7?'#6bcb77':'#4d96ff' }}>
+            {score} / {QUIZ_LEN}
+          </div>
+          <div style={{ color:'rgba(255,255,255,0.5)', fontWeight:700, marginTop:4 }}>respuestas correctas</div>
+          <div style={{ height:8, background:'rgba(255,255,255,0.1)', borderRadius:50, marginTop:16, overflow:'hidden' }}>
+            <div style={{ height:'100%', width:`${pct100}%`, background:'linear-gradient(90deg,#4d96ff,#ff6b9d)', borderRadius:50 }} />
+          </div>
+          <div style={{ marginTop:10, color:'#ffd93d', fontWeight:900, fontFamily:'Fredoka One', fontSize:'1.1rem' }}>
+            +{score * 5} XP ganados
+          </div>
+        </div>
+        <button onClick={() => setPhase('setup')} style={{ ...btnStyle('#4d96ff'), maxWidth:280 }}>
+          Otro Quiz 🔄
+        </button>
+      </div>
+    );
+  }
+
+  // playing
+  return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', padding:'16px', gap:16, overflow:'auto' }}>
+      {/* Progress bar */}
+      <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+        <div style={{ flex:1, height:8, background:'rgba(255,255,255,0.1)', borderRadius:50, overflow:'hidden' }}>
+          <div style={{ height:'100%', width:`${pct}%`, background:'linear-gradient(90deg,#6bcb77,#4d96ff)', borderRadius:50, transition:'width .4s ease' }} />
+        </div>
+        <span style={{ fontFamily:'Fredoka One', color:'rgba(255,255,255,0.6)', fontSize:'0.9rem', flexShrink:0 }}>
+          {qIdx+1}/{QUIZ_LEN}
+        </span>
+        <span style={{ fontFamily:'Fredoka One', color:'#ffd93d', fontSize:'0.9rem', flexShrink:0 }}>
+          ⭐ {score}
+        </span>
+      </div>
+
+      {/* Question */}
+      <div style={{ textAlign:'center', animation:'fadeUp .3s ease both' }}>
+        <p style={{ color:'rgba(255,255,255,0.5)', fontWeight:800, fontSize:'0.85rem', marginBottom:12, textTransform:'uppercase', letterSpacing:'0.05em' }}>
+          ¿Cuál es esta imagen?
+        </p>
+        <div style={{ width:140, height:140, margin:'0 auto 16px', background:`${q.item.catColor}22`, borderRadius:32, display:'flex', alignItems:'center', justifyContent:'center', border:`3px solid ${q.item.catColor}44` }}>
+          <EmojiImg code={q.item.e} size={110} />
+        </div>
+      </div>
+
+      {/* Options */}
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+        {q.opts.map((opt, i) => {
+          const isCorrect = opt.en === q.item.en;
+          const isChosen  = chosen?.en === opt.en;
+          let bg = 'rgba(255,255,255,0.07)';
+          let border = '2px solid rgba(255,255,255,0.12)';
+          let textC = '#fff';
+          if (showAns) {
+            if (isCorrect) { bg='rgba(107,203,119,0.25)'; border='2px solid #6bcb77'; textC='#6bcb77'; }
+            else if (isChosen) { bg='rgba(255,107,157,0.2)'; border='2px solid #ff6b9d'; textC='#ff6b9d'; }
+          }
+          return (
+            <button key={opt.en} onClick={() => pick(opt)} style={{
+              padding:'16px 10px', borderRadius:18, border, background: bg,
+              color: textC, fontFamily:'Nunito', fontWeight:900, fontSize:'0.95rem',
+              cursor: showAns ? 'default' : 'pointer', transition:'all .2s',
+              animation: showAns && isChosen && !isCorrect ? 'wrong .3s ease' : 'none',
+              textAlign:'center', lineHeight:1.2
+            }}>
+              {opt.en}
+              {showAns && isCorrect && ' ✓'}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Hint */}
+      <div style={{ textAlign:'center', color:'rgba(255,255,255,0.3)', fontSize:'0.8rem', fontWeight:700 }}>
+        {q.item.es}
+      </div>
+    </div>
+  );
+}
+
+// ─── BADGES SCREEN ───────────────────────────────────────────────
+function BadgesScreen({ state }) {
+  const earned = state.unlockedBadges || [];
+  return (
+    <div style={{ flex:1, overflowY:'auto', padding:'20px 16px' }}>
+      <h2 style={{ fontFamily:'Fredoka One', color:'#fff', fontSize:'1.6rem', marginBottom:4 }}>Logros</h2>
+      <p style={{ color:'rgba(255,255,255,0.4)', fontWeight:700, fontSize:'0.85rem', marginBottom:20 }}>
+        {earned.length} / {BADGES.length} desbloqueados
+      </p>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:12 }}>
+        {BADGES.map((b, i) => {
+          const unlocked = earned.includes(b.id);
+          return (
+            <div key={b.id} style={{
+              background: unlocked ? 'rgba(255,217,61,0.1)' : 'rgba(255,255,255,0.04)',
+              border: unlocked ? '2px solid rgba(255,217,61,0.4)' : '2px solid rgba(255,255,255,0.08)',
+              borderRadius:20, padding:'18px 14px', textAlign:'center',
+              opacity: unlocked ? 1 : 0.45, transition:'all .3s',
+              animation:`fadeUp .4s ease ${i*.04}s both`
+            }}>
+              <div style={{ fontSize:'2.5rem', marginBottom:8, filter: unlocked ? 'none' : 'grayscale(1)' }}>
+                {b.icon}
+              </div>
+              <div style={{ fontFamily:'Fredoka One', color: unlocked ? '#ffd93d' : 'rgba(255,255,255,0.6)', fontSize:'0.9rem', marginBottom:4 }}>
+                {b.label}
+              </div>
+              <div style={{ fontSize:'0.7rem', color:'rgba(255,255,255,0.35)', fontWeight:700, lineHeight:1.4 }}>
+                {b.desc}
+              </div>
+              {unlocked && (
+                <div style={{ marginTop:8, fontSize:'0.7rem', color:'#6bcb77', fontWeight:900 }}>
+                  ✓ Desbloqueado
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// ─── BADGE CHECK ─────────────────────────────────────────────────
+function checkBadges(state) {
+  const badges = [...(state.unlockedBadges || [])];
+  for (const b of BADGES) {
+    if (badges.includes(b.id)) continue;
+    let val = 0;
+    if (b.type === 'words') val = state.wordsCorrect;
+    else if (b.type === 'quizzes') val = state.quizzesCompleted;
+    else if (b.type === 'perfectQuizzes') val = state.perfectQuizzes;
+    else if (b.type === 'streak') val = state.streak;
+    if (val >= b.threshold) badges.push(b.id);
+  }
+  return badges;
+}
+
+// ─── MAIN APP ────────────────────────────────────────────────────
+function App() {
+  const [state, setStateRaw] = useState(loadState);
+  const [screen, setScreen] = useState('home');
+
+  const setState = (s) => { setStateRaw(s); saveState(s); };
+
+  // Onboarding check
+  if (!state.name) return <Onboarding onDone={(p) => setState({ ...state, ...p })} />;
+
+  const screens = {
+    home:   <HomeScreen   state={state} onNavigate={setScreen} />,
+    learn:  <LearnScreen  state={state} onStateChange={setState} />,
+    quiz:   <QuizScreen   state={state} onStateChange={setState} />,
+    badges: <BadgesScreen state={state} />,
+  };
+
+  return (
+    <div style={{ height:'100%', display:'flex', flexDirection:'column', position:'relative', background:'linear-gradient(160deg,#0f0c29 0%,#1a1548 60%,#0f2457 100%)' }}>
+      <BgBlobs />
+
+      {/* Status bar simulation */}
+      <div style={{ height: 'env(safe-area-inset-top,0px)', background:'transparent', flexShrink:0 }} />
+
+      {/* Top bar */}
+      <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', padding:'10px 16px 6px', flexShrink:0, position:'relative', zIndex:10 }}>
+        <div style={{ fontFamily:'Fredoka One', fontSize:'1.3rem', color:'#fff', display:'flex', alignItems:'center', gap:8 }}>
+          <span>🌍</span> English Kids
+        </div>
+        <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+          <div style={{ background:'rgba(255,217,61,0.15)', border:'1px solid rgba(255,217,61,0.3)', borderRadius:50, padding:'5px 12px', display:'flex', alignItems:'center', gap:6 }}>
+            <span style={{ fontSize:'0.9rem' }}>⚡</span>
+            <span style={{ fontFamily:'Fredoka One', color:'#ffd93d', fontSize:'0.95rem' }}>{state.xp}</span>
+          </div>
+          <div style={{ fontSize:'1.6rem', width:36, height:36, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(255,255,255,0.08)', borderRadius:12 }}>
+            {state.avatar}
+          </div>
+        </div>
+      </div>
+
+      {/* Screen content */}
+      <div style={{ flex:1, overflow:'hidden', display:'flex', flexDirection:'column', position:'relative', zIndex:1 }}
+        key={screen}>
+        {screens[screen]}
+      </div>
+
+      {/* Bottom Nav */}
+      <BottomNav active={screen} onChange={setScreen} />
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
