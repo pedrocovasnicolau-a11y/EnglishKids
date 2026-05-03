@@ -65,6 +65,7 @@ function HomeScreen({ state, onNavigate }) {
   const allItems = Object.values(CATEGORIES).flat().flatMap(c=>c.items);
   const totalWords = allItems.length;
   const learnedCount = Object.keys(state.learnedWords||{}).length;
+  const masteredCount = getMasteredCount(state);
   const recentBadges = BADGES.filter(b=>(state.unlockedBadges||[]).includes(b.id)).slice(-3);
 
   return (
@@ -96,7 +97,7 @@ function HomeScreen({ state, onNavigate }) {
 
       {/* Stats */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:10 }}>
-        {[{icon:'🎯',val:state.wordsCorrect,label:'Correctas'},{icon:'✏️',val:state.wordsWritten||0,label:'Escritas'},{icon:'🏆',val:(state.unlockedBadges||[]).length,label:'Logros'}].map((s,i)=>(
+        {[{icon:'🎯',val:state.wordsCorrect,label:'Correctas'},{icon:'⭐',val:masteredCount,label:'Dominadas'},{icon:'🏆',val:(state.unlockedBadges||[]).length,label:'Logros'}].map((s,i)=>(
           <div key={i} style={{ background:'rgba(255,255,255,0.82)', border:'2px solid rgba(255,255,255,0.9)',
             borderRadius:18, padding:'14px 8px', textAlign:'center', boxShadow:'0 2px 10px rgba(0,0,0,0.05)' }}>
             <div style={{ fontSize:'1.6rem', marginBottom:4 }}>{s.icon}</div>
@@ -111,10 +112,11 @@ function HomeScreen({ state, onNavigate }) {
         <h3 style={{ fontFamily:'Fredoka One,cursive', color:'#555', fontSize:'0.85rem', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:10 }}>Acceso rápido</h3>
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
           {[
-            { id:'learn', icon:'📚', label:'Aprender', sub:`${totalWords} palabras`, bg:'linear-gradient(135deg,#4d96ff,#6bcb77)' },
-            { id:'write', icon:'✏️', label:'Escribir',  sub:'Practica escribiendo',  bg:'linear-gradient(135deg,#6bcb77,#ffd93d)' },
-            { id:'quiz',  icon:'🎯', label:'Quiz',      sub:'¡Pon a prueba!',        bg:'linear-gradient(135deg,#ff6b9d,#ffd93d)' },
-            { id:'duo',   icon:'🆚', label:'Modo Dúo',  sub:'2 jugadores',           bg:'linear-gradient(135deg,#f97316,#c77dff)' },
+            { id:'learn', icon:'📚', label:'Aprender',  sub:`${totalWords} palabras`, bg:'linear-gradient(135deg,#4d96ff,#6bcb77)' },
+            { id:'write', icon:'✏️', label:'Escribir',   sub:'Practica escribiendo',  bg:'linear-gradient(135deg,#6bcb77,#ffd93d)' },
+            { id:'quiz',  icon:'🎯', label:'Quiz',       sub:'¡Pon a prueba!',        bg:'linear-gradient(135deg,#ff6b9d,#ffd93d)' },
+            { id:'songs', icon:'🎵', label:'Canciones',  sub:'8 nursery rhymes',      bg:'linear-gradient(135deg,#14b8a6,#4d96ff)' },
+            { id:'duo',   icon:'🆚', label:'Modo Dúo',   sub:'2 jugadores',           bg:'linear-gradient(135deg,#f97316,#c77dff)' },
           ].map(item => (
             <button key={item.id} onClick={()=>onNavigate(item.id)} style={{
               background:item.bg, border:'none', borderRadius:20, padding:'18px 14px',
