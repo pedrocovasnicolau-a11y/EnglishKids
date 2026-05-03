@@ -62,6 +62,7 @@
 <script type="text/babel" src="screens-home.jsx"></script>
 <script type="text/babel" src="screens-learn.jsx"></script>
 <script type="text/babel" src="screens-duo.jsx"></script>
+<script type="text/babel" src="screens-songs.jsx"></script>
 
 <!-- Main App -->
 <script type="text/babel">
@@ -103,6 +104,7 @@ function App() {
     write:  <WriteScreen  state={appState} onStateChange={setAppState} />,
     quiz:   <QuizScreen   state={appState} onStateChange={setAppState} />,
     duo:    <DuoScreen    state={appState} onStateChange={setAppState} />,
+    songs:  <SongsScreen  state={appState} onStateChange={setAppState} />,
     badges: <BadgesScreen state={appState} />,
   };
 

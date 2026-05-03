@@ -138,6 +138,7 @@ const NAV_ITEMS = [
   { id:'write',  icon:'✏️', label:'Escribir' },
   { id:'quiz',   icon:'🎯', label:'Quiz'     },
   { id:'duo',    icon:'🆚', label:'Dúo'      },
+  { id:'songs',  icon:'🎵', label:'Canciones'},
   { id:'badges', icon:'🏆', label:'Logros'   },
 ];
 
@@ -152,7 +153,7 @@ function BottomNav({ active, onChange }) {
     }}>
       {NAV_ITEMS.map(item => {
         const isActive = active === item.id;
-        const activeColors = { home:'#ff6b9d', learn:'#4d96ff', write:'#6bcb77', quiz:'#ffd93d', duo:'#f97316', badges:'#c77dff' };
+        const activeColors = { home:'#ff6b9d', learn:'#4d96ff', write:'#6bcb77', quiz:'#ffd93d', duo:'#f97316', songs:'#14b8a6', badges:'#c77dff' };
         const ac = activeColors[item.id];
         return (
           <button key={item.id} onClick={() => onChange(item.id)} style={{
@@ -160,7 +161,7 @@ function BottomNav({ active, onChange }) {
             gap:2, border:'none', background:'transparent', cursor:'pointer', transition:'all .2s',
             color: isActive ? ac : 'rgba(0,0,0,0.35)',
           }}>
-            <span style={{ fontSize:'1.35rem', transition:'all .2s', transform: isActive ? 'translateY(-2px) scale(1.15)':'scale(1)',
+            <span style={{ fontSize:'1.2rem', transition:'all .2s', transform: isActive ? 'translateY(-2px) scale(1.15)':'scale(1)',
               filter: isActive ? `drop-shadow(0 2px 6px ${ac}88)` : 'none' }}>
               {item.icon}
             </span>
