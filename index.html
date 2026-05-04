@@ -63,56 +63,76 @@
 <script type="text/babel" src="screens-learn.jsx"></script>
 <script type="text/babel" src="screens-duo.jsx"></script>
 <script type="text/babel" src="screens-songs.jsx"></script>
+<script type="text/babel" src="screens-profiles.jsx"></script>
 
 <!-- Main App -->
 <script type="text/babel">
 const { useState, useEffect } = React;
 
 function App() {
-  const [appState, setAppStateRaw] = useState(loadState);
-  const [screen, setScreen] = useState('home');
+  const [profilesData,    setProfilesDataRaw]  = useState(loadProfiles);
+  const [activeProfileId, setActiveProfileId]  = useState(null);
+  const [screen,          setScreen]           = useState('home');
 
-  const setAppState = (s) => { setAppStateRaw(s); saveState(s); };
+  const activeProfile = (profilesData.profiles || []).find(p => p.id === activeProfileId);
 
-  // Streak tracking
+  const setProfilesData = (data) => {
+    setProfilesDataRaw(data);
+    saveProfiles(data);
+  };
+
+  const updateActiveProfile = (newState) => {
+    const updated = {
+      ...profilesData,
+      profiles: profilesData.profiles.map(p => p.id === activeProfileId ? newState : p),
+    };
+    setProfilesData(updated);
+  };
+
+  // Streak tracking: run when a profile becomes active
   useEffect(() => {
+    if (!activeProfile) return;
     const today = new Date().toDateString();
-    if (appState.lastDate !== today && appState.name) {
+    if (activeProfile.lastDate !== today) {
       const yesterday = new Date(Date.now() - 86400000).toDateString();
-      const newStreak = appState.lastDate === yesterday ? (appState.streak || 0) + 1 : 1;
-      const ns = { ...appState, lastDate: today, streak: newStreak };
+      const newStreak = activeProfile.lastDate === yesterday ? (activeProfile.streak || 0) + 1 : 1;
+      const ns = { ...activeProfile, lastDate: today, streak: newStreak };
       ns.unlockedBadges = checkBadges(ns);
-      setAppState(ns);
+      updateActiveProfile(ns);
     }
-  }, []);
+  }, [activeProfileId]);
 
-  // Onboarding
-  if (!appState.name) {
+  const switchProfile = () => {
+    setActiveProfileId(null);
+    setScreen('home');
+  };
+
+  // Show profile selector when no active profile
+  if (!activeProfile) {
     return (
-      <div style={{ height: '100%', position: 'relative' }}>
-        <SkyBackground />
-        <div style={{ position: 'relative', zIndex: 1, height: '100%' }}>
-          <Onboarding onDone={(p) => setAppState({ ...appState, ...p })} />
-        </div>
-      </div>
+      <ProfileSelector
+        profilesData={profilesData}
+        onSelect={(id) => { setActiveProfileId(id); setScreen('home'); }}
+        onProfilesChange={setProfilesData}
+      />
     );
   }
 
   const screens = {
-    home:   <HomeScreen   state={appState} onNavigate={setScreen} />,
-    learn:  <LearnScreen  state={appState} onStateChange={setAppState} />,
-    write:  <WriteScreen  state={appState} onStateChange={setAppState} />,
-    quiz:   <QuizScreen   state={appState} onStateChange={setAppState} />,
-    duo:    <DuoScreen    state={appState} onStateChange={setAppState} />,
-    songs:  <SongsScreen  state={appState} onStateChange={setAppState} />,
-    badges: <BadgesScreen state={appState} />,
+    home:   <HomeScreen   state={activeProfile} onNavigate={setScreen} />,
+    learn:  <LearnScreen  state={activeProfile} onStateChange={updateActiveProfile} />,
+    write:  <WriteScreen  state={activeProfile} onStateChange={updateActiveProfile} />,
+    quiz:   <QuizScreen   state={activeProfile} onStateChange={updateActiveProfile} />,
+    duo:    <DuoScreen    state={activeProfile} onStateChange={updateActiveProfile} />,
+    songs:  <SongsScreen  state={activeProfile} onStateChange={updateActiveProfile} />,
+    badges: <BadgesScreen state={activeProfile} />,
   };
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       <SkyBackground />
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <TopBar state={appState} />
+        <TopBar state={activeProfile} onSwitchProfile={switchProfile} />
         <div key={screen} style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', animation: 'slideIn .25s ease both' }}>
           {screens[screen]}
         </div>

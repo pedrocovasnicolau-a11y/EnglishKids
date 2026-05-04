@@ -177,7 +177,7 @@ function BottomNav({ active, onChange }) {
 }
 
 // ─── TOP BAR ─────────────────────────────────────────────────────
-function TopBar({ state }) {
+function TopBar({ state, onSwitchProfile }) {
   const pl = getPlayerLevel(state.xp);
   return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
@@ -194,11 +194,25 @@ function TopBar({ state }) {
           <span style={{ fontSize:'0.85rem' }}>⚡</span>
           <span style={{ fontFamily:'Fredoka One,cursive', color: pl.color, fontSize:'0.95rem' }}>{state.xp}</span>
         </div>
-        <div style={{ fontSize:'1.6rem', width:36, height:36, display:'flex', alignItems:'center',
-          justifyContent:'center', background:'rgba(255,255,255,0.8)', borderRadius:12,
-          boxShadow:'0 2px 8px rgba(0,0,0,0.1)' }}>
-          {state.avatar}
-        </div>
+        {onSwitchProfile ? (
+          <button onClick={onSwitchProfile} title="Cambiar perfil" style={{
+            background:'rgba(255,255,255,0.8)', border:'2px solid rgba(255,255,255,0.9)',
+            borderRadius:12, padding:0, cursor:'pointer', width:38, height:38,
+            display:'flex', alignItems:'center', justifyContent:'center',
+            boxShadow:'0 2px 8px rgba(0,0,0,0.1)', overflow:'hidden', flexShrink:0,
+          }}>
+            {window.ProfileAvatar
+              ? React.createElement(window.ProfileAvatar, { profileId: state.id, avatar: state.avatar, size: 38, style: { borderRadius:10, boxShadow:'none' } })
+              : <span style={{ fontSize:'1.6rem' }}>{state.avatar}</span>
+            }
+          </button>
+        ) : (
+          <div style={{ fontSize:'1.6rem', width:36, height:36, display:'flex', alignItems:'center',
+            justifyContent:'center', background:'rgba(255,255,255,0.8)', borderRadius:12,
+            boxShadow:'0 2px 8px rgba(0,0,0,0.1)' }}>
+            {state.avatar}
+          </div>
+        )}
       </div>
     </div>
   );
