@@ -907,8 +907,118 @@ function getPlayerLevel(xp) {
   return { ...cur, next, pct };
 }
 
+// ══════════════════════════════════════════════════════════════
+// MULTI-PROFILE SYSTEM
+// ══════════════════════════════════════════════════════════════
+function generateId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+}
+
+function defaultGameState() {
+  return {
+    xp: 0, wordsCorrect: 0, quizzesCompleted: 0, perfectQuizzes: 0,
+    wordsWritten: 0, duoWins: 0, streak: 0, lastDate: null,
+    unlockedBadges: [], learnedWords: {},
+    wordAttempts: {}, masteredWords: {},
+    selectedVoiceName: null, songsCompleted: 0,
+  };
+}
+
+function loadProfiles() {
+  try {
+    const s = localStorage.getItem('englishkids_profiles_v1');
+    if (s) {
+      const data = JSON.parse(s);
+      if (data && Array.isArray(data.profiles)) return data;
+    }
+    // Migración desde perfil único v3
+    const v3 = localStorage.getItem('englishkids_v3');
+    if (v3) {
+      const old = JSON.parse(v3);
+      if (old && old.name) {
+        const profile = {
+          ...defaultGameState(), ...old,
+          id: generateId(),
+          createdAt: new Date().toISOString(),
+          hasPhoto: false,
+        };
+        const data = { profiles: [profile] };
+        saveProfiles(data);
+        return data;
+      }
+    }
+  } catch(e) {}
+  return { profiles: [] };
+}
+
+function saveProfiles(data) {
+  try { localStorage.setItem('englishkids_profiles_v1', JSON.stringify(data)); } catch(e) {}
+}
+
+function saveProfilePhoto(profileId, base64) {
+  try { localStorage.setItem(`englishkids_photo_${profileId}`, base64); } catch(e) {}
+}
+
+function loadProfilePhoto(profileId) {
+  try { return localStorage.getItem(`englishkids_photo_${profileId}`); } catch(e) { return null; }
+}
+
+function deleteProfilePhoto(profileId) {
+  try { localStorage.removeItem(`englishkids_photo_${profileId}`); } catch(e) {}
+}
+
+function exportAllProfiles() {
+  try {
+    const data = JSON.parse(JSON.stringify(loadProfiles()));
+    data.profiles = data.profiles.map(p => ({
+      ...p,
+      _exportedPhoto: loadProfilePhoto(p.id) || null,
+    }));
+    const json = JSON.stringify(data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `english-kids-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    return true;
+  } catch(e) { return false; }
+}
+
+function importAllProfiles(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!data.profiles || !Array.isArray(data.profiles)) throw new Error('Formato inválido');
+        data.profiles.forEach(p => {
+          if (p._exportedPhoto) {
+            saveProfilePhoto(p.id, p._exportedPhoto);
+            delete p._exportedPhoto;
+          }
+          if (!p.id) p.id = generateId();
+          if (!p.createdAt) p.createdAt = new Date().toISOString();
+        });
+        const cleaned = { profiles: data.profiles };
+        saveProfiles(cleaned);
+        resolve(data.profiles);
+      } catch(err) { reject(err); }
+    };
+    reader.onerror = () => reject(new Error('Error leyendo archivo'));
+    reader.readAsText(file);
+  });
+}
+
 Object.assign(window, {
   LEVELS, CATEGORIES, BADGES, AVATARS, SONGS,
   checkBadges, loadState, saveState, getPlayerLevel,
   updateWordSRS, getMasteredCount, getWordSRSLevel,
+  generateId, defaultGameState,
+  loadProfiles, saveProfiles,
+  saveProfilePhoto, loadProfilePhoto, deleteProfilePhoto,
+  exportAllProfiles, importAllProfiles,
 });

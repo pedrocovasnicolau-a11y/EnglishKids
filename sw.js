@@ -1,5 +1,5 @@
-// ─── English Kids Service Worker v2 ─────────────────────────────
-const CACHE = 'english-kids-v2';
+// ─── English Kids Service Worker v3 ─────────────────────────────
+const CACHE = 'english-kids-v3';
 
 const PRECACHE = [
   './',
@@ -10,6 +10,7 @@ const PRECACHE = [
   './screens-learn.jsx',
   './screens-duo.jsx',
   './screens-songs.jsx',
+  './screens-profiles.jsx',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
