@@ -25,15 +25,12 @@ function SelfieCapture({ onCapture, onSkip }) {
         });
         if (cancelled) { s.getTracks().forEach(t => t.stop()); return; }
         streamRef.current = s;
+        // <video> is always in the DOM (display:none), so ref is available right now
+        if (videoRef.current) {
+          videoRef.current.srcObject = s;
+          videoRef.current.play().catch(() => {});
+        }
         setLoading(false);
-        // Assign srcObject after loading=false so <video> is in the DOM on next render
-        // We use a tiny timeout to let React commit the render before accessing the ref
-        setTimeout(() => {
-          if (videoRef.current) {
-            videoRef.current.srcObject = s;
-            videoRef.current.play().catch(() => {});
-          }
-        }, 0);
       } catch(e) {
         if (!cancelled) { setCamError(true); setLoading(false); }
       }
@@ -64,13 +61,11 @@ function SelfieCapture({ onCapture, onSkip }) {
           video: { facingMode: 'user', width: { ideal: 400 }, height: { ideal: 400 } },
         });
         streamRef.current = s;
+        if (videoRef.current) {
+          videoRef.current.srcObject = s;
+          videoRef.current.play().catch(() => {});
+        }
         setLoading(false);
-        setTimeout(() => {
-          if (videoRef.current) {
-            videoRef.current.srcObject = s;
-            videoRef.current.play().catch(() => {});
-          }
-        }, 0);
       } catch(e) { setCamError(true); setLoading(false); }
     })();
   };

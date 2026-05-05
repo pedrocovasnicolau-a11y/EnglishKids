@@ -1,5 +1,5 @@
 // ─── English Kids Service Worker v3 ─────────────────────────────
-const CACHE = 'english-kids-v3';
+const CACHE = 'english-kids-v4';
 
 const PRECACHE = [
   './',
