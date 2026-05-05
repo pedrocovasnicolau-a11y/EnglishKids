@@ -1,37 +1,50 @@
 // ─── SELFIE CAPTURE ──────────────────────────────────────────────
 function SelfieCapture({ onCapture, onSkip }) {
-  const [stream,    setStream]    = React.useState(null);
-  const [captured,  setCaptured]  = React.useState(null);
-  const [camError,  setCamError]  = React.useState(false);
-  const [loading,   setLoading]   = React.useState(false);
-  const videoRef  = React.useRef(null);
-  const canvasRef = React.useRef(null);
-
-  const startCamera = async () => {
-    setLoading(true); setCamError(false);
-    try {
-      const s = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: 'user', width: { ideal: 400 }, height: { ideal: 400 } }
-      });
-      setStream(s);
-      if (videoRef.current) {
-        videoRef.current.srcObject = s;
-        videoRef.current.play();
-      }
-    } catch(e) {
-      setCamError(true);
-    } finally { setLoading(false); }
-  };
+  const [captured, setCaptured] = React.useState(null);
+  const [camError, setCamError] = React.useState(false);
+  const [loading,  setLoading]  = React.useState(true);
+  const [ready,    setReady]    = React.useState(false);
+  const videoRef   = React.useRef(null);
+  const canvasRef  = React.useRef(null);
+  const streamRef  = React.useRef(null); // ref avoids closure issues in cleanup
 
   const stopCamera = () => {
-    if (stream) stream.getTracks().forEach(t => t.stop());
-    setStream(null);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(t => t.stop());
+      streamRef.current = null;
+    }
   };
+
+  // Start camera on mount, stop on unmount
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const s = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 400 }, height: { ideal: 400 } },
+        });
+        if (cancelled) { s.getTracks().forEach(t => t.stop()); return; }
+        streamRef.current = s;
+        setLoading(false);
+        // Assign srcObject after loading=false so <video> is in the DOM on next render
+        // We use a tiny timeout to let React commit the render before accessing the ref
+        setTimeout(() => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = s;
+            videoRef.current.play().catch(() => {});
+          }
+        }, 0);
+      } catch(e) {
+        if (!cancelled) { setCamError(true); setLoading(false); }
+      }
+    })();
+    return () => { cancelled = true; stopCamera(); };
+  }, []);
 
   const capture = () => {
     const video  = videoRef.current;
     const canvas = canvasRef.current;
-    if (!video || !canvas) return;
+    if (!video || !canvas || !ready) return;
     const size = Math.min(video.videoWidth, video.videoHeight);
     const ox   = (video.videoWidth  - size) / 2;
     const oy   = (video.videoHeight - size) / 2;
@@ -39,16 +52,28 @@ function SelfieCapture({ onCapture, onSkip }) {
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, ox, oy, size, size, 0, 0, 240, 240);
     const dataUrl = canvas.toDataURL('image/jpeg', 0.78);
-    setCaptured(dataUrl);
     stopCamera();
+    setCaptured(dataUrl);
   };
 
-  const retry = () => { setCaptured(null); startCamera(); };
-
-  React.useEffect(() => {
-    startCamera();
-    return () => stopCamera();
-  }, []);
+  const retry = () => {
+    setCaptured(null); setReady(false); setLoading(true);
+    (async () => {
+      try {
+        const s = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 400 }, height: { ideal: 400 } },
+        });
+        streamRef.current = s;
+        setLoading(false);
+        setTimeout(() => {
+          if (videoRef.current) {
+            videoRef.current.srcObject = s;
+            videoRef.current.play().catch(() => {});
+          }
+        }, 0);
+      } catch(e) { setCamError(true); setLoading(false); }
+    })();
+  };
 
   const base = {
     display:'flex', flexDirection:'column', alignItems:'center',
@@ -81,7 +106,8 @@ function SelfieCapture({ onCapture, onSkip }) {
         </div>
         <img src={captured} alt="selfie" style={{
           width:160, height:160, borderRadius:'50%', objectFit:'cover',
-          border:'4px solid #6bcb77', display:'block', margin:'0 auto 20px', boxShadow:'0 4px 20px rgba(0,0,0,0.15)'
+          border:'4px solid #6bcb77', display:'block', margin:'0 auto 20px',
+          boxShadow:'0 4px 20px rgba(0,0,0,0.15)'
         }} />
         <canvas ref={canvasRef} style={{ display:'none' }} />
         <div style={{ display:'flex', gap:10 }}>
@@ -100,26 +126,29 @@ function SelfieCapture({ onCapture, onSkip }) {
           📸 ¡Hazte una foto!
         </div>
 
-        {/* Circular crop overlay */}
+        {/* Video always rendered so ref is always available; loading overlay on top */}
         <div style={{ position:'relative', width:280, height:280, margin:'0 auto 16px',
           borderRadius:'50%', overflow:'hidden', border:'4px solid #6bcb77',
-          boxShadow:'0 0 0 9999px rgba(0,0,0,0.6)' }}>
-          {loading ? (
-            <div style={{ display:'flex', alignItems:'center', justifyContent:'center',
-              height:'100%', color:'#fff', fontFamily:'Nunito,sans-serif', fontWeight:800 }}>
+          boxShadow:'0 0 0 9999px rgba(0,0,0,0.6)', background:'#000' }}>
+          <video ref={videoRef} autoPlay playsInline muted
+            onCanPlay={() => setReady(true)}
+            style={{ width:'100%', height:'100%', objectFit:'cover',
+              transform:'scaleX(-1)', display: loading ? 'none' : 'block' }} />
+          {loading && (
+            <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center',
+              justifyContent:'center', color:'#fff', fontFamily:'Nunito,sans-serif',
+              fontWeight:800, fontSize:'0.9rem' }}>
               Iniciando cámara...
             </div>
-          ) : (
-            <video ref={videoRef} autoPlay playsInline muted
-              style={{ width:'100%', height:'100%', objectFit:'cover',
-                transform:'scaleX(-1)' }} />
           )}
         </div>
         <canvas ref={canvasRef} style={{ display:'none' }} />
 
         <div style={{ display:'flex', gap:10 }}>
           <button onClick={onSkip} style={btnStyle('#888', true)}>Omitir</button>
-          <button onClick={capture} disabled={loading} style={btnStyle('#ff6b9d')}>📸 Capturar</button>
+          <button onClick={capture} disabled={!ready} style={btnStyle(!ready ? '#aaa' : '#ff6b9d')}>
+            📸 Capturar
+          </button>
         </div>
       </div>
     </div>
