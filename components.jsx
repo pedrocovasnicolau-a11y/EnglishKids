@@ -177,7 +177,7 @@ function BottomNav({ active, onChange }) {
 }
 
 // ─── TOP BAR ─────────────────────────────────────────────────────
-function TopBar({ state, onSwitchProfile }) {
+function TopBar({ state, onSwitchProfile, onExitApp }) {
   const pl = getPlayerLevel(state.xp);
   return (
     <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
@@ -194,6 +194,14 @@ function TopBar({ state, onSwitchProfile }) {
           <span style={{ fontSize:'0.85rem' }}>⚡</span>
           <span style={{ fontFamily:'Fredoka One,cursive', color: pl.color, fontSize:'0.95rem' }}>{state.xp}</span>
         </div>
+        {onExitApp && (
+          <button onClick={onExitApp} title="Cambiar app" style={{
+            background:'rgba(255,255,255,0.8)', border:'2px solid rgba(255,255,255,0.9)',
+            borderRadius:12, padding:0, cursor:'pointer', width:38, height:38,
+            display:'flex', alignItems:'center', justifyContent:'center',
+            boxShadow:'0 2px 8px rgba(0,0,0,0.1)', flexShrink:0, fontSize:'1.1rem',
+          }}>🔄</button>
+        )}
         {onSwitchProfile ? (
           <button onClick={onSwitchProfile} title="Cambiar perfil" style={{
             background:'rgba(255,255,255,0.8)', border:'2px solid rgba(255,255,255,0.9)',

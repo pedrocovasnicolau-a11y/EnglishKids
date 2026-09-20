@@ -1,16 +1,20 @@
 // ─── English Kids Service Worker v3 ─────────────────────────────
-const CACHE = 'english-kids-v4';
+const CACHE = 'english-kids-v5';
 
 const PRECACHE = [
   './',
   './index.html',
   './data.js',
+  './data-pequeworld.js',
   './components.jsx',
   './screens-home.jsx',
   './screens-learn.jsx',
   './screens-duo.jsx',
   './screens-songs.jsx',
   './screens-profiles.jsx',
+  './screens-pequeworld.jsx',
+  './screens-pequeworld-leer.jsx',
+  './screens-launcher.jsx',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',

@@ -468,7 +468,7 @@ function ProfileCard({ profile, onSelect, onEdit }) {
 }
 
 // ─── PROFILE SELECTOR ────────────────────────────────────────────
-function ProfileSelector({ profilesData, onSelect, onProfilesChange }) {
+function ProfileSelector({ profilesData, onSelect, onProfilesChange, title, icon }) {
   const [creating,    setCreating]    = React.useState(false);
   const [editProfile, setEditProfile] = React.useState(null);
   const [importError, setImportError] = React.useState(null);
@@ -549,7 +549,7 @@ function ProfileSelector({ profilesData, onSelect, onProfilesChange }) {
         <div style={{ textAlign:'center', marginBottom:28, animation:'fadeUp .4s ease' }}>
           <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'2.6rem', color:'#2d6a4f',
             textShadow:'0 2px 0 rgba(255,255,255,0.8)', marginBottom:4 }}>
-            🌍 English Kids
+            {icon || '🌍'} {title || 'English Kids'}
           </div>
           <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.3rem', color:'#555' }}>
             {profiles.length === 0 ? '¡Bienvenido! Crea tu primer perfil' : '¿Quién juega hoy?'}
