@@ -161,12 +161,18 @@ function LearnScreen({ state, onStateChange }) {
     setIsListening(true);
     setFeedback({ type:'info', text:'🎤 ¡Habla ahora!' });
     const rec = new SR();
-    rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 6;
+    // Con palabras muy cortas (números, "yes/no"...) el motor a veces
+    // nunca marca un resultado como final y simplemente termina: por
+    // eso escuchamos también los resultados provisionales y, si acaba
+    // sin uno final, usamos el último provisional en vez de dar la
+    // respuesta por incorrecta (que penalizaría una palabra bien dicha).
+    rec.lang = 'en-US'; rec.interimResults = true; rec.maxAlternatives = 6;
+    let lastAlts = null;
+    let settled = false;
     const safe = setTimeout(() => { try { rec.stop(); } catch(e){} }, 8000);
-
-    rec.onresult = (ev) => {
-      clearTimeout(safe); setIsListening(false);
-      const alts = Array.from(ev.results[0]).map(r => r.transcript.trim());
+    const finish = (alts) => {
+      if (settled) return;
+      settled = true; clearTimeout(safe); setIsListening(false);
       const ok = matchesTarget(alts, selectedItem.en);
       if (ok) {
         setFeedback({ type:'good', text:['🎉 ¡Perfecto!','🌟 ¡Brillante!','⭐ ¡Genial!','🏆 ¡Campeón!','💫 ¡Increíble!'][Math.floor(Math.random()*5)] });
@@ -183,8 +189,23 @@ function LearnScreen({ state, onStateChange }) {
         setFeedback({ type:'bad', text:`🙊 ¡Casi! "${alts[0] || ''}" — ¡otra vez!` });
       }
     };
-    rec.onerror = () => { clearTimeout(safe); setIsListening(false); setFeedback({ type:'bad', text:'🙈 No te oí. ¡Inténtalo!' }); };
-    rec.onend   = () => { clearTimeout(safe); setIsListening(false); };
+
+    rec.onresult = (ev) => {
+      const res = ev.results[ev.results.length - 1];
+      const alts = Array.from(res).map(r => r.transcript.trim());
+      if (res.isFinal) finish(alts); else lastAlts = alts;
+    };
+    rec.onerror = () => {
+      if (settled) return;
+      settled = true; clearTimeout(safe); setIsListening(false);
+      setFeedback({ type:'bad', text:'🙈 No te oí. ¡Inténtalo!' });
+    };
+    rec.onend = () => {
+      if (settled) return;
+      if (lastAlts) { finish(lastAlts); return; }
+      settled = true; clearTimeout(safe); setIsListening(false);
+      setFeedback({ type:'bad', text:'🙈 No te oí. ¡Inténtalo!' });
+    };
     try { rec.start(); } catch(e) { setIsListening(false); }
   };
 
@@ -258,7 +279,7 @@ function LearnScreen({ state, onStateChange }) {
               )}
               <div style={{ width:64, height:64, display:'flex', alignItems:'center', justifyContent:'center',
                 borderRadius:50, background:`${cat.color}18`, overflow:'hidden' }}>
-                <EmojiImg code={item.e} size={54} />
+                <EmojiOrNumeral item={item} size={54} />
               </div>
               <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'0.88rem', color:'#333', lineHeight:1.2, textAlign:'center' }}>{item.en}</div>
               <div style={{ fontSize:'0.68rem', color:'#999', fontWeight:700, textAlign:'center' }}>{item.es}</div>
@@ -442,7 +463,7 @@ function WriteScreen({ state, onStateChange }) {
             </div>
             <div style={{ width:100, height:100, margin:'0 auto 12px', display:'flex', alignItems:'center',
               justifyContent:'center', borderRadius:50, background:`${cat.color}18` }}>
-              <EmojiImg code={item.e} size={82} />
+              <EmojiOrNumeral item={item} size={82} />
             </div>
             <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.3rem', color:'#555', marginBottom:4 }}>
               {item.es}
@@ -696,7 +717,7 @@ function QuizScreen({ state, onStateChange }) {
               }}>
                 <div style={{ width:72, height:72, display:'flex', alignItems:'center', justifyContent:'center',
                   borderRadius:16, background:`${opt.catColor||'#4d96ff'}18` }}>
-                  <EmojiImg code={opt.e} size={58} />
+                  <EmojiOrNumeral item={opt} size={58} />
                 </div>
                 {showAns && (
                   <span style={{ fontSize:'0.8rem', fontWeight:900,
@@ -727,7 +748,7 @@ function QuizScreen({ state, onStateChange }) {
         <div style={{ width:130, height:130, margin:'0 auto 12px', background:`${q.item.catColor}18`,
           borderRadius:28, display:'flex', alignItems:'center', justifyContent:'center',
           border:`3px solid ${q.item.catColor}44`, boxShadow:'0 4px 20px rgba(0,0,0,0.08)' }}>
-          <EmojiImg code={q.item.e} size={104} />
+          <EmojiOrNumeral item={q.item} size={104} />
         </div>
         <button onClick={() => speakWord(q.item.en)} style={{ background:'none', border:'none', cursor:'pointer', fontSize:'1.4rem' }}>🔊</button>
         <div style={{ color:'#bbb', fontSize:'0.8rem', fontWeight:700, marginTop:2 }}>{q.item.es}</div>

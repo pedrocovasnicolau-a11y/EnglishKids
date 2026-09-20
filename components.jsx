@@ -23,6 +23,22 @@ function EmojiImg({ code, size = 72, style = {} }) {
   );
 }
 
+// Muestra el número real (item.numeral) en vez de un emoji genérico
+// para tarjetas de números — el emoji 🔢 es idéntico para todos los
+// números y no ayuda al niño a identificar cuál es cuál.
+function EmojiOrNumeral({ item, size = 72 }) {
+  if (item && item.numeral) {
+    return (
+      <div style={{ width:size, height:size, display:'flex', alignItems:'center', justifyContent:'center',
+        fontFamily:'Fredoka One,cursive', fontWeight:900, color:'#333',
+        fontSize: size * (item.numeral.length > 2 ? 0.34 : 0.44) }}>
+        {item.numeral}
+      </div>
+    );
+  }
+  return <EmojiImg code={item.e} size={size} />;
+}
+
 function launchStars(count = 12) {
   const ems = ['⭐','🌟','✨','🎊','🎉','💫','🥳','🏆'];
   for (let i = 0; i < count; i++) {
@@ -227,4 +243,4 @@ function TopBar({ state, onSwitchProfile, onExitApp }) {
 }
 
 // Expose globals
-Object.assign(window, { EmojiImg, launchStars, ActionBtn, MicWaves, SkyBackground, Cloud, BottomNav, TopBar });
+Object.assign(window, { EmojiImg, EmojiOrNumeral, launchStars, ActionBtn, MicWaves, SkyBackground, Cloud, BottomNav, TopBar });
