@@ -191,9 +191,33 @@ ReactDOM.createRoot(document.getElementById('root')).render(<RootApp />);
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('SW registered:', reg.scope))
+    // Si la página ya estaba controlada por un Service Worker al cargar,
+    // un "controllerchange" posterior es una actualización real y hay
+    // que recargar. Si no había ninguno (primera visita), es solo la
+    // primera instalación tomando el control: no hace falta recargar.
+    const hadControllerAtLoad = !!navigator.serviceWorker.controller;
+
+    // updateViaCache:'none' evita que el propio navegador sirva sw.js
+    // desde su caché HTTP — sin esto, en móvil puede tardar horas en
+    // enterarse de que hay una versión nueva.
+    navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' })
+      .then(reg => {
+        console.log('SW registered:', reg.scope);
+        // Comprueba si hay una versión nueva cada vez que se abre la
+        // app (incluido reabrir desde el icono de la pantalla de inicio).
+        reg.update().catch(() => {});
+        document.addEventListener('visibilitychange', () => {
+          if (document.visibilityState === 'visible') reg.update().catch(() => {});
+        });
+      })
       .catch(err => console.log('SW error:', err));
+
+    let reloading = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadControllerAtLoad || reloading) return;
+      reloading = true;
+      window.location.reload();
+    });
   });
 }
 </script>

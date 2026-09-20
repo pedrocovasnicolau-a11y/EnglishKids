@@ -1,5 +1,5 @@
 // ─── English Kids Service Worker v3 ─────────────────────────────
-const CACHE = 'english-kids-v7';
+const CACHE = 'english-kids-v8';
 
 const PRECACHE = [
   './',
@@ -46,9 +46,26 @@ self.addEventListener('activate', event => {
   );
 });
 
-// Fetch: cache-first for app shell, network-first for Twemoji images
+// Fetch: red primero para el HTML (así nunca se queda pillado en una
+// versión vieja aunque el Service Worker tarde en actualizarse),
+// cache-first para el resto del app shell, network-first para Twemoji.
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
+
+  // Documento principal (navegación / index.html): red primero,
+  // caché solo como último recurso si no hay conexión.
+  if (event.request.mode === 'navigate' || url.pathname.endsWith('/index.html')) {
+    event.respondWith(
+      fetch(event.request)
+        .then(res => {
+          const clone = res.clone();
+          caches.open(CACHE).then(c => c.put(event.request, clone));
+          return res;
+        })
+        .catch(() => caches.match(event.request).then(c => c || caches.match('./index.html')))
+    );
+    return;
+  }
 
   // Twemoji images: network first, fallback to cache
   if (url.hostname === 'cdn.jsdelivr.net') {
