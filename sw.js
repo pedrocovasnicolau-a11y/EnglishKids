@@ -1,5 +1,5 @@
 // ─── English Kids Service Worker v3 ─────────────────────────────
-const CACHE = 'english-kids-v8';
+const CACHE = 'english-kids-v9';
 
 const PRECACHE = [
   './',
@@ -25,13 +25,53 @@ const PRECACHE = [
   'https://unpkg.com/@babel/standalone@7.29.0/babel.min.js',
 ];
 
+// Contenido propio de PequeWorld. Sin precachearlo, la primera vez que
+// se abre la app sin red no hay fotos ni sonidos de animales: justo el
+// contenido por el que un niño de 3 años entra en la sección.
+const PRECACHE_ASSETS = [
+  './assets/pequeworld/img/animal_caballo.jpg',
+  './assets/pequeworld/img/animal_cerdo.jpg',
+  './assets/pequeworld/img/animal_gallina.jpg',
+  './assets/pequeworld/img/animal_gato.jpg',
+  './assets/pequeworld/img/animal_oveja.jpg',
+  './assets/pequeworld/img/animal_pato.jpg',
+  './assets/pequeworld/img/animal_perro.jpg',
+  './assets/pequeworld/img/animal_vaca.jpg',
+  './assets/pequeworld/img/emocion_con_miedo.jpg',
+  './assets/pequeworld/img/emocion_enfadado.jpg',
+  './assets/pequeworld/img/emocion_feliz.jpg',
+  './assets/pequeworld/img/emocion_sorprendido.jpg',
+  './assets/pequeworld/img/emocion_tranquilo.jpg',
+  './assets/pequeworld/img/emocion_triste.jpg',
+  './assets/pequeworld/img/rutina_banarse.jpg',
+  './assets/pequeworld/img/rutina_desayunar.jpg',
+  './assets/pequeworld/img/rutina_despertarse.jpg',
+  './assets/pequeworld/img/rutina_dientes.jpg',
+  './assets/pequeworld/img/rutina_dormir.jpg',
+  './assets/pequeworld/img/rutina_jugar.jpg',
+  './assets/pequeworld/img/rutina_vestirse.jpg',
+  './assets/pequeworld/audio/animals/sonido_caballo.mp3',
+  './assets/pequeworld/audio/animals/sonido_cerdo.mp3',
+  './assets/pequeworld/audio/animals/sonido_gallina.mp3',
+  './assets/pequeworld/audio/animals/sonido_gato.mp3',
+  './assets/pequeworld/audio/animals/sonido_oveja.mp3',
+  './assets/pequeworld/audio/animals/sonido_pato.mp3',
+  './assets/pequeworld/audio/animals/sonido_perro.mp3',
+  './assets/pequeworld/audio/animals/sonido_vaca.mp3',
+  './assets/pequeworld/audio/music/fondo1.mp3',
+  './assets/pequeworld/audio/music/fondo2.mp3',
+  './assets/pequeworld/audio/music/fondo3.mp3',
+  './assets/pequeworld/audio/music/fondo4.mp3',
+  './assets/pequeworld/audio/music/fondo6.mp3',
+];
+
 // Install: pre-cache all app shell files
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE).then(cache => {
       // Cache what we can, ignore failures for CDN resources
       return Promise.allSettled(
-        PRECACHE.map(url => cache.add(url).catch(() => {}))
+        [...PRECACHE, ...PRECACHE_ASSETS].map(url => cache.add(url).catch(() => {}))
       );
     }).then(() => self.skipWaiting())
   );
@@ -105,7 +145,15 @@ self.addEventListener('fetch', event => {
           caches.open(CACHE).then(c => c.put(event.request, clone));
         }
         return res;
-      }).catch(() => caches.match('./index.html'));
+      }).catch(() => {
+        // Solo tiene sentido devolver el HTML si se pedía un documento.
+        // Devolverlo para una imagen o un mp3 hacía que el navegador
+        // recibiera HTML donde esperaba binario.
+        if (event.request.destination === 'document' || event.request.mode === 'navigate') {
+          return caches.match('./index.html');
+        }
+        return new Response('', { status: 504, statusText: 'Offline' });
+      });
     })
   );
 });

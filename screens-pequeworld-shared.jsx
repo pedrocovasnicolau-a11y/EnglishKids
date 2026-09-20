@@ -87,14 +87,57 @@ function PequeFullscreenImage({ item, onClose }) {
   );
 }
 
+// Tamaño sugerido del estímulo dentro del marco de Practicar. Los
+// `renderPrompt` de cada categoría lo reciben como 2º argumento para que
+// la imagen/letra llene el marco en vez de quedarse pequeña en el centro.
+const PEQUE_PRACTICE_SIZE = 300;
+
 // ─── MODO PRACTICAR: aparece el estímulo, el niño lo dice con el micro ─
+// El orden es ALEATORIO: en orden fijo el niño memoriza la secuencia
+// ("después de la vaca viene el caballo") y deja de mirar la imagen,
+// que es justo lo contrario de lo que se quiere entrenar. Se recorre
+// una baraja completa (sin repetir) y al acabarla se vuelve a barajar.
 function PequePracticeCard({ items, color, renderPrompt, getTarget, hintLabel }) {
+  const [deck, setDeck] = React.useState(() => pequeShuffle(items));
   const [idx, setIdx] = React.useState(0);
   const [feedback, setFeedback] = React.useState(null);
   const [listening, setListening] = React.useState(false);
   const recRef = React.useRef(null);
   const hasSR = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
-  const item = items.length ? items[idx % items.length] : null;
+
+  // Si cambia el CONTENIDO (nivel, letras desbloqueadas...) se reparte de
+  // nuevo. Se compara por firma y no por identidad del array: los padres
+  // recalculan `items` en cada render (pequeByLevel(...)), así que
+  // depender de la identidad rebarajaría sin parar.
+  const itemsKey = React.useMemo(
+    () => items.map(i => i.id || i.letter || i.word || i.syl || i.n).join('|'),
+    [items]
+  );
+  const firstDeal = React.useRef(true);
+  React.useEffect(() => {
+    if (firstDeal.current) { firstDeal.current = false; return; }
+    setDeck(pequeShuffle(items));
+    setIdx(0);
+  }, [itemsKey]);
+
+  const item = deck.length ? deck[idx % deck.length] : null;
+
+  // Al terminar la baraja se vuelve a barajar, evitando repetir
+  // inmediatamente la última tarjeta vista.
+  const next = () => {
+    setIdx(i => {
+      const n = i + 1;
+      if (deck.length > 1 && n % deck.length === 0) {
+        let reshuffled = pequeShuffle(deck);
+        if (reshuffled[0] === deck[deck.length - 1]) {
+          reshuffled = [...reshuffled.slice(1), reshuffled[0]];
+        }
+        setDeck(reshuffled);
+        return 0;
+      }
+      return n;
+    });
+  };
 
   React.useEffect(() => { setFeedback(null); setListening(false); }, [idx]);
   React.useEffect(() => () => { try { recRef.current && recRef.current.abort && recRef.current.abort(); } catch(e) {} }, []);
@@ -114,7 +157,7 @@ function PequePracticeCard({ items, color, renderPrompt, getTarget, hintLabel })
         if (pequeMatchesWord(alts, getTarget(item))) {
           setFeedback({ type:'good', text:['🎉 ¡Perfecto!','🌟 ¡Genial!','⭐ ¡Muy bien!','🏆 ¡Campeón!'][Math.floor(Math.random()*4)] });
           launchStars(10);
-          setTimeout(() => setIdx(i => i + 1), 1400);
+          setTimeout(next, 1400);
         } else {
           setFeedback({ type:'bad', text:'🙊 Casi... ¡inténtalo otra vez!' });
         }
@@ -126,10 +169,15 @@ function PequePracticeCard({ items, color, renderPrompt, getTarget, hintLabel })
   const fColor = { good:'#16a34a', bad:'#dc2626', info:'#2563eb' };
 
   return (
-    <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:14, padding:16 }}>
-      <div style={{ width:210, height:210, borderRadius:44, background:`${color}18`,
-        display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 8px 28px ${color}33` }}>
-        {renderPrompt(item)}
+    <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:12, padding:'10px 12px' }}>
+      {/* Marco del estímulo: ocupa casi todo el ancho disponible y se
+          limita por altura (dvh) para que nunca empuje al micrófono
+          fuera de la pantalla en móviles bajos. */}
+      <div style={{ width:'min(86vw, 340px)', height:'min(86vw, 340px)', maxHeight:'46dvh', maxWidth:'46dvh',
+        borderRadius:'12%', background:`${color}18`, flexShrink:0,
+        display:'flex', alignItems:'center', justifyContent:'center', overflow:'hidden',
+        boxShadow:`0 8px 28px ${color}33` }}>
+        {renderPrompt(item, PEQUE_PRACTICE_SIZE)}
       </div>
       <div style={{ minHeight:24 }}>
         {feedback && <div style={{ fontWeight:900, fontSize:'1rem', color: fColor[feedback.type], textAlign:'center' }}>{feedback.text}</div>}
@@ -149,13 +197,18 @@ function PequePracticeCard({ items, color, renderPrompt, getTarget, hintLabel })
         <button onClick={() => pequeSpeak(getTarget(item))} style={{ background:'none', border:'none', color:'#999', fontWeight:800, fontSize:'0.78rem', cursor:'pointer' }}>
           🔊 {hintLabel || '¿No te acuerdas?'}
         </button>
-        <button onClick={() => setIdx(i => i + 1)} style={{ background:'none', border:'none', color:'#bbb', fontWeight:700, fontSize:'0.78rem', cursor:'pointer' }}>
+        <button onClick={next} style={{ background:'none', border:'none', color:'#bbb', fontWeight:700, fontSize:'0.78rem', cursor:'pointer' }}>
           Siguiente →
         </button>
       </div>
     </div>
   );
 }
+
+// Tamaño de la imagen de cada opción del concurso. Con 58px la foto era
+// casi un icono: para reconocer un animal en una foto real hace falta
+// que la cara se vea, sobre todo a 3-4 años.
+const PEQUE_QUIZ_OPTION_SIZE = 130;
 
 // ─── MODO CONCURSO: multiple choice con puntuación y confeti ──────
 // variant: 'audio-to-image' (oye el nombre, elige la imagen) ·
@@ -241,8 +294,10 @@ function PequeQuizGame({ pool, variant, color, length = 8, getLabel, renderOptio
 
       {variant === 'image-to-text' ? (
         <div style={{ textAlign:'center' }}>
-          <div style={{ width:110, height:110, margin:'0 auto', borderRadius:24, background:`${color}18`, display:'flex', alignItems:'center', justifyContent:'center' }}>
-            <PequeImage item={round.correct} size={90} />
+          <div style={{ width:'min(60vw, 230px)', height:'min(60vw, 230px)', maxHeight:'28dvh', maxWidth:'28dvh',
+            margin:'0 auto', borderRadius:'12%', background:`${color}18`, overflow:'hidden',
+            display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <PequeImage item={round.correct} size={210} />
           </div>
         </div>
       ) : (
@@ -265,16 +320,16 @@ function PequeQuizGame({ pool, variant, color, length = 8, getLabel, renderOptio
           const bg = isChosenCorrect ? 'rgba(107,203,119,0.2)' : isChosenWrong ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.85)';
           return (
             <button key={i} onClick={() => pick(opt)} disabled={status === 'correct'} style={{
-              padding:'14px 10px', borderRadius:18, cursor: status === 'correct' ? 'default' : 'pointer',
-              background: bg, border:`3px solid ${border}`,
-              display:'flex', flexDirection:'column', alignItems:'center', gap:6, minHeight:64,
+              padding:'10px 8px', borderRadius:22, cursor: status === 'correct' ? 'default' : 'pointer',
+              background: bg, border:`3px solid ${border}`, overflow:'hidden',
+              display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:6, minHeight:118,
               animation: isChosenWrong ? 'wrongShake .35s ease' : isChosenCorrect ? 'popIn .3s ease' : 'none'
             }}>
               {renderOption
                 ? renderOption(opt, { isChosenCorrect, isChosenWrong })
                 : variant === 'audio-to-image'
-                  ? <PequeImage item={opt} size={58} />
-                  : <span style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.15rem', color:'#333' }}>{getLabel(opt)}</span>}
+                  ? <PequeImage item={opt} size={PEQUE_QUIZ_OPTION_SIZE} />
+                  : <span style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.6rem', color:'#333' }}>{getLabel(opt)}</span>}
             </button>
           );
         })}
@@ -298,4 +353,5 @@ function PequeQuizGame({ pool, variant, color, length = 8, getLabel, renderOptio
 
 Object.assign(window, {
   PequeModeTabs, PequeFeaturedPanel, PequePopupImage, PequeFullscreenImage, PequePracticeCard, PequeQuizGame,
+  PEQUE_PRACTICE_SIZE, PEQUE_QUIZ_OPTION_SIZE,
 });

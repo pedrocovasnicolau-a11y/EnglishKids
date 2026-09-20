@@ -76,6 +76,20 @@ function PequeWorldApp({ profile, onExitApp, onSwitchProfile }) {
   const changeLevel = (level) => setPequeState({ ...pequeState, level });
   const level = pequeState.level || 'inicio';
 
+  // Catálogo de categorías "simples" (todas usan PequeCategoryScreen).
+  // Tenerlo como datos evita la cadena de if/else y que añadir una
+  // sección nueva obligue a tocar tres sitios distintos.
+  const CATEGORY_SCREENS = {
+    formas:    { title:'Formas',    icon:'🔺', color:'#14b8a6', pool:PEQUE_SHAPES },
+    animales:  { title:'Animales',  icon:'🐾', color:'#f97316', pool:PEQUE_ANIMALS, allowFullscreen:true },
+    frutas:    { title:'Frutas',    icon:'🍎', color:'#6bcb77', pool:PEQUE_FRUITS },
+    emociones: { title:'Emociones', icon:'😊', color:'#ffd93d', pool:PEQUE_EMOTIONS },
+    rutinas:   { title:'Rutinas',   icon:'🧴', color:'#8b5cf6', pool:PEQUE_ROUTINES },
+    cuerpo:    { title:'Mi cuerpo', icon:'🙋', color:'#0ea5e9', pool:PEQUE_BODY },
+    familia:   { title:'Familia',   icon:'👨‍👩‍👧', color:'#f43f5e', pool:PEQUE_FAMILY },
+    opuestos:  { title:'Opuestos',  icon:'↔️', color:'#a855f7', pool:PEQUE_OPPOSITES },
+  };
+
   let content;
   if (section === 'home') {
     content = <PequeHome profile={profile} level={level} onChangeLevel={changeLevel}
@@ -83,28 +97,32 @@ function PequeWorldApp({ profile, onExitApp, onSwitchProfile }) {
   } else if (section === 'numeros') {
     content = <PequeNumbersScreen level={level} onBack={goHome} onVisit={onVisit} />;
   } else if (section === 'colores') {
-    content = <PequeColorsScreen onBack={goHome} onVisit={onVisit} />;
-  } else if (section === 'formas') {
-    content = <PequeCategoryScreen sectionId="formas" title="Formas" icon="🔺" color="#14b8a6" items={pequeByLevel(PEQUE_SHAPES, level)} onBack={goHome} onVisit={onVisit} popupSeconds={pequeState.popupSeconds} />;
-  } else if (section === 'animales') {
-    content = <PequeCategoryScreen sectionId="animales" title="Animales" icon="🐾" color="#f97316" items={pequeByLevel(PEQUE_ANIMALS, level)} onBack={goHome} onVisit={onVisit} allowFullscreen popupSeconds={pequeState.popupSeconds} />;
-  } else if (section === 'frutas') {
-    content = <PequeCategoryScreen sectionId="frutas" title="Frutas" icon="🍎" color="#6bcb77" items={pequeByLevel(PEQUE_FRUITS, level)} onBack={goHome} onVisit={onVisit} popupSeconds={pequeState.popupSeconds} />;
-  } else if (section === 'emociones') {
-    content = <PequeCategoryScreen sectionId="emociones" title="Emociones" icon="😊" color="#ffd93d" items={pequeByLevel(PEQUE_EMOTIONS, level)} onBack={goHome} onVisit={onVisit} popupSeconds={pequeState.popupSeconds} />;
-  } else if (section === 'rutinas') {
-    content = <PequeCategoryScreen sectionId="rutinas" title="Rutinas" icon="🧴" color="#8b5cf6" items={pequeByLevel(PEQUE_ROUTINES, level)} onBack={goHome} onVisit={onVisit} popupSeconds={pequeState.popupSeconds} />;
+    content = <PequeColorsScreen level={level} onBack={goHome} onVisit={onVisit} />;
+  } else if (CATEGORY_SCREENS[section]) {
+    const c = CATEGORY_SCREENS[section];
+    content = <PequeCategoryScreen sectionId={section} title={c.title} icon={c.icon} color={c.color}
+      items={pequeByLevel(c.pool, level)} allowFullscreen={c.allowFullscreen}
+      onBack={goHome} onVisit={onVisit} popupSeconds={pequeState.popupSeconds} />;
   } else if (section === 'ajustes') {
     content = <PequeSettingsScreen state={pequeState} onStateChange={setPequeState} onBack={goHome} />;
   } else if (section === 'leer') {
     const backToLeerHome = () => setLeerScreen('home');
-    if (leerScreen === 'home') content = <PequeLeerHome level={level} onOpen={setLeerScreen} onBack={goHome} />;
+    if (leerScreen === 'home') content = <PequeLeerHome level={level} state={pequeState} onOpen={setLeerScreen} onBack={goHome} />;
     else if (leerScreen === 'vocales') content = <PequeVowelsScreen onBack={backToLeerHome} />;
     else if (leerScreen === 'letras') content = <PequeLettersScreen level={level} state={pequeState} onStateChange={setPequeState} onBack={backToLeerHome} />;
+    else if (leerScreen === 'silabas') content = <PequeSyllablesScreen level={level} state={pequeState} onStateChange={setPequeState} onBack={backToLeerHome} />;
     else if (leerScreen === 'formo') content = <PequeBuildWordScreen level={level} state={pequeState} onStateChange={setPequeState} onBack={backToLeerHome} />;
-    else if (leerScreen === 'palabras') content = <PequeSightWordsScreen level={level} state={pequeState} profile={profile} onBack={backToLeerHome} />;
-    else if (leerScreen === 'frases') content = <PequeSentencesScreen state={pequeState} onStateChange={setPequeState} onBack={backToLeerHome} />;
+    else if (leerScreen === 'palabras') content = <PequeSightWordsScreen state={pequeState} profile={profile} onBack={backToLeerHome} />;
+    else if (leerScreen === 'frases') content = <PequeSentencesScreen state={pequeState} onBack={backToLeerHome} />;
   }
+
+  // Si el nivel baja a Iniciación mientras se está en una sección que
+  // solo existe en Avanzado, se vuelve al inicio en vez de dejar una
+  // pantalla vacía.
+  React.useEffect(() => {
+    const s = PEQUE_SECTIONS.find(x => x.id === section);
+    if (s && s.advancedOnly && level !== 'avanzado') goHome();
+  }, [level, section]);
 
   return (
     <div style={{ height:'100%', display:'flex', flexDirection:'column', position:'relative' }}>
