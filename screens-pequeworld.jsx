@@ -61,13 +61,14 @@ function PequeCard({ item, color, onTap }) {
 }
 
 // ─── PANTALLA GENÉRICA de categoría: Ver / Practicar / Concurso ───
-function PequeCategoryScreen({ sectionId, title, icon, color, items, onBack, onVisit, allowFullscreen }) {
+function PequeCategoryScreen({ sectionId, title, icon, color, items, onBack, onVisit, allowFullscreen, popupSeconds = 2 }) {
   React.useEffect(() => { onVisit(sectionId); }, []);
   const [mode, setMode] = React.useState('ver');
   const [selectedItem, setSelectedItem] = React.useState(null);
+  const [popupItem, setPopupItem] = React.useState(null);
   const [fullscreenItem, setFullscreenItem] = React.useState(null);
 
-  const tap = (item) => { setSelectedItem(item); pequePlayItemCue(item); };
+  const tap = (item) => { setSelectedItem(item); setPopupItem(item); pequePlayItemCue(item); };
 
   return (
     <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
@@ -82,6 +83,7 @@ function PequeCategoryScreen({ sectionId, title, icon, color, items, onBack, onV
             <PequeCard key={item.id} item={item} color={color} onTap={tap} />
           ))}
         </div>
+        {popupItem && <PequePopupImage item={popupItem} durationMs={popupSeconds * 1000} onDone={() => setPopupItem(null)} />}
       </>)}
 
       {mode === 'practicar' && (
@@ -326,6 +328,20 @@ function PequeSettingsScreen({ state, onStateChange, onBack }) {
               ))}
             </div>
           </>)}
+        </div>
+
+        <div style={{ background:'rgba(255,255,255,0.85)', borderRadius:20, padding:16 }}>
+          <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.05rem', color:'#333', marginBottom:10 }}>🔍 Duración del pop-up</div>
+          <div style={{ display:'flex', gap:8 }}>
+            {[1, 2, 3].map(s => (
+              <button key={s} onClick={() => onStateChange({ ...state, popupSeconds: s })} style={{
+                flex:1, padding:'9px 4px', borderRadius:14, border:'none', cursor:'pointer',
+                background: (state.popupSeconds || 2) === s ? '#4d96ff' : 'rgba(0,0,0,0.05)',
+                color: (state.popupSeconds || 2) === s ? '#fff' : '#666',
+                fontFamily:'Nunito,sans-serif', fontWeight:900, fontSize:'0.85rem'
+              }}>{s}s</button>
+            ))}
+          </div>
         </div>
 
         <div style={{ background:'rgba(255,255,255,0.7)', borderRadius:16, padding:'12px 14px' }}>

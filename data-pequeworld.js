@@ -385,8 +385,9 @@ function pequeDefaultState() {
   return {
     level: 'inicio',
     musicOn: true,
-    musicVolume: 0.5,
+    musicVolume: 0.12, // casi al mínimo: los efectos/voz deben oírse claramente por encima
     musicTrackId: PEQUE_DEFAULT_TRACK,
+    popupSeconds: 2, // duración del pop-up grande al tocar un elemento en modo Ver
     unlockedConsonants: ['m'],
     visitedSections: [],
     wordsBuilt: [],
@@ -398,7 +399,15 @@ function pequeDefaultState() {
 function loadPequeState(profileId) {
   try {
     const all = JSON.parse(localStorage.getItem(PEQUE_STORAGE_KEY) || '{}');
-    return { ...pequeDefaultState(), ...(all[profileId] || {}) };
+    const saved = all[profileId] || {};
+    const merged = { ...pequeDefaultState(), ...saved };
+    // Migración: perfiles creados antes de bajar el volumen por defecto
+    // (0.5) se quedaban con la música demasiado alta; se corrige una vez,
+    // solo si nunca llegaron a tocar el ajuste de nivel de pop-up.
+    if (saved.popupSeconds === undefined && saved.musicVolume === 0.5) {
+      merged.musicVolume = pequeDefaultState().musicVolume;
+    }
+    return merged;
   } catch(e) { return pequeDefaultState(); }
 }
 
