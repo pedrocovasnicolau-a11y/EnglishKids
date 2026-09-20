@@ -54,6 +54,7 @@
 
 <!-- Data & helpers -->
 <script src="data.js"></script>
+<script src="data-pequeworld.js"></script>
 
 <!-- Shared React components -->
 <script type="text/babel" src="components.jsx"></script>
@@ -64,15 +65,21 @@
 <script type="text/babel" src="screens-duo.jsx"></script>
 <script type="text/babel" src="screens-songs.jsx"></script>
 <script type="text/babel" src="screens-profiles.jsx"></script>
+<script type="text/babel" src="screens-pequeworld.jsx"></script>
+<script type="text/babel" src="screens-pequeworld-leer.jsx"></script>
+<script type="text/babel" src="screens-launcher.jsx"></script>
 
 <!-- Main App -->
 <script type="text/babel">
 const { useState, useEffect } = React;
 
-function App() {
+// ─── RAÍZ: perfil (quién juega) → selector de app → English Kids
+// o PequeWorld. El perfil se elige siempre primero y nunca se salta
+// directo a la última app usada: el mismo niño puede usar las dos.
+function RootApp() {
   const [profilesData,    setProfilesDataRaw]  = useState(loadProfiles);
   const [activeProfileId, setActiveProfileId]  = useState(null);
-  const [screen,          setScreen]           = useState('home');
+  const [selectedApp,     setSelectedApp]      = useState(null); // 'englishkids' | 'pequeworld' | null
 
   const activeProfile = (profilesData.profiles || []).find(p => p.id === activeProfileId);
 
@@ -89,7 +96,7 @@ function App() {
     setProfilesData(updated);
   };
 
-  // Streak tracking: run when a profile becomes active
+  // Streak tracking: run when a profile becomes active (para cualquiera de las dos apps)
   useEffect(() => {
     if (!activeProfile) return;
     const today = new Date().toDateString();
@@ -104,35 +111,69 @@ function App() {
 
   const switchProfile = () => {
     setActiveProfileId(null);
-    setScreen('home');
+    setSelectedApp(null);
   };
 
-  // Show profile selector when no active profile
+  // 1) Sin perfil activo → elegir quién juega
   if (!activeProfile) {
     return (
       <ProfileSelector
         profilesData={profilesData}
-        onSelect={(id) => { setActiveProfileId(id); setScreen('home'); }}
+        title="English Kids & PequeWorld"
+        icon="🎈"
+        onSelect={(id) => { setActiveProfileId(id); setSelectedApp(null); }}
         onProfilesChange={setProfilesData}
       />
     );
   }
 
+  // 2) Con perfil, sin app elegida → siempre mostrar el selector de app
+  if (!selectedApp) {
+    return (
+      <AppLauncher profile={activeProfile} onSelect={setSelectedApp} onSwitchProfile={switchProfile} />
+    );
+  }
+
+  // 3) PequeWorld
+  if (selectedApp === 'pequeworld') {
+    return (
+      <PequeWorldApp
+        profile={activeProfile}
+        onExitApp={() => setSelectedApp(null)}
+        onSwitchProfile={switchProfile}
+      />
+    );
+  }
+
+  // 4) English Kids
+  return (
+    <EnglishKidsApp
+      profile={activeProfile}
+      onUpdateProfile={updateActiveProfile}
+      onExitApp={() => setSelectedApp(null)}
+      onSwitchProfile={switchProfile}
+    />
+  );
+}
+
+function EnglishKidsApp({ profile, onUpdateProfile, onExitApp, onSwitchProfile }) {
+  const [screen, setScreen] = useState('home');
+
   const screens = {
-    home:   <HomeScreen   state={activeProfile} onNavigate={setScreen} />,
-    learn:  <LearnScreen  state={activeProfile} onStateChange={updateActiveProfile} />,
-    write:  <WriteScreen  state={activeProfile} onStateChange={updateActiveProfile} />,
-    quiz:   <QuizScreen   state={activeProfile} onStateChange={updateActiveProfile} />,
-    duo:    <DuoScreen    state={activeProfile} onStateChange={updateActiveProfile} />,
-    songs:  <SongsScreen  state={activeProfile} onStateChange={updateActiveProfile} />,
-    badges: <BadgesScreen state={activeProfile} />,
+    home:   <HomeScreen   state={profile} onNavigate={setScreen} />,
+    learn:  <LearnScreen  state={profile} onStateChange={onUpdateProfile} />,
+    write:  <WriteScreen  state={profile} onStateChange={onUpdateProfile} />,
+    quiz:   <QuizScreen   state={profile} onStateChange={onUpdateProfile} />,
+    duo:    <DuoScreen    state={profile} onStateChange={onUpdateProfile} />,
+    songs:  <SongsScreen  state={profile} onStateChange={onUpdateProfile} />,
+    badges: <BadgesScreen state={profile} />,
   };
 
   return (
     <div style={{ height: '100%', display: 'flex', flexDirection: 'column', position: 'relative' }}>
       <SkyBackground />
       <div style={{ position: 'relative', zIndex: 1, display: 'flex', flexDirection: 'column', height: '100%' }}>
-        <TopBar state={activeProfile} onSwitchProfile={switchProfile} />
+        <TopBar state={profile} onSwitchProfile={onSwitchProfile} onExitApp={onExitApp} />
         <div key={screen} style={{ flex: 1, overflow: 'hidden', display: 'flex', flexDirection: 'column', animation: 'slideIn .25s ease both' }}>
           {screens[screen]}
         </div>
@@ -142,7 +183,7 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+ReactDOM.createRoot(document.getElementById('root')).render(<RootApp />);
 </script>
 
 <!-- PWA Service Worker registration -->
