@@ -30,25 +30,47 @@ function PequeFeaturedPanel({ item, color, onImageTap, subtitle }) {
   if (!item) return null;
   const clickable = !!(item.photo && onImageTap);
   return (
-    <div style={{ padding:'10px 16px 6px', textAlign:'center', flexShrink:0 }}>
+    <div style={{ padding:'10px 16px 8px', textAlign:'center', flexShrink:0 }}>
       <div onClick={() => clickable && onImageTap(item)} style={{
-        width:130, height:130, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'center',
-        borderRadius:32, background:`${color}20`, boxShadow:`0 6px 22px ${color}33`,
+        width:168, height:168, margin:'0 auto', display:'flex', alignItems:'center', justifyContent:'center',
+        borderRadius:38, background:`${color}20`, boxShadow:`0 6px 22px ${color}33`,
         cursor: clickable ? 'pointer' : 'default', position:'relative'
       }}>
-        <PequeImage item={item} size={item.photo ? 118 : 92} />
+        <PequeImage item={item} size={item.photo ? 154 : 118} />
         {clickable && (
-          <span style={{ position:'absolute', bottom:4, right:4, width:26, height:26, borderRadius:'50%',
-            background:'rgba(255,255,255,0.9)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.85rem' }}>🔍</span>
+          <span style={{ position:'absolute', bottom:4, right:4, width:28, height:28, borderRadius:'50%',
+            background:'rgba(255,255,255,0.9)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.9rem' }}>🔍</span>
         )}
       </div>
-      <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.25rem', color:'#333', marginTop:8 }}>{item.es}</div>
+      <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.3rem', color:'#333', marginTop:8 }}>{item.es}</div>
       {subtitle && <div style={{ fontSize:'0.72rem', color:'#aaa', fontWeight:700 }}>{subtitle}</div>}
     </div>
   );
 }
 
-// Foto a pantalla completa (animales)
+// Pop-up grande y temporal (no a pantalla completa) al tocar un elemento
+// en modo Ver: se cierra solo tras `durationMs`, o antes si se toca.
+function PequePopupImage({ item, durationMs = 2000, onDone }) {
+  React.useEffect(() => {
+    const t = setTimeout(onDone, durationMs);
+    return () => clearTimeout(t);
+  }, [item]);
+  if (!item) return null;
+  return (
+    <div onClick={onDone} style={{
+      position:'fixed', inset:0, zIndex:400, background:'rgba(10,10,20,0.45)',
+      display:'flex', alignItems:'center', justifyContent:'center', padding:24
+    }}>
+      <div style={{ width:'min(78vw, 320px)', height:'min(78vw, 320px)', borderRadius:44,
+        background:'#fff', display:'flex', alignItems:'center', justifyContent:'center',
+        boxShadow:'0 20px 60px rgba(0,0,0,0.35)', animation:'popIn .25s ease' }}>
+        <PequeImage item={item} size={item.photo ? 290 : 210} />
+      </div>
+    </div>
+  );
+}
+
+// Foto a pantalla completa (animales) — se queda hasta que se toca
 function PequeFullscreenImage({ item, onClose }) {
   if (!item) return null;
   return (
@@ -104,20 +126,24 @@ function PequePracticeCard({ items, color, renderPrompt, getTarget, hintLabel })
   const fColor = { good:'#16a34a', bad:'#dc2626', info:'#2563eb' };
 
   return (
-    <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:16, padding:20 }}>
-      <div style={{ width:150, height:150, borderRadius:36, background:`${color}18`,
+    <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:14, padding:16 }}>
+      <div style={{ width:210, height:210, borderRadius:44, background:`${color}18`,
         display:'flex', alignItems:'center', justifyContent:'center', boxShadow:`0 8px 28px ${color}33` }}>
         {renderPrompt(item)}
       </div>
-      <div style={{ minHeight:26 }}>
-        {feedback && <div style={{ fontWeight:900, fontSize:'1.05rem', color: fColor[feedback.type], textAlign:'center' }}>{feedback.text}</div>}
+      <div style={{ minHeight:24 }}>
+        {feedback && <div style={{ fontWeight:900, fontSize:'1rem', color: fColor[feedback.type], textAlign:'center' }}>{feedback.text}</div>}
       </div>
       {!hasSR ? (
         <div style={{ color:'#999', fontWeight:700, textAlign:'center', maxWidth:280, fontSize:'0.85rem' }}>
           El micrófono no está disponible en este navegador. Prueba con Chrome en Android.
         </div>
       ) : (
-        <ActionBtn color={color} onClick={startListen} disabled={listening} label={listening ? <MicWaves/> : '🎤 Decirlo en voz alta'} />
+        <button onClick={startListen} disabled={listening} style={{
+          padding:'9px 20px', borderRadius:50, border:'none', cursor: listening ? 'default' : 'pointer',
+          background:color, color:'#fff', fontFamily:'Nunito,sans-serif', fontWeight:900, fontSize:'0.82rem',
+          boxShadow:`0 4px 14px ${color}55`, opacity: listening ? 0.75 : 1
+        }}>{listening ? <MicWaves/> : '🎤 Decirlo'}</button>
       )}
       <div style={{ display:'flex', gap:18 }}>
         <button onClick={() => pequeSpeak(getTarget(item))} style={{ background:'none', border:'none', color:'#999', fontWeight:800, fontSize:'0.78rem', cursor:'pointer' }}>
@@ -143,15 +169,17 @@ function PequeQuizGame({ pool, variant, color, length = 8, getLabel, renderOptio
   }, [pool, length, keyField]);
 
   const [rounds, setRounds] = React.useState(buildRounds);
+  const [solved, setSolved] = React.useState(() => new Array(rounds.length).fill(false));
   const [idx, setIdx] = React.useState(0);
-  const [score, setScore] = React.useState(0);
   const [chosen, setChosen] = React.useState(null);
-  const [showAns, setShowAns] = React.useState(false);
+  const [status, setStatus] = React.useState(null); // null | 'wrong' | 'correct'
   const [done, setDone] = React.useState(false);
 
   const round = rounds[idx];
+  const score = solved.filter(Boolean).length;
 
   React.useEffect(() => {
+    setChosen(null); setStatus(null);
     if (done || !round || variant === 'image-to-text') return;
     const t = setTimeout(() => pequeSpeak(getLabel(round.correct)), 350);
     return () => clearTimeout(t);
@@ -163,23 +191,29 @@ function PequeQuizGame({ pool, variant, color, length = 8, getLabel, renderOptio
     </div>;
   }
 
-  const restart = () => { setRounds(buildRounds()); setIdx(0); setScore(0); setChosen(null); setShowAns(false); setDone(false); };
+  const restart = () => {
+    const r = buildRounds();
+    setRounds(r); setSolved(new Array(r.length).fill(false));
+    setIdx(0); setChosen(null); setStatus(null); setDone(false);
+  };
+
+  const goTo = (newIdx) => {
+    if (newIdx < 0) return;
+    if (newIdx >= rounds.length) { setDone(true); if (onFinish) onFinish(score, rounds.length); return; }
+    setIdx(newIdx); setChosen(null); setStatus(null);
+  };
 
   const pick = (opt) => {
-    if (showAns) return;
-    setChosen(opt); setShowAns(true);
-    const correct = opt === round.correct;
-    const finalScore = correct ? score + 1 : score;
-    if (correct) launchStars(6);
-    setTimeout(() => {
-      if (idx + 1 >= rounds.length) {
-        setScore(finalScore); setDone(true);
-        if (onFinish) onFinish(finalScore, rounds.length);
-      } else {
-        if (correct) setScore(finalScore);
-        setIdx(i => i + 1); setChosen(null); setShowAns(false);
-      }
-    }, 1000);
+    if (status === 'correct') return;
+    if (opt === round.correct) {
+      setChosen(opt); setStatus('correct');
+      launchStars(6);
+      setSolved(s => { const n = [...s]; n[idx] = true; return n; });
+      setTimeout(() => goTo(idx + 1), 1000);
+    } else {
+      setChosen(opt); setStatus('wrong');
+      setTimeout(() => { setChosen(null); setStatus(null); }, 900);
+    }
   };
 
   if (done) {
@@ -197,7 +231,7 @@ function PequeQuizGame({ pool, variant, color, length = 8, getLabel, renderOptio
   }
 
   return (
-    <div style={{ flex:1, display:'flex', flexDirection:'column', padding:'14px', gap:14, overflowY:'auto' }}>
+    <div style={{ flex:1, display:'flex', flexDirection:'column', padding:'14px', gap:12, overflowY:'auto' }}>
       <div style={{ display:'flex', alignItems:'center', gap:10 }}>
         <div style={{ flex:1, height:8, background:'rgba(255,255,255,0.5)', borderRadius:50, overflow:'hidden' }}>
           <div style={{ height:'100%', width:`${(idx/rounds.length)*100}%`, background:color, borderRadius:50, transition:'width .3s ease' }} />
@@ -219,20 +253,25 @@ function PequeQuizGame({ pool, variant, color, length = 8, getLabel, renderOptio
         </div>
       )}
 
+      <div style={{ minHeight:22, textAlign:'center' }}>
+        {status === 'wrong' && <span style={{ color:'#dc2626', fontWeight:900, fontSize:'0.92rem' }}>🙈 ¡Vuelve a intentarlo!</span>}
+      </div>
+
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
         {round.opts.map((opt, i) => {
-          const isCorrect = opt === round.correct;
-          const isChosen = chosen === opt;
-          const border = showAns ? (isCorrect ? '#6bcb77' : isChosen ? '#ef4444' : 'rgba(255,255,255,0.8)') : 'rgba(255,255,255,0.8)';
-          const bg = showAns ? (isCorrect ? 'rgba(107,203,119,0.2)' : isChosen ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.85)') : 'rgba(255,255,255,0.85)';
+          const isChosenWrong = status === 'wrong' && chosen === opt;
+          const isChosenCorrect = status === 'correct' && chosen === opt;
+          const border = isChosenCorrect ? '#6bcb77' : isChosenWrong ? '#ef4444' : 'rgba(255,255,255,0.8)';
+          const bg = isChosenCorrect ? 'rgba(107,203,119,0.2)' : isChosenWrong ? 'rgba(239,68,68,0.15)' : 'rgba(255,255,255,0.85)';
           return (
-            <button key={i} onClick={() => pick(opt)} style={{
-              padding:'14px 10px', borderRadius:18, cursor: showAns ? 'default' : 'pointer',
+            <button key={i} onClick={() => pick(opt)} disabled={status === 'correct'} style={{
+              padding:'14px 10px', borderRadius:18, cursor: status === 'correct' ? 'default' : 'pointer',
               background: bg, border:`3px solid ${border}`,
-              display:'flex', flexDirection:'column', alignItems:'center', gap:6, minHeight:64
+              display:'flex', flexDirection:'column', alignItems:'center', gap:6, minHeight:64,
+              animation: isChosenWrong ? 'wrongShake .35s ease' : isChosenCorrect ? 'popIn .3s ease' : 'none'
             }}>
               {renderOption
-                ? renderOption(opt, { isCorrect, isChosen, showAns })
+                ? renderOption(opt, { isChosenCorrect, isChosenWrong })
                 : variant === 'audio-to-image'
                   ? <PequeImage item={opt} size={58} />
                   : <span style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.15rem', color:'#333' }}>{getLabel(opt)}</span>}
@@ -240,10 +279,23 @@ function PequeQuizGame({ pool, variant, color, length = 8, getLabel, renderOptio
           );
         })}
       </div>
+
+      <div style={{ display:'flex', gap:10, justifyContent:'center', marginTop:2 }}>
+        <button onClick={() => goTo(idx - 1)} disabled={idx === 0} style={{
+          padding:'8px 16px', borderRadius:50, border:'none', cursor: idx === 0 ? 'default' : 'pointer',
+          background:'rgba(255,255,255,0.8)', color: idx === 0 ? '#ccc' : '#666',
+          fontFamily:'Nunito,sans-serif', fontWeight:800, fontSize:'0.78rem'
+        }}>← Atrás</button>
+        <button onClick={() => goTo(idx + 1)} style={{
+          padding:'8px 16px', borderRadius:50, border:'none', cursor:'pointer',
+          background:'rgba(255,255,255,0.8)', color:'#666',
+          fontFamily:'Nunito,sans-serif', fontWeight:800, fontSize:'0.78rem'
+        }}>Adelante →</button>
+      </div>
     </div>
   );
 }
 
 Object.assign(window, {
-  PequeModeTabs, PequeFeaturedPanel, PequeFullscreenImage, PequePracticeCard, PequeQuizGame,
+  PequeModeTabs, PequeFeaturedPanel, PequePopupImage, PequeFullscreenImage, PequePracticeCard, PequeQuizGame,
 });

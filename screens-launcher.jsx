@@ -85,15 +85,15 @@ function PequeWorldApp({ profile, onExitApp, onSwitchProfile }) {
   } else if (section === 'colores') {
     content = <PequeColorsScreen onBack={goHome} onVisit={onVisit} />;
   } else if (section === 'formas') {
-    content = <PequeCategoryScreen sectionId="formas" title="Formas" icon="🔺" color="#14b8a6" items={pequeByLevel(PEQUE_SHAPES, level)} onBack={goHome} onVisit={onVisit} />;
+    content = <PequeCategoryScreen sectionId="formas" title="Formas" icon="🔺" color="#14b8a6" items={pequeByLevel(PEQUE_SHAPES, level)} onBack={goHome} onVisit={onVisit} popupSeconds={pequeState.popupSeconds} />;
   } else if (section === 'animales') {
-    content = <PequeCategoryScreen sectionId="animales" title="Animales" icon="🐾" color="#f97316" items={pequeByLevel(PEQUE_ANIMALS, level)} onBack={goHome} onVisit={onVisit} allowFullscreen />;
+    content = <PequeCategoryScreen sectionId="animales" title="Animales" icon="🐾" color="#f97316" items={pequeByLevel(PEQUE_ANIMALS, level)} onBack={goHome} onVisit={onVisit} allowFullscreen popupSeconds={pequeState.popupSeconds} />;
   } else if (section === 'frutas') {
-    content = <PequeCategoryScreen sectionId="frutas" title="Frutas" icon="🍎" color="#6bcb77" items={pequeByLevel(PEQUE_FRUITS, level)} onBack={goHome} onVisit={onVisit} />;
+    content = <PequeCategoryScreen sectionId="frutas" title="Frutas" icon="🍎" color="#6bcb77" items={pequeByLevel(PEQUE_FRUITS, level)} onBack={goHome} onVisit={onVisit} popupSeconds={pequeState.popupSeconds} />;
   } else if (section === 'emociones') {
-    content = <PequeCategoryScreen sectionId="emociones" title="Emociones" icon="😊" color="#ffd93d" items={pequeByLevel(PEQUE_EMOTIONS, level)} onBack={goHome} onVisit={onVisit} />;
+    content = <PequeCategoryScreen sectionId="emociones" title="Emociones" icon="😊" color="#ffd93d" items={pequeByLevel(PEQUE_EMOTIONS, level)} onBack={goHome} onVisit={onVisit} popupSeconds={pequeState.popupSeconds} />;
   } else if (section === 'rutinas') {
-    content = <PequeCategoryScreen sectionId="rutinas" title="Rutinas" icon="🧴" color="#8b5cf6" items={pequeByLevel(PEQUE_ROUTINES, level)} onBack={goHome} onVisit={onVisit} />;
+    content = <PequeCategoryScreen sectionId="rutinas" title="Rutinas" icon="🧴" color="#8b5cf6" items={pequeByLevel(PEQUE_ROUTINES, level)} onBack={goHome} onVisit={onVisit} popupSeconds={pequeState.popupSeconds} />;
   } else if (section === 'ajustes') {
     content = <PequeSettingsScreen state={pequeState} onStateChange={setPequeState} onBack={goHome} />;
   } else if (section === 'leer') {
