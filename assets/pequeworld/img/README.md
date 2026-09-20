@@ -7,22 +7,21 @@ al emoji provisional que usa la app hoy — no hace falta tocar código,
 solo pedir que se active la referencia en `data-pequeworld.js`.
 
 ## Animales (`animal_<nombre>.jpg`) — 16
-perro, gato, vaca, caballo, oveja, cerdo, gallina, pato, leon, pajaro,
-elefante, mono, oso, conejo, pez, tortuga
+✅ perro, gato, vaca, caballo, oveja, cerdo, gallina, pato
+⬜ leon, pajaro, elefante, mono, oso, conejo, pez, tortuga
 
 ## Frutas (`fruta_<nombre>.jpg`) — 10
-manzana, platano, naranja, fresa, uva, sandia, pera, cereza, limon, pina
+⬜ manzana, platano, naranja, fresa, uva, sandia, pera, cereza, limon, pina
 
 ## Colores — objeto representativo (`color_<nombre>.jpg`) — 10
-rojo, azul, amarillo, verde, naranja, rosa, morado, blanco, negro, marron
+⬜ rojo, azul, amarillo, verde, naranja, rosa, morado, blanco, negro, marron
 
 ## Rutinas — foto del propio niño recomendada (`rutina_<nombre>.jpg`) — 7
-despertarse, desayunar, dientes, vestirse, jugar, banarse, dormir
+✅ despertarse, desayunar, dientes, vestirse, jugar, banarse, dormir
 
 ## Emociones — foto del propio niño recomendada (`emocion_<nombre>.jpg`) — 6
-feliz, triste, enfadado, sorprendido, con_miedo, tranquilo
+✅ feliz, triste, enfadado, sorprendido, con_miedo, tranquilo
 
-**Total: 49 fotos.** No hace falta esperar a tenerlas todas — cada una
-que llegue se activa por separado.
+**Total: 49 fotos · 21 recibidas, 28 pendientes.**
 
 Números y formas se quedan con ilustración/emoji (no necesitan foto).

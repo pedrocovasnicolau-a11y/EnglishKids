@@ -36,7 +36,10 @@ function PequeLeerHome({ onOpen, onBack }) {
 // ─── FASE 0: sonidos y rimas (onomatopeyas de animales) ───────────
 function PequeSoundsScreen({ onBack }) {
   const withSound = PEQUE_ANIMALS.filter(a => a.onomat);
-  const tap = (a) => { pequeSpeak(a.onomat); setTimeout(() => pequeSpeak(a.es), 1200); };
+  const tap = (a) => {
+    if (a.sound) pequePlaySoundEffect(a.sound, () => pequeSpeak(a.es));
+    else { pequeSpeak(a.onomat); setTimeout(() => pequeSpeak(a.es), 1200); }
+  };
   return (
     <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
       <PequeTopBar title="Sonidos y rimas" icon="👂" color="#8b5cf6" onBack={onBack} />

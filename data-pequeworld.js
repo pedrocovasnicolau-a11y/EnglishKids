@@ -51,14 +51,14 @@ const PEQUE_SHAPES = [
 
 // ─── ANIMALES (con onomatopeya cuando existe una real y conocida) ─
 const PEQUE_ANIMALS = [
-  { id:'perro',    es:'Perro',    emoji:'1f436', photo:null, sound:null, onomat:'Guau guau'   },
-  { id:'gato',     es:'Gato',     emoji:'1f431', photo:null, sound:null, onomat:'Miau miau'   },
-  { id:'vaca',     es:'Vaca',     emoji:'1f404', photo:null, sound:null, onomat:'Muuu'        },
-  { id:'caballo',  es:'Caballo',  emoji:'1f434', photo:null, sound:null, onomat:'Jiiii'       },
-  { id:'oveja',    es:'Oveja',    emoji:'1f411', photo:null, sound:null, onomat:'Beee'        },
-  { id:'cerdo',    es:'Cerdo',    emoji:'1f437', photo:null, sound:null, onomat:'Oinc oinc'   },
-  { id:'gallina',  es:'Gallina',  emoji:'1f414', photo:null, sound:null, onomat:'Coc co co co'},
-  { id:'pato',     es:'Pato',     emoji:'1f986', photo:null, sound:null, onomat:'Cuac cuac'   },
+  { id:'perro',    es:'Perro',    emoji:'1f436', photo:'animal_perro.jpg',    sound:'assets/pequeworld/audio/animals/sonido_perro.mp3',    onomat:'Guau guau'   },
+  { id:'gato',     es:'Gato',     emoji:'1f431', photo:'animal_gato.jpg',     sound:'assets/pequeworld/audio/animals/sonido_gato.mp3',     onomat:'Miau miau'   },
+  { id:'vaca',     es:'Vaca',     emoji:'1f404', photo:'animal_vaca.jpg',     sound:'assets/pequeworld/audio/animals/sonido_vaca.mp3',     onomat:'Muuu'        },
+  { id:'caballo',  es:'Caballo',  emoji:'1f434', photo:'animal_caballo.jpg',  sound:'assets/pequeworld/audio/animals/sonido_caballo.mp3',  onomat:'Jiiii'       },
+  { id:'oveja',    es:'Oveja',    emoji:'1f411', photo:'animal_oveja.jpg',    sound:'assets/pequeworld/audio/animals/sonido_oveja.mp3',    onomat:'Beee'        },
+  { id:'cerdo',    es:'Cerdo',    emoji:'1f437', photo:'animal_cerdo.jpg',    sound:'assets/pequeworld/audio/animals/sonido_cerdo.mp3',    onomat:'Oinc oinc'   },
+  { id:'gallina',  es:'Gallina',  emoji:'1f414', photo:'animal_gallina.jpg',  sound:'assets/pequeworld/audio/animals/sonido_gallina.mp3',  onomat:'Coc co co co'},
+  { id:'pato',     es:'Pato',     emoji:'1f986', photo:'animal_pato.jpg',     sound:'assets/pequeworld/audio/animals/sonido_pato.mp3',     onomat:'Cuac cuac'   },
   { id:'leon',     es:'León',     emoji:'1f981', photo:null, sound:null, onomat:'Grrrr'       },
   { id:'pajaro',   es:'Pájaro',   emoji:'1f426', photo:null, sound:null, onomat:'Pío pío'     },
   { id:'elefante', es:'Elefante', emoji:'1f418', photo:null, sound:null, onomat:null          },
@@ -85,23 +85,23 @@ const PEQUE_FRUITS = [
 
 // ─── EMOCIONES ────────────────────────────────────────────────────
 const PEQUE_EMOTIONS = [
-  { id:'feliz',        es:'Feliz',        emoji:'1f600', photo:null },
-  { id:'triste',       es:'Triste',       emoji:'1f622', photo:null },
-  { id:'enfadado',     es:'Enfadado',     emoji:'1f621', photo:null },
-  { id:'sorprendido',  es:'Sorprendido',  emoji:'1f632', photo:null },
-  { id:'con_miedo',    es:'Con miedo',    emoji:'1f628', photo:null },
-  { id:'tranquilo',    es:'Tranquilo',    emoji:'1f60c', photo:null },
+  { id:'feliz',        es:'Feliz',        emoji:'1f600', photo:'emocion_feliz.jpg' },
+  { id:'triste',       es:'Triste',       emoji:'1f622', photo:'emocion_triste.jpg' },
+  { id:'enfadado',     es:'Enfadado',     emoji:'1f621', photo:'emocion_enfadado.jpg' },
+  { id:'sorprendido',  es:'Sorprendido',  emoji:'1f632', photo:'emocion_sorprendido.jpg' },
+  { id:'con_miedo',    es:'Con miedo',    emoji:'1f628', photo:'emocion_con_miedo.jpg' },
+  { id:'tranquilo',    es:'Tranquilo',    emoji:'1f60c', photo:'emocion_tranquilo.jpg' },
 ];
 
 // ─── RUTINAS ──────────────────────────────────────────────────────
 const PEQUE_ROUTINES = [
-  { id:'despertarse', es:'Despertarse',        emoji:'23f0',  photo:null },
-  { id:'desayunar',   es:'Desayunar',          emoji:'1f95e', photo:null },
-  { id:'dientes',     es:'Lavarse los dientes',emoji:'1f9b7', photo:null },
-  { id:'vestirse',    es:'Vestirse',           emoji:'1f455', photo:null },
-  { id:'jugar',       es:'Jugar',              emoji:'1f9f8', photo:null },
-  { id:'banarse',     es:'Bañarse',            emoji:'1f6c1', photo:null },
-  { id:'dormir',      es:'Dormir',             emoji:'1f634', photo:null },
+  { id:'despertarse', es:'Despertarse',        emoji:'23f0',  photo:'rutina_despertarse.jpg' },
+  { id:'desayunar',   es:'Desayunar',          emoji:'1f95e', photo:'rutina_desayunar.jpg' },
+  { id:'dientes',     es:'Lavarse los dientes',emoji:'1f9b7', photo:'rutina_dientes.jpg' },
+  { id:'vestirse',    es:'Vestirse',           emoji:'1f455', photo:'rutina_vestirse.jpg' },
+  { id:'jugar',       es:'Jugar',              emoji:'1f9f8', photo:'rutina_jugar.jpg' },
+  { id:'banarse',     es:'Bañarse',            emoji:'1f6c1', photo:'rutina_banarse.jpg' },
+  { id:'dormir',      es:'Dormir',             emoji:'1f634', photo:'rutina_dormir.jpg' },
 ];
 
 // ══════════════════════════════════════════════════════════════
@@ -163,9 +163,12 @@ const PEQUE_SIGHT_WORDS = [
 // se vayan añadiendo (descargadas de bancos libres) se registran
 // aquí con type:'file' y aparecerán automáticamente en Ajustes.
 const PEQUE_MUSIC_TRACKS = [
-  { id:'ambient1', label:'Melodía suave', type:'synth' },
-  // Ejemplo para cuando se añada una pista real:
-  // { id:'pista2', label:'Nombre de la pista', type:'file', file:'assets/pequeworld/audio/music/pista2.mp3' },
+  { id:'ambient1', label:'Melodía suave (integrada)', type:'synth' },
+  { id:'fondo1', label:'Fondo 1', type:'file', file:'assets/pequeworld/audio/music/fondo1.mp3' },
+  { id:'fondo2', label:'Fondo 2', type:'file', file:'assets/pequeworld/audio/music/fondo2.mp3' },
+  { id:'fondo3', label:'Fondo 3', type:'file', file:'assets/pequeworld/audio/music/fondo3.mp3' },
+  { id:'fondo4', label:'Fondo 4', type:'file', file:'assets/pequeworld/audio/music/fondo4.mp3' },
+  { id:'fondo6', label:'Fondo 6', type:'file', file:'assets/pequeworld/audio/music/fondo6.mp3' },
 ];
 
 const PequeMusic = (() => {
@@ -235,6 +238,22 @@ function pequeStopFileTrack() {
   if (PEQUE_FILE_AUDIO) { PEQUE_FILE_AUDIO.pause(); PEQUE_FILE_AUDIO = null; }
 }
 function pequeSetFileVolume(v) { if (PEQUE_FILE_AUDIO) PEQUE_FILE_AUDIO.volume = v; }
+
+// Sonido puntual (ej. sonido real de un animal): baja la música mientras
+// suena y la recupera al terminar, igual que hace la voz.
+function pequePlaySoundEffect(file, onEnded) {
+  speechSynthesis.cancel && speechSynthesis.cancel();
+  PequeMusic.duck(0.2);
+  pequeSetFileVolume(0.15);
+  const restore = () => { PequeMusic.unduck(); pequeSetFileVolume(1); if (onEnded) onEnded(); };
+  try {
+    const a = new Audio(file);
+    a.volume = 1;
+    a.onended = restore;
+    a.onerror = restore;
+    a.play().catch(restore);
+  } catch(e) { restore(); }
+}
 
 // Voz (TTS) en español, con "ducking" automático de la música mientras habla
 function pequeSpeak(text, rate = 0.85) {
@@ -310,7 +329,7 @@ Object.assign(window, {
   PEQUE_ANIMALS, PEQUE_FRUITS, PEQUE_EMOTIONS, PEQUE_ROUTINES,
   PEQUE_VOWELS, PEQUE_CONSONANTS, PEQUE_BUILD_WORDS, PEQUE_SIGHT_WORDS,
   PEQUE_MUSIC_TRACKS, PequeMusic,
-  pequePlayFileTrack, pequeStopFileTrack, pequeSetFileVolume,
+  pequePlayFileTrack, pequeStopFileTrack, pequeSetFileVolume, pequePlaySoundEffect,
   pequeSpeak, pequeSyllables,
   loadPequeState, savePequeState, pequeMarkVisited,
   pequeUnlockNextConsonant, pequeMarkWordBuilt,

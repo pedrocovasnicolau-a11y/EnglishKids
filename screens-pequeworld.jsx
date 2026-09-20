@@ -67,7 +67,9 @@ function PequeCategoryScreen({ sectionId, title, icon, color, items, onBack, onV
   React.useEffect(() => { onVisit(sectionId); }, []);
 
   const tap = (item) => {
-    if (speakField && item[speakField]) {
+    if (item.sound) {
+      pequePlaySoundEffect(item.sound, () => pequeSpeak(item.es));
+    } else if (speakField && item[speakField]) {
       pequeSpeak(item[speakField]);
       setTimeout(() => pequeSpeak(item.es), 1300);
     } else {
