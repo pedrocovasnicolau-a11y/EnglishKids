@@ -242,5 +242,47 @@ function TopBar({ state, onSwitchProfile, onExitApp }) {
   );
 }
 
+// ─── ERROR BOUNDARY ──────────────────────────────────────────────
+// Sin esto, cualquier excepción en un render o en un onClick (TTS no
+// disponible, dato con un campo inesperado, audio bloqueado por el
+// sistema) desmonta todo el árbol y deja la PANTALLA EN BLANCO. Un
+// adulto recarga; un niño de 3 años se queda mirando el blanco y la
+// sesión se acaba ahí. Aquí se muestra un botón grande de "volver a
+// empezar" y se registra el error para poder verlo desde el móvil.
+class AppErrorBoundary extends React.Component {
+  constructor(props) { super(props); this.state = { error: null }; }
+  static getDerivedStateFromError(error) { return { error }; }
+  componentDidCatch(error, info) {
+    try {
+      const log = JSON.parse(localStorage.getItem('app_errors') || '[]');
+      log.unshift({ at: new Date().toISOString(), msg: String(error && error.message || error),
+        stack: String((info && info.componentStack) || '').slice(0, 600) });
+      localStorage.setItem('app_errors', JSON.stringify(log.slice(0, 10)));
+    } catch(e) {}
+    console.error('App error:', error, info);
+  }
+  render() {
+    if (!this.state.error) return this.props.children;
+    return (
+      <div style={{ height:'100%', display:'flex', flexDirection:'column', alignItems:'center',
+        justifyContent:'center', gap:22, padding:28, background:'#87ceeb', textAlign:'center' }}>
+        <div style={{ fontSize:'4.5rem' }}>🙈</div>
+        <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.4rem', color:'#fff',
+          textShadow:'0 2px 6px rgba(0,0,0,0.25)' }}>¡Ups! Vamos a empezar otra vez</div>
+        <button onClick={() => window.location.reload()} style={{
+          padding:'20px 38px', borderRadius:50, border:'none', background:'#fff', color:'#333',
+          fontFamily:'Fredoka One,cursive', fontSize:'1.3rem', cursor:'pointer',
+          boxShadow:'0 8px 26px rgba(0,0,0,0.25)' }}>🔄 Volver a empezar</button>
+        <details style={{ maxWidth:340, color:'rgba(255,255,255,0.85)', fontSize:'0.7rem', fontWeight:700 }}>
+          <summary style={{ cursor:'pointer' }}>Detalles (para un adulto)</summary>
+          <pre style={{ textAlign:'left', whiteSpace:'pre-wrap', wordBreak:'break-word', marginTop:8 }}>
+            {String(this.state.error && this.state.error.message || this.state.error)}
+          </pre>
+        </details>
+      </div>
+    );
+  }
+}
+
 // Expose globals
-Object.assign(window, { EmojiImg, EmojiOrNumeral, launchStars, ActionBtn, MicWaves, SkyBackground, Cloud, BottomNav, TopBar });
+Object.assign(window, { EmojiImg, EmojiOrNumeral, launchStars, ActionBtn, MicWaves, SkyBackground, Cloud, BottomNav, TopBar, AppErrorBoundary });

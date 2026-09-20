@@ -1,61 +1,102 @@
-# 🌍 English Kids
+# 🌍 English Kids & 🧸 PequeWorld
 
-App educativa PWA para aprender inglés — niños de 3 a 10 años.
+Dos apps educativas en una sola PWA, con perfiles de niño compartidos.
 
-## 🚀 Funcionalidades
+| App | Idioma | Edad | Qué hace |
+|-----|--------|------|----------|
+| 🌍 **English Kids** | inglés | 3–10 | 700 palabras, frases y diálogos en 4 niveles |
+| 🧸 **PequeWorld** | español | 3–5 | Vocabulario por categorías + **Aprendo a leer** |
 
-- **📚 Aprender** — 600+ palabras y frases en 4 niveles (Starter, Básico, Intermedio, Avanzado)
-- **✏️ Escribir** — Practica escribiendo palabras con pistas progresivas
-- **🎯 Quiz** — 10 preguntas por ronda con puntuación XP
-- **🆚 Modo Dúo** — 2 jugadores con niveles independientes
-- **🏆 Logros** — 16 badges desbloqueables
-- **📱 PWA** — Instalable en Android como app nativa
+El flujo es siempre: **¿quién juega? → ¿qué app? → sección**.
+
+## 📚 Documentación
+
+- **`CLAUDE.md`** — reglas de trabajo en el repo (léelo antes de tocar código).
+- **`docs/ARQUITECTURA.md`** — diseño técnico: ficheros, modelo de datos,
+  audio, PWA y cómo verificar cambios.
+- **`docs/AUDITORIA.md`** — auditoría técnica, funcional y pedagógica, con lo
+  corregido y lo pendiente por prioridad.
+
+---
+
+## 🌍 English Kids — funcionalidades
+
+- **📚 Aprender** — 700 palabras y frases en 4 niveles, con pronunciación
+  (velocidad de voz adaptada al nivel) y micrófono para repetir.
+- **✏️ Escribir** — escribe la palabra con pistas progresivas.
+- **🎯 Quiz** — 10 preguntas por ronda, por imagen o por audio.
+- **🆚 Modo Dúo** — 2 jugadores con niveles independientes.
+- **🎵 Canciones** · **🏆 35 logros** desbloqueables.
+- Repaso espaciado: las palabras falladas vuelven a salir.
+
+### Niveles
+
+| Nivel | Edad | Ítems | Contenido |
+|-------|------|-------|-----------|
+| 🌱 Starter | 3–4 | 127 | Animales, colores, frutas, números, cuerpo, formas, saludos, frases |
+| 🌿 Básico | 4–6 | 146 | Comida, ropa, casa, familia, días y tiempo, números, juguetes |
+| 🌳 Intermedio | 6–8 | 248 | Verbos, adjetivos, colegio, transporte, deportes, diálogos, 21–100 |
+| 🏆 Avanzado | 8–10 | 179 | Naturaleza, estaciones, rutinas, conversaciones completas |
+
+---
+
+## 🧸 PequeWorld — para niños que aún no leen
+
+Todo funciona con **imagen grande + voz**: ninguna interacción exige leer.
+
+**Dos niveles en espiral** — Avanzado *añade* contenido sin quitar el conocido:
+
+| Sección | Iniciación (3–4) | Avanzado (4–5) |
+|---|---|---|
+| 🔢 Números | 11 | 25 (+ decenas, con cantidad dibujada hasta 20) |
+| 🎨 Colores | 10 | 20 |
+| 🔺 Formas | 8 | 16 (dibujadas en SVG, no con emoji) |
+| 🐾 Animales | 12 | 30 (con fotos y sonidos reales) |
+| 🍎 Frutas | 10 | 20 |
+| 😊 Emociones | 6 | 14 |
+| 🧴 Rutinas | 7 | 16 |
+| 🙋 Mi cuerpo | 9 | 18 |
+| 👨‍👩‍👧 Familia | 8 | 14 |
+| ↔️ Opuestos | — | 12 (siempre en par: grande ↔ pequeño) |
+
+Cada sección tiene los mismos tres modos:
+**👀 Ver** (reconocer y oír) · **🎤 Practicar** (decirlo al micrófono, en orden
+aleatorio) · **🎯 Concurso** (elegir entre 4 opciones).
+
+### 📖 Aprendo a leer — método fonético-silábico
+
+Seis pasos. Nada aparece si el niño todavía no tiene las letras para leerlo.
+
+1. **Vocales** — a, e, i, o, u con palabra-clave.
+2. **Letras** — 18 consonantes en el orden estándar del español
+   (m, p, l, s → n, t, d, f, r, c, b, v, g, j, ñ, ch, ll, z). Cada letra dice
+   **cómo se llama** y, si es continua, **cómo suena**.
+3. **Sílabas** — **una tarjeta grande por sílaba**, cada una aislada. Es el paso
+   que automatiza la lectura: ver `po` y decir /po/ sin pensarlo.
+4. **Formo palabras** — 40 palabras montadas sílaba a sílaba, de izquierda a derecha.
+5. **Mis palabras** — solo las que el niño puede decodificar ahora, más su nombre.
+6. **Frases y cuentos** (Avanzado) — 10 frases con pregunta de comprensión.
+
+Se avanza de letra cuando el niño ha escuchado **las cinco sílabas una a una**,
+no por pulsar un botón.
+
+---
 
 ## 📱 Instalar en Android (PWA)
 
-1. Abre **Chrome** en tu Android
-2. Ve a la URL de GitHub Pages del proyecto
-3. Toca el menú (⋮) → **"Añadir a pantalla de inicio"**
-4. ¡Listo! Ya tienes el icono en tu móvil
+1. Abre **Chrome** y ve a la URL de GitHub Pages del proyecto.
+2. Menú (⋮) → **«Añadir a pantalla de inicio»**.
 
-## 🌐 Publicar en GitHub Pages
+## 🌐 Publicar
 
-1. Sube todos los ficheros a un repositorio de GitHub
-2. Ve a **Settings → Pages**
-3. En "Source" selecciona **main branch / root**
-4. GitHub Pages publicará la app en `https://TU_USUARIO.github.io/TU_REPO/`
-
-## 📁 Estructura de ficheros
-
-```
-index.html          ← Punto de entrada principal (GitHub Pages)
-data.js             ← Todo el vocabulario y datos
-components.jsx      ← Componentes compartidos (fondo, nav, emojis)
-screens-home.jsx    ← Pantalla de inicio y onboarding
-screens-learn.jsx   ← Aprender, Escribir, Quiz, Logros
-screens-duo.jsx     ← Modo 2 jugadores
-manifest.json       ← Configuración PWA
-sw.js               ← Service Worker (offline)
-icon-192.png        ← Icono PWA 192×192
-icon-512.png        ← Icono PWA 512×512
-```
-
-## 🎓 Niveles de contenido
-
-| Nivel | Edad | Contenido |
-|-------|------|-----------|
-| 🌱 Starter | 3–4 años | Animales, colores, frutas, números, cuerpo, formas, saludos, primeras frases |
-| 🌿 Básico | 4–6 años | Comida, ropa, casa, familia, días, juguetes, frases cotidianas |
-| 🌳 Intermedio | 6–8 años | Verbos, adjetivos, colegio, transporte, deportes, diálogos |
-| 🏆 Avanzado | 8–10 años | Naturaleza, animales salvajes, rutinas, conversaciones completas |
+**Settings → Pages → Source: main branch / root.**
+Al cambiar cualquier fichero, sube `CACHE` en `sw.js` o los móviles seguirán con
+la versión antigua.
 
 ## 🛠️ Tecnologías
 
-- React 18 + Babel (sin bundler, carga directa)
-- Twemoji (Twitter) para emojis de alta calidad
-- Web Speech API (pronunciación y micrófono)
-- LocalStorage (progreso persistente)
-- Service Worker (modo offline)
+React 18 + Babel standalone (sin bundler) · Twemoji · Web Speech API (voz y
+micrófono) · localStorage · Service Worker (offline completo, assets incluidos).
 
 ## 📄 Licencia
 

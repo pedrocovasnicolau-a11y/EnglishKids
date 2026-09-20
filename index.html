@@ -184,7 +184,9 @@ function EnglishKidsApp({ profile, onUpdateProfile, onExitApp, onSwitchProfile }
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<RootApp />);
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <AppErrorBoundary><RootApp /></AppErrorBoundary>
+);
 </script>
 
 <!-- PWA Service Worker registration -->
