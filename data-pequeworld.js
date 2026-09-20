@@ -353,20 +353,32 @@ function pequeListen({ onResult, onError }) {
   if (!SR) { onError && onError('unsupported'); return null; }
   const rec = new SR();
   rec.lang = 'es-ES';
-  rec.interimResults = false;
+  // Con palabras muy cortas (vocales sueltas, números) Chrome a veces
+  // nunca llega a marcar un resultado como "final": corta el audio y
+  // termina (onend) sin más. Escuchando también los resultados
+  // provisionales guardamos la última transcripción oída y la usamos
+  // como respuesta si el reconocimiento acaba sin un resultado final,
+  // en vez de darla directamente por incorrecta (que sería peor: un
+  // "dos" bien dicho aparecería como fallo cada vez).
+  rec.interimResults = true;
   rec.maxAlternatives = 5;
-  // Palabras muy cortas (números, vocales sueltas) a veces terminan el
-  // reconocimiento sin disparar ni onresult ni onerror — sin esta guarda
-  // el micrófono se quedaba "escuchando" para siempre.
+  let lastAlts = null;
   let settled = false;
   const settle = (fn) => { if (!settled) { settled = true; clearTimeout(safety); fn(); } };
   const safety = setTimeout(() => { try { rec.stop(); } catch(e) {} settle(() => onError && onError('timeout')); }, 8000);
   rec.onresult = (ev) => {
-    const alts = Array.from(ev.results[0]).map(r => r.transcript.trim());
-    settle(() => onResult(alts));
+    const res = ev.results[ev.results.length - 1];
+    const alts = Array.from(res).map(r => r.transcript.trim());
+    if (res.isFinal) {
+      settle(() => onResult(alts));
+    } else {
+      lastAlts = alts;
+    }
   };
   rec.onerror = () => { settle(() => onError && onError('error')); };
-  rec.onend = () => { settle(() => onError && onError('no-result')); };
+  rec.onend = () => {
+    settle(() => lastAlts ? onResult(lastAlts) : (onError && onError('no-result')));
+  };
   try { rec.start(); } catch(e) { settle(() => onError && onError('start-failed')); }
   return rec;
 }
@@ -388,7 +400,7 @@ const PEQUE_STORAGE_KEY = 'pequeworld_progress_v2';
 function pequeDefaultState() {
   return {
     level: 'inicio',
-    musicOn: true,
+    musicOn: false,
     musicVolume: 0.12, // casi al mínimo: los efectos/voz deben oírse claramente por encima
     musicTrackId: PEQUE_DEFAULT_TRACK,
     popupSeconds: 2, // duración del pop-up grande al tocar un elemento en modo Ver

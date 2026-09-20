@@ -161,12 +161,18 @@ function LearnScreen({ state, onStateChange }) {
     setIsListening(true);
     setFeedback({ type:'info', text:'🎤 ¡Habla ahora!' });
     const rec = new SR();
-    rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 6;
+    // Con palabras muy cortas (números, "yes/no"...) el motor a veces
+    // nunca marca un resultado como final y simplemente termina: por
+    // eso escuchamos también los resultados provisionales y, si acaba
+    // sin uno final, usamos el último provisional en vez de dar la
+    // respuesta por incorrecta (que penalizaría una palabra bien dicha).
+    rec.lang = 'en-US'; rec.interimResults = true; rec.maxAlternatives = 6;
+    let lastAlts = null;
+    let settled = false;
     const safe = setTimeout(() => { try { rec.stop(); } catch(e){} }, 8000);
-
-    rec.onresult = (ev) => {
-      clearTimeout(safe); setIsListening(false);
-      const alts = Array.from(ev.results[0]).map(r => r.transcript.trim());
+    const finish = (alts) => {
+      if (settled) return;
+      settled = true; clearTimeout(safe); setIsListening(false);
       const ok = matchesTarget(alts, selectedItem.en);
       if (ok) {
         setFeedback({ type:'good', text:['🎉 ¡Perfecto!','🌟 ¡Brillante!','⭐ ¡Genial!','🏆 ¡Campeón!','💫 ¡Increíble!'][Math.floor(Math.random()*5)] });
@@ -183,8 +189,23 @@ function LearnScreen({ state, onStateChange }) {
         setFeedback({ type:'bad', text:`🙊 ¡Casi! "${alts[0] || ''}" — ¡otra vez!` });
       }
     };
-    rec.onerror = () => { clearTimeout(safe); setIsListening(false); setFeedback({ type:'bad', text:'🙈 No te oí. ¡Inténtalo!' }); };
-    rec.onend   = () => { clearTimeout(safe); setIsListening(false); };
+
+    rec.onresult = (ev) => {
+      const res = ev.results[ev.results.length - 1];
+      const alts = Array.from(res).map(r => r.transcript.trim());
+      if (res.isFinal) finish(alts); else lastAlts = alts;
+    };
+    rec.onerror = () => {
+      if (settled) return;
+      settled = true; clearTimeout(safe); setIsListening(false);
+      setFeedback({ type:'bad', text:'🙈 No te oí. ¡Inténtalo!' });
+    };
+    rec.onend = () => {
+      if (settled) return;
+      if (lastAlts) { finish(lastAlts); return; }
+      settled = true; clearTimeout(safe); setIsListening(false);
+      setFeedback({ type:'bad', text:'🙈 No te oí. ¡Inténtalo!' });
+    };
     try { rec.start(); } catch(e) { setIsListening(false); }
   };
 
