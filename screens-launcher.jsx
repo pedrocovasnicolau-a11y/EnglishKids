@@ -67,44 +67,43 @@ function PequeWorldApp({ profile, onExitApp, onSwitchProfile }) {
   // se dispara dentro de un gesto real del usuario (tocar "PequeWorld"
   // en el selector), lo que cumple la política de autoplay del navegador.
   React.useEffect(() => {
-    if (pequeState.musicOn) {
-      const t = PEQUE_MUSIC_TRACKS.find(tr => tr.id === pequeState.musicTrackId) || PEQUE_MUSIC_TRACKS[0];
-      if (t.type === 'synth') PequeMusic.start(pequeState.musicVolume);
-      else if (t.type === 'file') pequePlayFileTrack(t.file, pequeState.musicVolume);
-    }
-    return () => { PequeMusic.stop(); pequeStopFileTrack(); };
+    if (pequeState.musicOn) pequeStartMusic(pequeState.musicTrackId, pequeState.musicVolume);
+    return () => pequeStopMusic();
   }, []);
 
   const goHome = () => { setSection('home'); setLeerScreen('home'); };
   const onVisit = (id) => setPequeState(pequeMarkVisited(pequeState, id));
+  const changeLevel = (level) => setPequeState({ ...pequeState, level });
+  const level = pequeState.level || 'inicio';
 
   let content;
   if (section === 'home') {
-    content = <PequeHome profile={profile} onOpenSection={setSection} onChangeApp={onExitApp} onSwitchProfile={onSwitchProfile} />;
+    content = <PequeHome profile={profile} level={level} onChangeLevel={changeLevel}
+      onOpenSection={setSection} onChangeApp={onExitApp} onSwitchProfile={onSwitchProfile} />;
   } else if (section === 'numeros') {
-    content = <PequeNumbersScreen onBack={goHome} onVisit={onVisit} />;
+    content = <PequeNumbersScreen level={level} onBack={goHome} onVisit={onVisit} />;
   } else if (section === 'colores') {
     content = <PequeColorsScreen onBack={goHome} onVisit={onVisit} />;
   } else if (section === 'formas') {
-    content = <PequeCategoryScreen sectionId="formas" title="Formas" icon="🔺" color="#14b8a6" items={PEQUE_SHAPES} onBack={goHome} onVisit={onVisit} />;
+    content = <PequeCategoryScreen sectionId="formas" title="Formas" icon="🔺" color="#14b8a6" items={pequeByLevel(PEQUE_SHAPES, level)} onBack={goHome} onVisit={onVisit} />;
   } else if (section === 'animales') {
-    content = <PequeCategoryScreen sectionId="animales" title="Animales" icon="🐾" color="#f97316" items={PEQUE_ANIMALS} onBack={goHome} onVisit={onVisit} speakField="onomat" />;
+    content = <PequeCategoryScreen sectionId="animales" title="Animales" icon="🐾" color="#f97316" items={pequeByLevel(PEQUE_ANIMALS, level)} onBack={goHome} onVisit={onVisit} allowFullscreen />;
   } else if (section === 'frutas') {
-    content = <PequeCategoryScreen sectionId="frutas" title="Frutas" icon="🍎" color="#6bcb77" items={PEQUE_FRUITS} onBack={goHome} onVisit={onVisit} />;
+    content = <PequeCategoryScreen sectionId="frutas" title="Frutas" icon="🍎" color="#6bcb77" items={pequeByLevel(PEQUE_FRUITS, level)} onBack={goHome} onVisit={onVisit} />;
   } else if (section === 'emociones') {
-    content = <PequeCategoryScreen sectionId="emociones" title="Emociones" icon="😊" color="#ffd93d" items={PEQUE_EMOTIONS} onBack={goHome} onVisit={onVisit} />;
+    content = <PequeCategoryScreen sectionId="emociones" title="Emociones" icon="😊" color="#ffd93d" items={pequeByLevel(PEQUE_EMOTIONS, level)} onBack={goHome} onVisit={onVisit} />;
   } else if (section === 'rutinas') {
-    content = <PequeCategoryScreen sectionId="rutinas" title="Rutinas" icon="🧴" color="#8b5cf6" items={PEQUE_ROUTINES} onBack={goHome} onVisit={onVisit} />;
+    content = <PequeCategoryScreen sectionId="rutinas" title="Rutinas" icon="🧴" color="#8b5cf6" items={pequeByLevel(PEQUE_ROUTINES, level)} onBack={goHome} onVisit={onVisit} />;
   } else if (section === 'ajustes') {
     content = <PequeSettingsScreen state={pequeState} onStateChange={setPequeState} onBack={goHome} />;
   } else if (section === 'leer') {
     const backToLeerHome = () => setLeerScreen('home');
-    if (leerScreen === 'home') content = <PequeLeerHome onOpen={setLeerScreen} onBack={goHome} />;
-    else if (leerScreen === 'sonidos') content = <PequeSoundsScreen onBack={backToLeerHome} />;
+    if (leerScreen === 'home') content = <PequeLeerHome level={level} onOpen={setLeerScreen} onBack={goHome} />;
     else if (leerScreen === 'vocales') content = <PequeVowelsScreen onBack={backToLeerHome} />;
-    else if (leerScreen === 'letras') content = <PequeLettersScreen state={pequeState} onStateChange={setPequeState} onBack={backToLeerHome} />;
-    else if (leerScreen === 'formo') content = <PequeBuildWordScreen state={pequeState} onStateChange={setPequeState} onBack={backToLeerHome} />;
-    else if (leerScreen === 'palabras') content = <PequeSightWordsScreen profile={profile} onBack={backToLeerHome} />;
+    else if (leerScreen === 'letras') content = <PequeLettersScreen level={level} state={pequeState} onStateChange={setPequeState} onBack={backToLeerHome} />;
+    else if (leerScreen === 'formo') content = <PequeBuildWordScreen level={level} state={pequeState} onStateChange={setPequeState} onBack={backToLeerHome} />;
+    else if (leerScreen === 'palabras') content = <PequeSightWordsScreen level={level} state={pequeState} profile={profile} onBack={backToLeerHome} />;
+    else if (leerScreen === 'frases') content = <PequeSentencesScreen state={pequeState} onStateChange={setPequeState} onBack={backToLeerHome} />;
   }
 
   return (

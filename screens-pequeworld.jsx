@@ -37,7 +37,7 @@ function PequeTopBar({ title, icon, color, onBack, right }) {
   );
 }
 
-function PequeCard({ item, color, onTap, big }) {
+function PequeCard({ item, color, onTap }) {
   const [pulse, setPulse] = React.useState(false);
   const tap = () => {
     setPulse(true); setTimeout(() => setPulse(false), 400);
@@ -46,120 +46,166 @@ function PequeCard({ item, color, onTap, big }) {
   return (
     <button onClick={tap} style={{
       background:'rgba(255,255,255,0.88)', border:`3px solid ${color}55`,
-      borderRadius:24, padding: big ? '22px 10px' : '16px 8px',
-      display:'flex', flexDirection:'column', alignItems:'center', gap:8,
-      cursor:'pointer', boxShadow: pulse ? `0 0 0 6px ${color}33` : '0 4px 16px rgba(0,0,0,0.08)',
+      borderRadius:22, padding:'14px 8px', display:'flex', flexDirection:'column',
+      alignItems:'center', gap:8, cursor:'pointer',
+      boxShadow: pulse ? `0 0 0 6px ${color}33` : '0 4px 16px rgba(0,0,0,0.08)',
       transform: pulse ? 'scale(1.08)' : 'scale(1)', transition:'all .2s'
     }}>
-      <div style={{ width: big ? 84 : 68, height: big ? 84 : 68, borderRadius:'50%',
-        background:`${color}20`, display:'flex', alignItems:'center', justifyContent:'center' }}>
-        <PequeImage item={item} size={big ? 68 : 54} />
+      <div style={{ width:64, height:64, borderRadius:'50%', background:`${color}20`,
+        display:'flex', alignItems:'center', justifyContent:'center' }}>
+        <PequeImage item={item} size={50} />
       </div>
-      <div style={{ fontFamily:'Fredoka One,cursive', fontSize: big ? '1.1rem' : '0.92rem', color:'#444', textAlign:'center' }}>
-        {item.es}
-      </div>
+      <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'0.88rem', color:'#444', textAlign:'center' }}>{item.es}</div>
     </button>
   );
 }
 
-// ─── PANTALLA GENÉRICA: toca la tarjeta → la app dice la palabra ──
-function PequeCategoryScreen({ sectionId, title, icon, color, items, onBack, onVisit, speakField }) {
+// ─── PANTALLA GENÉRICA de categoría: Ver / Practicar / Concurso ───
+function PequeCategoryScreen({ sectionId, title, icon, color, items, onBack, onVisit, allowFullscreen }) {
   React.useEffect(() => { onVisit(sectionId); }, []);
+  const [mode, setMode] = React.useState('ver');
+  const [selectedItem, setSelectedItem] = React.useState(null);
+  const [fullscreenItem, setFullscreenItem] = React.useState(null);
 
-  const tap = (item) => {
-    if (item.sound) {
-      pequePlaySoundEffect(item.sound, () => pequeSpeak(item.es));
-    } else if (speakField && item[speakField]) {
-      pequeSpeak(item[speakField]);
-      setTimeout(() => pequeSpeak(item.es), 1300);
-    } else {
-      pequeSpeak(item.es);
-    }
-  };
+  const tap = (item) => { setSelectedItem(item); pequePlayItemCue(item); };
 
   return (
     <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
       <PequeTopBar title={title} icon={icon} color={color} onBack={onBack} />
-      <div style={{ flex:1, overflowY:'auto', padding:'14px',
-        display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(120px,1fr))', gap:14 }}>
-        {items.map(item => (
-          <PequeCard key={item.id || item.es} item={item} color={color} onTap={tap} />
-        ))}
-      </div>
+      <PequeModeTabs mode={mode} onChange={setMode} color={color} />
+
+      {mode === 'ver' && (<>
+        <PequeFeaturedPanel item={selectedItem} color={color} onImageTap={allowFullscreen ? setFullscreenItem : null} />
+        <div style={{ flex:1, overflowY:'auto', padding:'6px 14px 14px',
+          display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(110px,1fr))', gap:12 }}>
+          {items.map(item => (
+            <PequeCard key={item.id} item={item} color={color} onTap={tap} />
+          ))}
+        </div>
+      </>)}
+
+      {mode === 'practicar' && (
+        <PequePracticeCard items={items} color={color}
+          renderPrompt={(item) => <PequeImage item={item} size={item.photo ? 130 : 100} />}
+          getTarget={(item) => item.es} />
+      )}
+
+      {mode === 'concurso' && (
+        <PequeQuizGame pool={items} variant="audio-to-image" color={color} getLabel={(i) => i.es} />
+      )}
+
+      {fullscreenItem && <PequeFullscreenImage item={fullscreenItem} onClose={() => setFullscreenItem(null)} />}
     </div>
   );
 }
 
-// ─── COLORES: además de la palabra, resalta la mancha de color ───
+// ─── COLORES: modos propios (mancha de color en vez de emoji) ────
 function PequeColorsScreen({ onBack, onVisit }) {
   React.useEffect(() => { onVisit('colores'); }, []);
+  const [mode, setMode] = React.useState('ver');
   const [sel, setSel] = React.useState(null);
-  return (
-    <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
-      <PequeTopBar title="Colores" icon="🎨" color="#ec4899" onBack={onBack} />
-      {sel && (
-        <div style={{ padding:'10px 16px 0' }}>
-          <div style={{ height:64, borderRadius:20, background: sel.hex,
-            display:'flex', alignItems:'center', justifyContent:'center',
-            boxShadow:'0 4px 16px rgba(0,0,0,0.15)' }}>
-            <span style={{ fontFamily:'Fredoka One,cursive', color: sel.id==='blanco'||sel.id==='amarillo' ? '#333' : '#fff', fontSize:'1.2rem' }}>{sel.es}</span>
-          </div>
-        </div>
-      )}
-      <div style={{ flex:1, overflowY:'auto', padding:'14px',
-        display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(110px,1fr))', gap:14 }}>
-        {PEQUE_COLORS.map(c => (
-          <button key={c.id} onClick={() => { setSel(c); pequeSpeak(c.es); }} style={{
-            background: c.hex, border: sel?.id===c.id ? '4px solid #333' : '3px solid rgba(255,255,255,0.6)',
-            borderRadius:24, height:100, cursor:'pointer', boxShadow:'0 4px 14px rgba(0,0,0,0.12)',
-            transform: sel?.id===c.id ? 'scale(1.06)' : 'scale(1)', transition:'all .2s'
-          }} />
-        ))}
-      </div>
-    </div>
-  );
-}
+  const COLOR = '#ec4899';
 
-// ─── NÚMEROS: dígito gigante + cantidad visual ────────────────────
-function PequeNumbersScreen({ onBack, onVisit }) {
-  React.useEffect(() => { onVisit('numeros'); }, []);
-  const [sel, setSel] = React.useState(PEQUE_NUMBERS[0]);
-
-  const tap = (item) => { setSel(item); pequeSpeak(item.es); };
+  const tap = (c) => { setSel(c); pequePlayItemCue(c); };
 
   return (
     <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
-      <PequeTopBar title="Números" icon="🔢" color="#4d96ff" onBack={onBack} />
-      <div style={{ padding:'16px', textAlign:'center', flexShrink:0 }}>
-        <div onClick={() => pequeSpeak(sel.es)} style={{
-          fontFamily:'Fredoka One,cursive', fontSize:'5.5rem', color:'#4d96ff',
-          lineHeight:1, cursor:'pointer', textShadow:'0 4px 0 rgba(0,0,0,0.08)'
-        }}>{sel.n}</div>
-        <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.3rem', color:'#666', marginBottom:8 }}>{sel.es}</div>
-        {sel.n > 0 && (
-          <div style={{ fontSize:'1.6rem', letterSpacing:4, lineHeight:1.6 }}>
-            {Array.from({ length: sel.n }).map((_, i) => (
-              <EmojiImg key={i} code={PEQUE_COUNT_EMOJI} size={28} style={{ display:'inline-block', margin:'0 2px' }} />
-            ))}
+      <PequeTopBar title="Colores" icon="🎨" color={COLOR} onBack={onBack} />
+      <PequeModeTabs mode={mode} onChange={setMode} color={COLOR} />
+
+      {mode === 'ver' && (<>
+        {sel && (
+          <div style={{ padding:'8px 16px 0', flexShrink:0 }}>
+            <div style={{ height:64, borderRadius:20, background: sel.hex,
+              display:'flex', alignItems:'center', justifyContent:'center', boxShadow:'0 4px 16px rgba(0,0,0,0.15)' }}>
+              <span style={{ fontFamily:'Fredoka One,cursive', color: sel.id==='blanco'||sel.id==='amarillo' ? '#333' : '#fff', fontSize:'1.2rem' }}>{sel.es}</span>
+            </div>
           </div>
         )}
-      </div>
-      <div style={{ flex:1, overflowY:'auto', padding:'4px 14px 14px',
-        display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(70px,1fr))', gap:10 }}>
-        {PEQUE_NUMBERS.map(item => (
-          <button key={item.n} onClick={() => tap(item)} style={{
-            padding:'14px 6px', borderRadius:18,
-            border: sel.n===item.n ? '3px solid #4d96ff' : '3px solid rgba(0,0,0,0.06)',
-            background: sel.n===item.n ? 'rgba(77,150,255,0.12)' : 'rgba(255,255,255,0.85)',
-            fontFamily:'Fredoka One,cursive', fontSize:'1.4rem', color:'#333', cursor:'pointer'
-          }}>{item.n}</button>
-        ))}
-      </div>
+        <div style={{ flex:1, overflowY:'auto', padding:'14px',
+          display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(110px,1fr))', gap:14 }}>
+          {PEQUE_COLORS.map(c => (
+            <button key={c.id} onClick={() => tap(c)} style={{
+              background: c.hex, border: sel?.id===c.id ? '4px solid #333' : '3px solid rgba(255,255,255,0.6)',
+              borderRadius:24, height:100, cursor:'pointer', boxShadow:'0 4px 14px rgba(0,0,0,0.12)',
+              transform: sel?.id===c.id ? 'scale(1.06)' : 'scale(1)', transition:'all .2s'
+            }} />
+          ))}
+        </div>
+      </>)}
+
+      {mode === 'practicar' && (
+        <PequePracticeCard items={PEQUE_COLORS} color={COLOR}
+          renderPrompt={(item) => <div style={{ width:110, height:110, borderRadius:26, background:item.hex, boxShadow:'0 4px 14px rgba(0,0,0,0.15)' }} />}
+          getTarget={(item) => item.es} />
+      )}
+
+      {mode === 'concurso' && (
+        <PequeQuizGame pool={PEQUE_COLORS} variant="audio-to-image" color={COLOR} getLabel={(i) => i.es}
+          renderOption={(opt) => <div style={{ width:56, height:56, borderRadius:14, background:opt.hex, border:'2px solid rgba(0,0,0,0.08)' }} />} />
+      )}
     </div>
   );
 }
 
-// ─── INICIO DE PEQUEWORLD (menú grande de iconos) ─────────────────
+// ─── NÚMEROS: dígito gigante + cantidad visual + modos ────────────
+function PequeNumbersScreen({ level, onBack, onVisit }) {
+  React.useEffect(() => { onVisit('numeros'); }, []);
+  const numbers = pequeByLevel(PEQUE_NUMBERS, level);
+  const [mode, setMode] = React.useState('ver');
+  const [sel, setSel] = React.useState(numbers[0]);
+  const COLOR = '#4d96ff';
+
+  React.useEffect(() => { if (!numbers.find(n => n.n === sel.n)) setSel(numbers[0]); }, [level]);
+
+  const tap = (item) => { setSel(item); pequePlayItemCue(item); };
+
+  return (
+    <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
+      <PequeTopBar title="Números" icon="🔢" color={COLOR} onBack={onBack} />
+      <PequeModeTabs mode={mode} onChange={setMode} color={COLOR} />
+
+      {mode === 'ver' && (<>
+        <div style={{ padding:'8px', textAlign:'center', flexShrink:0 }}>
+          <div onClick={() => pequePlayItemCue(sel)} style={{
+            fontFamily:'Fredoka One,cursive', fontSize:'5rem', color:COLOR, lineHeight:1, cursor:'pointer', textShadow:'0 4px 0 rgba(0,0,0,0.08)'
+          }}>{sel.n}</div>
+          <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.2rem', color:'#666', marginBottom:6 }}>{sel.es}</div>
+          {sel.n > 0 && sel.n <= 10 && (
+            <div style={{ fontSize:'1.4rem', letterSpacing:3, lineHeight:1.5 }}>
+              {Array.from({ length: sel.n }).map((_, i) => (
+                <EmojiImg key={i} code={PEQUE_COUNT_EMOJI} size={24} style={{ display:'inline-block', margin:'0 2px' }} />
+              ))}
+            </div>
+          )}
+        </div>
+        <div style={{ flex:1, overflowY:'auto', padding:'4px 14px 14px',
+          display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(64px,1fr))', gap:8 }}>
+          {numbers.map(item => (
+            <button key={item.n} onClick={() => tap(item)} style={{
+              padding:'12px 4px', borderRadius:16,
+              border: sel.n===item.n ? `3px solid ${COLOR}` : '3px solid rgba(0,0,0,0.06)',
+              background: sel.n===item.n ? `${COLOR}1f` : 'rgba(255,255,255,0.85)',
+              fontFamily:'Fredoka One,cursive', fontSize:'1.2rem', color:'#333', cursor:'pointer'
+            }}>{item.n}</button>
+          ))}
+        </div>
+      </>)}
+
+      {mode === 'practicar' && (
+        <PequePracticeCard items={numbers} color={COLOR}
+          renderPrompt={(item) => <span style={{ fontFamily:'Fredoka One,cursive', fontSize:'4rem', color:COLOR }}>{item.n}</span>}
+          getTarget={(item) => item.es} />
+      )}
+
+      {mode === 'concurso' && (
+        <PequeQuizGame pool={numbers} variant="audio-to-text" color={COLOR} getLabel={(i) => String(i.n)} keyField="n" />
+      )}
+    </div>
+  );
+}
+
+// ─── INICIO DE PEQUEWORLD (menú grande de iconos + nivel) ─────────
 const PEQUE_SECTIONS = [
   { id:'numeros',   label:'Números',   icon:'🔢', color:'#4d96ff' },
   { id:'colores',   label:'Colores',   icon:'🎨', color:'#ec4899' },
@@ -171,7 +217,7 @@ const PEQUE_SECTIONS = [
   { id:'leer',      label:'Leo',       icon:'📖', color:'#ff6b6b' },
 ];
 
-function PequeHome({ profile, onOpenSection, onChangeApp, onSwitchProfile }) {
+function PequeHome({ profile, level, onChangeLevel, onOpenSection, onChangeApp, onSwitchProfile }) {
   React.useEffect(() => { pequeSpeak('¡Hola! ¿Qué quieres aprender hoy?'); }, []);
   return (
     <div style={{ flex:1, display:'flex', flexDirection:'column', overflow:'hidden' }}>
@@ -187,7 +233,19 @@ function PequeHome({ profile, onOpenSection, onChangeApp, onSwitchProfile }) {
           width:44, height:44, borderRadius:14, border:'none', background:'rgba(255,255,255,0.85)',
           fontSize:'1.2rem', cursor:'pointer', boxShadow:'0 2px 8px rgba(0,0,0,0.08)' }}>🔄</button>
       </div>
-      <div style={{ flex:1, overflowY:'auto', padding:'10px 16px 16px',
+
+      <div style={{ display:'flex', gap:8, padding:'0 16px 10px', flexShrink:0 }}>
+        {PEQUE_LEVELS.map(lv => (
+          <button key={lv.id} onClick={() => onChangeLevel(lv.id)} style={{
+            flex:1, padding:'9px 4px', borderRadius:14, border:'none', cursor:'pointer',
+            background: level === lv.id ? lv.color : 'rgba(255,255,255,0.75)',
+            color: level === lv.id ? '#fff' : '#666',
+            fontFamily:'Nunito,sans-serif', fontWeight:900, fontSize:'0.82rem'
+          }}>{lv.label} <span style={{ opacity:0.75, fontSize:'0.72rem' }}>({lv.age})</span></button>
+        ))}
+      </div>
+
+      <div style={{ flex:1, overflowY:'auto', padding:'0 16px 16px',
         display:'grid', gridTemplateColumns:'repeat(2,1fr)', gap:14 }}>
         {PEQUE_SECTIONS.map(s => (
           <button key={s.id} onClick={() => onOpenSection(s.id)} style={{
@@ -215,13 +273,9 @@ function PequeHome({ profile, onOpenSection, onChangeApp, onSwitchProfile }) {
 
 // ─── AJUSTES ──────────────────────────────────────────────────────
 function PequeSettingsScreen({ state, onStateChange, onBack }) {
-  const track = PEQUE_MUSIC_TRACKS.find(t => t.id === state.musicTrackId) || PEQUE_MUSIC_TRACKS[0];
-
   const applyMusic = (on, vol, trackId) => {
-    const t = PEQUE_MUSIC_TRACKS.find(tr => tr.id === trackId) || PEQUE_MUSIC_TRACKS[0];
-    if (!on) { PequeMusic.stop(); pequeStopFileTrack(); return; }
-    if (t.type === 'synth') { pequeStopFileTrack(); PequeMusic.start(vol); }
-    else if (t.type === 'file') { pequePlayFileTrack(t.file, vol); }
+    if (!on) { pequeStopMusic(); return; }
+    pequeStartMusic(trackId, vol);
   };
 
   const toggleMusic = () => {
@@ -231,7 +285,7 @@ function PequeSettingsScreen({ state, onStateChange, onBack }) {
   };
   const changeVolume = (v) => {
     onStateChange({ ...state, musicVolume: v });
-    if (state.musicOn) applyMusic(true, v, state.musicTrackId);
+    if (state.musicOn) pequeSetMusicVolume(v);
   };
   const changeTrack = (id) => {
     onStateChange({ ...state, musicTrackId: id });
