@@ -258,7 +258,7 @@ function LearnScreen({ state, onStateChange }) {
               )}
               <div style={{ width:64, height:64, display:'flex', alignItems:'center', justifyContent:'center',
                 borderRadius:50, background:`${cat.color}18`, overflow:'hidden' }}>
-                <EmojiImg code={item.e} size={54} />
+                <EmojiOrNumeral item={item} size={54} />
               </div>
               <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'0.88rem', color:'#333', lineHeight:1.2, textAlign:'center' }}>{item.en}</div>
               <div style={{ fontSize:'0.68rem', color:'#999', fontWeight:700, textAlign:'center' }}>{item.es}</div>
@@ -442,7 +442,7 @@ function WriteScreen({ state, onStateChange }) {
             </div>
             <div style={{ width:100, height:100, margin:'0 auto 12px', display:'flex', alignItems:'center',
               justifyContent:'center', borderRadius:50, background:`${cat.color}18` }}>
-              <EmojiImg code={item.e} size={82} />
+              <EmojiOrNumeral item={item} size={82} />
             </div>
             <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.3rem', color:'#555', marginBottom:4 }}>
               {item.es}
@@ -696,7 +696,7 @@ function QuizScreen({ state, onStateChange }) {
               }}>
                 <div style={{ width:72, height:72, display:'flex', alignItems:'center', justifyContent:'center',
                   borderRadius:16, background:`${opt.catColor||'#4d96ff'}18` }}>
-                  <EmojiImg code={opt.e} size={58} />
+                  <EmojiOrNumeral item={opt} size={58} />
                 </div>
                 {showAns && (
                   <span style={{ fontSize:'0.8rem', fontWeight:900,
@@ -727,7 +727,7 @@ function QuizScreen({ state, onStateChange }) {
         <div style={{ width:130, height:130, margin:'0 auto 12px', background:`${q.item.catColor}18`,
           borderRadius:28, display:'flex', alignItems:'center', justifyContent:'center',
           border:`3px solid ${q.item.catColor}44`, boxShadow:'0 4px 20px rgba(0,0,0,0.08)' }}>
-          <EmojiImg code={q.item.e} size={104} />
+          <EmojiOrNumeral item={q.item} size={104} />
         </div>
         <button onClick={() => speakWord(q.item.en)} style={{ background:'none', border:'none', cursor:'pointer', fontSize:'1.4rem' }}>🔊</button>
         <div style={{ color:'#bbb', fontSize:'0.8rem', fontWeight:700, marginTop:2 }}>{q.item.es}</div>

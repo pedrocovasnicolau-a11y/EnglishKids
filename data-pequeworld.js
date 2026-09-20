@@ -355,15 +355,19 @@ function pequeListen({ onResult, onError }) {
   rec.lang = 'es-ES';
   rec.interimResults = false;
   rec.maxAlternatives = 5;
-  const safety = setTimeout(() => { try { rec.stop(); } catch(e) {} }, 8000);
+  // Palabras muy cortas (números, vocales sueltas) a veces terminan el
+  // reconocimiento sin disparar ni onresult ni onerror — sin esta guarda
+  // el micrófono se quedaba "escuchando" para siempre.
+  let settled = false;
+  const settle = (fn) => { if (!settled) { settled = true; clearTimeout(safety); fn(); } };
+  const safety = setTimeout(() => { try { rec.stop(); } catch(e) {} settle(() => onError && onError('timeout')); }, 8000);
   rec.onresult = (ev) => {
-    clearTimeout(safety);
     const alts = Array.from(ev.results[0]).map(r => r.transcript.trim());
-    onResult(alts);
+    settle(() => onResult(alts));
   };
-  rec.onerror = () => { clearTimeout(safety); onError && onError('error'); };
-  rec.onend = () => clearTimeout(safety);
-  try { rec.start(); } catch(e) { onError && onError('start-failed'); }
+  rec.onerror = () => { settle(() => onError && onError('error')); };
+  rec.onend = () => { settle(() => onError && onError('no-result')); };
+  try { rec.start(); } catch(e) { settle(() => onError && onError('start-failed')); }
   return rec;
 }
 
