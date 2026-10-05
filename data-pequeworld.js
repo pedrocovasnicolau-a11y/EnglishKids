@@ -1,5 +1,5 @@
 // ══════════════════════════════════════════════════════════════
-// PEQUEWORLD — Contenido y progreso
+// PEQUE APRENDE — Contenido y progreso
 // App en español para 3–4 años (aún no lectores) + módulo de
 // iniciación a la lectura. Independiente del sistema de English
 // Kids: usa su propio almacenamiento, indexado por el mismo id
@@ -338,8 +338,11 @@ function pequeUnlockedSyllables(state, level) {
 // decodificación, leerla ya formada entrena lectura instantánea).
 // needs = consonantes que hacen falta para poder leerla.
 const PEQUE_BUILD_WORDS = [
-  { word:'mamá',    syllables:['ma','má'],       emoji:'1f469', needs:['m'],         level:'inicio' },
-  { word:'papá',    syllables:['pa','pá'],       emoji:'1f468', needs:['p'],         level:'inicio' },
+  // Las primeras palabras usan solamente sílabas abiertas ya presentadas.
+  // Los acentos y grupos consonánticos se introducirán antes de usarlos
+  // en una actividad de lectura guiada.
+  { word:'mami',    syllables:['ma','mi'],       emoji:'1f469', needs:['m'],         level:'inicio' },
+  { word:'papi',    syllables:['pa','pi'],       emoji:'1f468', needs:['p'],         level:'inicio' },
   { word:'mapa',    syllables:['ma','pa'],       emoji:'1f5fa', needs:['m','p'],     level:'inicio' },
   { word:'pelo',    syllables:['pe','lo'],       emoji:'1f9b1', needs:['p','l'],     level:'inicio' },
   { word:'sopa',    syllables:['so','pa'],       emoji:'1f35c', needs:['s','p'],     level:'inicio' },
@@ -361,7 +364,7 @@ const PEQUE_BUILD_WORDS = [
   { word:'nido',    syllables:['ni','do'],       emoji:'1fab9', needs:['n','d'],     level:'avanzado' },
   { word:'tomate',  syllables:['to','ma','te'],  emoji:'1f345', needs:['t','m'],     level:'avanzado' },
   { word:'patata',  syllables:['pa','ta','ta'],  emoji:'1f954', needs:['p','t'],     level:'avanzado' },
-  { word:'sofá',    syllables:['so','fá'],       emoji:'1f6cb', needs:['s','f'],     level:'avanzado' },
+  { word:'fila',    syllables:['fi','la'],       emoji:'1f6b6', needs:['f','l'],     level:'avanzado' },
   { word:'rosa',    syllables:['ro','sa'],       emoji:'1f339', needs:['r','s'],     level:'avanzado' },
   { word:'loro',    syllables:['lo','ro'],       emoji:'1f99c', needs:['l','r'],     level:'avanzado' },
   { word:'casa',    syllables:['ca','sa'],       emoji:'1f3e0', needs:['c','s'],     level:'avanzado' },
@@ -370,14 +373,14 @@ const PEQUE_BUILD_WORDS = [
   { word:'bota',    syllables:['bo','ta'],       emoji:'1f45e', needs:['b','t'],     level:'avanzado' },
   { word:'vaca',    syllables:['va','ca'],       emoji:'1f404', needs:['v','c'],     level:'avanzado' },
   { word:'gato',    syllables:['ga','to'],       emoji:'1f431', needs:['g','t'],     level:'avanzado' },
-  { word:'jamón',   syllables:['ja','món'],      emoji:'1f356', needs:['j','m'],     level:'avanzado' },
+  { word:'jefe',    syllables:['je','fe'],       emoji:'1f9d1-200d-1f4bc', needs:['j','f'], level:'avanzado' },
   { word:'piña',    syllables:['pi','ña'],       emoji:'1f34d', needs:['p','ñ'],     level:'avanzado' },
   { word:'chupete', syllables:['chu','pe','te'], emoji:'1f37c', needs:['ch','p','t'],level:'avanzado' },
   { word:'pollo',   syllables:['po','llo'],      emoji:'1f414', needs:['p','ll'],    level:'avanzado' },
   { word:'zapato',  syllables:['za','pa','to'],  emoji:'1f45e', needs:['z','p','t'], level:'avanzado' },
   { word:'camisa',  syllables:['ca','mi','sa'],  emoji:'1f455', needs:['c','m','s'], level:'avanzado' },
   { word:'pelota',  syllables:['pe','lo','ta'],  emoji:'26bd',  needs:['p','l','t'], level:'avanzado' },
-  { word:'plátano', syllables:['plá','ta','no'], emoji:'1f34c', needs:['p','l','t','n'], level:'avanzado' },
+  { word:'palito',  syllables:['pa','li','to'],  emoji:'1fab5', needs:['p','l','t'], level:'avanzado' },
 ];
 
 // "Mis primeras palabras" ya NO es una lista fija: se calcula con lo
@@ -396,74 +399,74 @@ function pequeGetSightWords(state, profileName) {
 // currículo para que sean realmente leíbles por el niño.
 const PEQUE_SENTENCES = [
   {
-    text: 'Mi mamá me ama',
+    text: 'Mi mami me mima',
     emoji: '1f469',
     needs: ['m'],
-    question: '¿Quién te ama?',
-    options: [ { es:'Mamá', emoji:'1f469', correct:true }, { es:'Sol', emoji:'2600', correct:false } ],
+    question: '¿Quién te mima?',
+    options: [ { es:'Mami', emoji:'1f469', correct:true }, { es:'Sol', emoji:'2600', correct:false } ],
   },
   {
-    text: 'Sale el sol',
-    emoji: '2600',
-    needs: ['s','l'],
-    question: '¿Qué sale?',
-    options: [ { es:'El sol', emoji:'2600', correct:true }, { es:'La luna', emoji:'1f319', correct:false } ],
+    text: 'La paloma sale',
+    emoji: '1f54a',
+    needs: ['p','l','m','s'],
+    question: '¿Quién sale?',
+    options: [ { es:'Paloma', emoji:'1f54a', correct:true }, { es:'Pato', emoji:'1f986', correct:false } ],
   },
   {
-    text: 'Papá pela la pera',
+    text: 'Papi pela la pera',
     emoji: '1f468',
-    needs: ['p','l'],
-    question: '¿Qué pela papá?',
+    needs: ['p','l','r'],
+    question: '¿Qué pela papi?',
     options: [ { es:'Una pera', emoji:'1f350', correct:true }, { es:'Una mesa', emoji:'1f6cb', correct:false } ],
   },
   {
-    text: 'Mamá pone la sopa',
+    text: 'Mami pone la sopa',
     emoji: '1f35c',
-    needs: ['m','p','s','l'],
-    question: '¿Qué pone mamá?',
+    needs: ['m','p','s','l','n'],
+    question: '¿Qué pone mami?',
     options: [ { es:'La sopa', emoji:'1f35c', correct:true }, { es:'La pala', emoji:'1f6a7', correct:false } ],
   },
   {
-    text: 'El pato nada solo',
-    emoji: '1f986',
-    needs: ['p','t','s','l','n'],
-    question: '¿Quién nada?',
-    options: [ { es:'El pato', emoji:'1f986', correct:true }, { es:'El dado', emoji:'1f3b2', correct:false } ],
+    text: 'La nena toma sopa',
+    emoji: '1f35c',
+    needs: ['l','n','t','m','s','p'],
+    question: '¿Qué toma la nena?',
+    options: [ { es:'Sopa', emoji:'1f35c', correct:true }, { es:'Pera', emoji:'1f350', correct:false } ],
   },
   {
-    text: 'La luna sale de noche',
-    emoji: '1f319',
-    needs: ['l','n','s','d'],
-    question: '¿Cuándo sale la luna?',
-    options: [ { es:'De noche', emoji:'1f319', correct:true }, { es:'De día', emoji:'2600', correct:false } ],
+    text: 'La paloma toma sopa',
+    emoji: '1f54a',
+    needs: ['l','p','m','t','s'],
+    question: '¿Quién toma sopa?',
+    options: [ { es:'Paloma', emoji:'1f54a', correct:true }, { es:'Pato', emoji:'1f986', correct:false } ],
   },
   {
-    text: 'Mi casa tiene una cama',
-    emoji: '1f3e0',
-    needs: ['m','c','s','t','n'],
-    question: '¿Qué tiene mi casa?',
-    options: [ { es:'Una cama', emoji:'1f6cf', correct:true }, { es:'Un loro', emoji:'1f99c', correct:false } ],
+    text: 'La moto pita',
+    emoji: '1f3cd',
+    needs: ['l','m','t','p'],
+    question: '¿Qué pita?',
+    options: [ { es:'Moto', emoji:'1f3cd', correct:true }, { es:'Vaca', emoji:'1f404', correct:false } ],
   },
   {
-    text: 'El gato bebe leche',
+    text: 'Mi gato bebe leche',
     emoji: '1f431',
-    needs: ['g','t','b','l','ch'],
-    question: '¿Qué bebe el gato?',
+    needs: ['m','g','t','b','l','ch'],
+    question: '¿Qué bebe mi gato?',
     options: [ { es:'Leche', emoji:'1f95b', correct:true }, { es:'Sopa', emoji:'1f35c', correct:false } ],
   },
   {
-    text: 'La vaca come en el prado',
+    text: 'Mi vaca se va sola',
     emoji: '1f404',
-    needs: ['v','c','m','n','p','r','d'],
-    question: '¿Dónde come la vaca?',
-    options: [ { es:'En el prado', emoji:'1f33e', correct:true }, { es:'En la cama', emoji:'1f6cf', correct:false } ],
+    needs: ['m','v','c','s','l'],
+    question: '¿Quién se va sola?',
+    options: [ { es:'Vaca', emoji:'1f404', correct:true }, { es:'Gato', emoji:'1f431', correct:false } ],
   },
   {
-    text: 'Mi pelota es roja',
+    text: 'La pelota se va',
     emoji: '26bd',
-    needs: ['m','p','l','t','s','r','j'],
-    question: '¿De qué color es la pelota?',
-    options: [ { es:'Roja', emoji:'2764', correct:true }, { es:'Azul', emoji:'1f499', correct:false } ],
+    needs: ['l','p','t','s','v'],
+    question: '¿Qué se va?',
+    options: [ { es:'Pelota', emoji:'26bd', correct:true }, { es:'Paloma', emoji:'1f54a', correct:false } ],
   },
 ];
 

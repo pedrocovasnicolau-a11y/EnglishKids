@@ -63,10 +63,14 @@ function Onboarding({ onDone }) {
 function HomeScreen({ state, onNavigate }) {
   const pl = getPlayerLevel(state.xp);
   const allItems = Object.values(CATEGORIES).flat().flatMap(c=>c.items);
-  const totalWords = allItems.length;
+  // El progreso se guarda por término inglés. El catálogo tiene tarjetas
+  // repetidas deliberadamente en contexto, así que el total debe medir
+  // términos distintos y no un máximo que el perfil nunca podría alcanzar.
+  const totalConcepts = new Set(allItems.map(item => item.en.toLowerCase())).size;
   const learnedCount = Object.keys(state.learnedWords||{}).length;
   const masteredCount = getMasteredCount(state);
   const recentBadges = BADGES.filter(b=>(state.unlockedBadges||[]).includes(b.id)).slice(-3);
+  const dailyRoute = getDailyRoute(state);
 
   return (
     <div style={{ flex:1, overflowY:'auto', padding:'16px', display:'flex', flexDirection:'column', gap:14 }}>
@@ -81,10 +85,12 @@ function HomeScreen({ state, onNavigate }) {
           <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.3rem', color:'#333', marginBottom:2 }}>
             ¡Hola, {state.name}! 👋
           </div>
-          <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:6 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:6, flexWrap:'wrap' }}>
             <span style={{ fontSize:'0.75rem', fontWeight:900, color:pl.color,
               background:`${pl.color}22`, padding:'2px 10px', borderRadius:50 }}>Nv.{pl.lvl} {pl.label}</span>
             <span style={{ fontSize:'0.75rem', color:'#999', fontWeight:700 }}>{state.xp} XP</span>
+            <span title="Días seguidos con una actividad de aprendizaje" style={{ fontSize:'0.72rem', color:'#d97706', fontWeight:900,
+              background:'#fff3c4', padding:'2px 8px', borderRadius:50 }}>🔥 {state.streak||0} días</span>
           </div>
           <div style={{ height:8, background:'#f0f0f0', borderRadius:50, overflow:'hidden' }}>
             <div style={{ height:'100%', width:`${pl.pct}%`, borderRadius:50, transition:'width .5s ease',
@@ -107,12 +113,40 @@ function HomeScreen({ state, onNavigate }) {
         ))}
       </div>
 
+      {/* Ruta diaria: variedad de práctica, sin obligar a un orden ni penalizar descansos. */}
+      <section aria-label="Ruta de aprendizaje de hoy" style={{ background:'linear-gradient(135deg,rgba(255,255,255,0.95),rgba(255,247,237,0.94))',
+        border:'2px solid #fdba7455', borderRadius:22, padding:16, boxShadow:'0 3px 14px rgba(234,88,12,0.10)' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', gap:10, alignItems:'center', marginBottom:10 }}>
+          <div>
+            <h3 style={{ fontFamily:'Fredoka One,cursive', color:'#9a3412', fontSize:'1.05rem', margin:0 }}>🧭 Tu ruta de hoy</h3>
+            <p style={{ color:'#9a3412', fontSize:'0.72rem', fontWeight:800, margin:'3px 0 0' }}>
+              {dailyRoute.rewarded ? '¡Cofre abierto! Has ganado 25 XP.' : 'Tres aventuras distintas para aprender jugando'}
+            </p>
+          </div>
+          <div aria-label={`${dailyRoute.completed} de ${dailyRoute.total} retos completados`} style={{ minWidth:48, height:48, borderRadius:16,
+            display:'flex', alignItems:'center', justifyContent:'center', background:'#fff', color:'#ea580c', fontFamily:'Fredoka One,cursive', fontSize:'1rem',
+            border:'2px solid #fed7aa' }}>{dailyRoute.completed}/{dailyRoute.total}</div>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:8 }}>
+          {DAILY_ROUTE_STEPS.map(step => {
+            const done = !!dailyRoute.activities[step.id];
+            return <button key={step.id} onClick={() => onNavigate(step.id)} aria-label={`${step.label}: ${step.desc}${done ? ', completado' : ''}`} style={{
+              border:`2px solid ${done ? '#86efac' : '#fed7aa'}`, background:done ? '#f0fdf4' : '#fff', borderRadius:15, padding:'10px 5px',
+              color:done ? '#166534' : '#9a3412', cursor:'pointer', fontFamily:'Nunito,sans-serif', fontWeight:900, lineHeight:1.1
+            }}>
+              <div style={{ fontSize:'1.35rem', marginBottom:4 }}>{done ? '✅' : step.icon}</div>
+              <div style={{ fontSize:'0.72rem' }}>{step.label}</div>
+            </button>;
+          })}
+        </div>
+      </section>
+
       {/* Quick access */}
       <div>
         <h3 style={{ fontFamily:'Fredoka One,cursive', color:'#555', fontSize:'0.85rem', letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:10 }}>Acceso rápido</h3>
         <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
           {[
-            { id:'learn', icon:'📚', label:'Aprender',  sub:`${totalWords} palabras`, bg:'linear-gradient(135deg,#4d96ff,#6bcb77)' },
+            { id:'learn', icon:'📚', label:'Aprender',  sub:`${totalConcepts} conceptos`, bg:'linear-gradient(135deg,#4d96ff,#6bcb77)' },
             { id:'write', icon:'✏️', label:'Escribir',   sub:'Practica escribiendo',  bg:'linear-gradient(135deg,#6bcb77,#ffd93d)' },
             { id:'quiz',  icon:'🎯', label:'Quiz',       sub:'¡Pon a prueba!',        bg:'linear-gradient(135deg,#ff6b9d,#ffd93d)' },
             { id:'songs', icon:'🎵', label:'Canciones',  sub:'8 nursery rhymes',      bg:'linear-gradient(135deg,#14b8a6,#4d96ff)' },
@@ -136,11 +170,11 @@ function HomeScreen({ state, onNavigate }) {
       <div style={{ background:'rgba(255,255,255,0.82)', border:'2px solid rgba(255,255,255,0.9)',
         borderRadius:20, padding:16, boxShadow:'0 2px 10px rgba(0,0,0,0.05)' }}>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:8 }}>
-          <span style={{ color:'#555', fontWeight:800, fontSize:'0.9rem' }}>Palabras aprendidas</span>
-          <span style={{ fontFamily:'Fredoka One,cursive', color:'#ff6b9d', fontSize:'1rem' }}>{learnedCount}/{totalWords}</span>
+          <span style={{ color:'#555', fontWeight:800, fontSize:'0.9rem' }}>Conceptos explorados</span>
+          <span style={{ fontFamily:'Fredoka One,cursive', color:'#ff6b9d', fontSize:'1rem' }}>{learnedCount}/{totalConcepts}</span>
         </div>
         <div style={{ height:10, background:'#f0f0f0', borderRadius:50, overflow:'hidden' }}>
-          <div style={{ height:'100%', width:`${(learnedCount/totalWords)*100}%`,
+          <div style={{ height:'100%', width:`${(learnedCount/totalConcepts)*100}%`,
             background:'linear-gradient(90deg,#ffd93d,#ff6b9d)', borderRadius:50, transition:'width .6s ease' }} />
         </div>
       </div>

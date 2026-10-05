@@ -262,14 +262,14 @@ const CATEGORIES = {
         {en:'Yesterday',es:'Ayer',            e:'1f303', ex:'Yesterday was my birthday.'},
         {en:'Weekend',  es:'Fin de semana',   e:'1f389', ex:'I love the weekend.'},
         {en:'Holiday',  es:'Vacaciones',      e:'1f334', ex:'We go on holiday in summer.'},
-        {en:'Today',     es:'Hoy',        e:'1f4c6', ex:'Today is Monday.'},
-        {en:'Tomorrow',  es:'Mañana',     e:'1f307', ex:'Tomorrow we go to the park.'},
-        {en:'Yesterday', es:'Ayer',       e:'1f4c5', ex:'Yesterday I played football.'},
+        {en:'Week',      es:'Semana',     e:'1f4c5', ex:'There are seven days in a week.'},
+        {en:'Next week', es:'La semana que viene', e:'1f4c6', ex:'Next week we visit grandma.'},
+        {en:'Last week', es:'La semana pasada', e:'1f4c5', ex:'Last week we went to the zoo.'},
         {en:'Morning',   es:'La mañana',  e:'1f305', ex:'I eat breakfast in the morning.'},
         {en:'Afternoon', es:'La tarde',   e:'1f31e', ex:'We play in the afternoon.'},
         {en:'Night',     es:'La noche',   e:'1f303', ex:'I sleep at night.'},
         {en:'Birthday',  es:'Cumpleaños', e:'1f382', ex:'My birthday is in May!'},
-        {en:'Holiday',   es:'Vacaciones', e:'1f3d6', ex:'I love the summer holiday!'},
+        {en:'Month',     es:'Mes',        e:'1f4c6', ex:'There are twelve months in a year.'},
       ]},
     { id: 'numbers_b', label: 'Números', icon: '🔢', color: '#4d96ff',
       items: [
@@ -300,12 +300,12 @@ const CATEGORIES = {
         {en:'Blocks',    es:'Bloques', e:'1f9f1', ex:'I build towers with blocks.'},
         {en:'Slide',     es:'Tobogán', e:'1f6d9', ex:'I go down the slide fast!'},
         {en:'Swing',     es:'Columpio',e:'1f333', ex:'I love swinging high!'},
-        {en:'Kite',       es:'Cometa',      e:'1fa81', ex:'My kite flies very high!'},
+        {en:'Yo-yo',      es:'Yo-yo',       e:'1fa80', ex:'I can make my yo-yo go up and down.'},
         {en:'Bubbles',    es:'Pompas',      e:'1fae7', ex:'I love blowing bubbles.'},
         {en:'Skateboard', es:'Monopatín',   e:'1f6f9', ex:'I ride my skateboard.'},
         {en:'Crayons',    es:'Ceras',       e:'1f58d', ex:'I draw with my crayons.'},
-        {en:'Slide',      es:'Tobogán',     e:'1f6dd', ex:'The slide is so fast!'},
-        {en:'Swing',      es:'Columpio',    e:'1f3de', ex:'Push me on the swing!'},
+        {en:'Drum',       es:'Tambor',      e:'1f941', ex:'I play the drum loudly.'},
+        {en:'Scooter',    es:'Patinete',    e:'1f6f4', ex:'I ride my scooter to the park.'},
       ]},
     { id: 'phrases_basic', label: 'Mis frases', icon: '💬', color: '#f97316',
       items: [
@@ -983,6 +983,10 @@ const BADGES = [
   { id: 'streak_7',     icon: '🌈', label: 'Semana Completa', desc: '7 días seguidos practicando',          threshold: 7,   type: 'streak' },
   { id: 'streak_14',    icon: '🔥', label: '2 Semanas',       desc: '14 días seguidos practicando',         threshold: 14,  type: 'streak' },
   { id: 'streak_30',    icon: '🌟', label: '1 Mes',           desc: '30 días seguidos — ¡increíble!',       threshold: 30,  type: 'streak' },
+  // Rutas diarias: tres experiencias variadas, no una repetición mecánica.
+  { id: 'daily_first',  icon: '🗺️', label: 'Ruta completada', desc: 'Completaste tu primera ruta diaria',     threshold: 1,   type: 'dailyRoutes' },
+  { id: 'daily_week',   icon: '🌤️', label: '7 rutas',         desc: 'Completaste 7 rutas diarias',           threshold: 7,   type: 'dailyRoutes' },
+  { id: 'daily_month',  icon: '🚀', label: '30 rutas',        desc: 'Completaste 30 rutas diarias',          threshold: 30,  type: 'dailyRoutes' },
   // Palabras dominadas (SRS)
   { id: 'mastered_10',  icon: '🧩', label: '10 Dominadas',    desc: '10 palabras completamente dominadas',  threshold: 10,  type: 'masteredWords' },
   { id: 'mastered_50',  icon: '🎪', label: '50 Dominadas',    desc: '50 palabras completamente dominadas',  threshold: 50,  type: 'masteredWords' },
@@ -1012,6 +1016,84 @@ function updateWordSRS(state, wordKey) {
   return { wordAttempts: newWordAttempts, masteredWords: newMasteredWords };
 }
 
+// ══════════════════════════════════════════════════════════════
+// RUTA DIARIA
+// ══════════════════════════════════════════════════════════════
+// La racha se registra al realizar una acción de aprendizaje, no al abrir
+// la app. Así la métrica representa práctica real y no una pulsación.
+const DAILY_ROUTE_STEPS = [
+  { id:'learn', icon:'🔎', label:'Explora',   desc:'Descubre una palabra con imagen y sonido' },
+  { id:'write', icon:'✏️', label:'Practica',  desc:'Escribe una palabra correctamente' },
+  { id:'quiz',  icon:'🎯', label:'Juega',     desc:'Termina un quiz de 10 preguntas' },
+];
+
+function getLocalDateKey(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function normaliseDateKey(value) {
+  if (!value) return null;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? null : getLocalDateKey(date);
+}
+
+function previousDateKey(dateKey) {
+  const date = new Date(`${dateKey}T12:00:00`);
+  date.setDate(date.getDate() - 1);
+  return getLocalDateKey(date);
+}
+
+function getDailyRoute(state, dateKey = getLocalDateKey()) {
+  const saved = state.dailyProgress;
+  const activities = saved && saved.date === dateKey ? (saved.activities || {}) : {};
+  return {
+    date: dateKey,
+    activities,
+    completed: DAILY_ROUTE_STEPS.filter(step => activities[step.id]).length,
+    total: DAILY_ROUTE_STEPS.length,
+    rewarded: !!(saved && saved.date === dateKey && saved.rewarded),
+  };
+}
+
+function recordDailyActivity(state, activityId) {
+  const route = getDailyRoute(state);
+  const alreadyDone = !!route.activities[activityId];
+  const activities = { ...route.activities, [activityId]: true };
+  const completed = DAILY_ROUTE_STEPS.filter(step => activities[step.id]).length;
+  const completesRoute = completed === DAILY_ROUTE_STEPS.length && !route.rewarded;
+  const previousDate = normaliseDateKey(state.lastDate);
+  const firstMeaningfulActivityToday = previousDate !== route.date;
+  const nextStreak = firstMeaningfulActivityToday
+    ? (previousDate === previousDateKey(route.date) ? (state.streak || 0) + 1 : 1)
+    : (state.streak || 0);
+  const dailyProgress = { date: route.date, activities, rewarded: route.rewarded || completesRoute };
+  const next = {
+    ...state,
+    dailyProgress,
+    streak: nextStreak,
+    lastDate: firstMeaningfulActivityToday ? route.date : state.lastDate,
+    dailyRoutesCompleted: (state.dailyRoutesCompleted || 0) + (completesRoute ? 1 : 0),
+    xp: (state.xp || 0) + (completesRoute ? 25 : 0),
+  };
+  next.unlockedBadges = checkBadges(next);
+  return { state: next, alreadyDone, justCompleted: completesRoute };
+}
+
+// Baraja sin sesgo. sort(() => Math.random() - .5) favorece ciertas
+// permutaciones y acaba repitiendo patrones en listas infantiles cortas.
+function shuffleItems(items) {
+  const result = [...items];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
 function getMasteredCount(state) {
   return Object.keys(state.masteredWords || {}).length;
 }
@@ -1033,6 +1115,7 @@ function checkBadges(state) {
     else if (b.type === 'wordsWritten')  val = state.wordsWritten     || 0;
     else if (b.type === 'duoWins')       val = state.duoWins          || 0;
     else if (b.type === 'streak')        val = state.streak           || 0;
+    else if (b.type === 'dailyRoutes')   val = state.dailyRoutesCompleted || 0;
     else if (b.type === 'masteredWords') val = getMasteredCount(state);
     else if (b.type === 'songs')         val = state.songsCompleted   || 0;
     if (val >= b.threshold) badges.push(b.id);
@@ -1048,6 +1131,7 @@ function loadState() {
     unlockedBadges: [], learnedWords: {},
     wordAttempts: {}, masteredWords: {},
     selectedVoiceName: null, songsCompleted: 0,
+    dailyProgress: null, dailyRoutesCompleted: 0,
   };
   try {
     const s = localStorage.getItem('englishkids_v3');
@@ -1094,6 +1178,7 @@ function defaultGameState() {
     unlockedBadges: [], learnedWords: {},
     wordAttempts: {}, masteredWords: {},
     selectedVoiceName: null, songsCompleted: 0,
+    dailyProgress: null, dailyRoutesCompleted: 0,
   };
 }
 
@@ -1189,7 +1274,8 @@ function importAllProfiles(file) {
 Object.assign(window, {
   LEVELS, CATEGORIES, BADGES, AVATARS, SONGS,
   checkBadges, loadState, saveState, getPlayerLevel,
-  updateWordSRS, getMasteredCount, getWordSRSLevel,
+  updateWordSRS, getMasteredCount, getWordSRSLevel, shuffleItems,
+  DAILY_ROUTE_STEPS, getDailyRoute, recordDailyActivity,
   generateId, defaultGameState,
   loadProfiles, saveProfiles,
   saveProfilePhoto, loadProfilePhoto, deleteProfilePhoto,

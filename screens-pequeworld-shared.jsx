@@ -217,7 +217,7 @@ const PEQUE_QUIZ_OPTION_SIZE = 130;
 function PequeQuizGame({ pool, variant, color, length = 8, getLabel, renderOption, keyField = 'id', onFinish }) {
   const buildRounds = React.useCallback(() => {
     const n = Math.min(length, pool.length);
-    const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, n);
+    const shuffled = pequeShuffle(pool).slice(0, n);
     return shuffled.map(correct => ({ correct, opts: pequeBuildOptions(pool, correct, Math.min(4, pool.length), keyField) }));
   }, [pool, length, keyField]);
 

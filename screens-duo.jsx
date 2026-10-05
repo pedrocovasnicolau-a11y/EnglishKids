@@ -23,8 +23,8 @@ function DuoScreen({ state, onStateChange }) {
   const buildQuestion = (levelId) => {
     const allItems = CATEGORIES[levelId].flatMap(c => c.items.map(it=>({...it,catColor:c.color})));
     const item = allItems[Math.floor(Math.random()*allItems.length)];
-    const others = allItems.filter(i=>i.en!==item.en).sort(()=>Math.random()-.5).slice(0,3);
-    return { item, opts:[...others,item].sort(()=>Math.random()-.5) };
+    const others = shuffleItems(allItems.filter(i=>i.en!==item.en)).slice(0,3);
+    return { item, opts:shuffleItems([...others,item]) };
   };
 
   const startGame = () => {
