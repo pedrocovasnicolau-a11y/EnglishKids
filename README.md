@@ -1,11 +1,11 @@
-# 🌍 English Kids & 🧸 PequeWorld
+# 🌍 English Kids & 🧸 Peque Aprende
 
 Dos apps educativas en una sola PWA, con perfiles de niño compartidos.
 
 | App | Idioma | Edad | Qué hace |
 |-----|--------|------|----------|
-| 🌍 **English Kids** | inglés | 3–10 | 700 palabras, frases y diálogos en 4 niveles |
-| 🧸 **PequeWorld** | español | 3–5 | Vocabulario por categorías + **Aprendo a leer** |
+| 🌍 **English Kids** | inglés | 3–10 | 700 tarjetas y 688 términos distintos en 4 niveles |
+| 🧸 **Peque Aprende** | español | 3–5 | Conceptos iniciales en español + **Aprendo a leer** |
 
 El flujo es siempre: **¿quién juega? → ¿qué app? → sección**.
 
@@ -21,13 +21,18 @@ El flujo es siempre: **¿quién juega? → ¿qué app? → sección**.
 
 ## 🌍 English Kids — funcionalidades
 
-- **📚 Aprender** — 700 palabras y frases en 4 niveles, con pronunciación
+- **📚 Aprender** — 700 tarjetas de palabras y frases en 4 niveles, con pronunciación
   (velocidad de voz adaptada al nivel) y micrófono para repetir.
 - **✏️ Escribir** — escribe la palabra con pistas progresivas.
 - **🎯 Quiz** — 10 preguntas por ronda, por imagen o por audio.
 - **🆚 Modo Dúo** — 2 jugadores con niveles independientes.
-- **🎵 Canciones** · **🏆 35 logros** desbloqueables.
-- Repaso espaciado: las palabras falladas vuelven a salir.
+- **🎵 Canciones** · **🏆 38 logros** desbloqueables.
+- **🧭 Ruta diaria** — tres acciones breves y variadas (explorar, practicar y
+  terminar un quiz). Al completarla se abre un cofre de **25 XP**; la racha
+  cuenta solo días con una actividad de aprendizaje real.
+- Progreso de consolidación: una palabra se marca como dominada tras tres
+  aciertos en días distintos. La planificación adaptativa de repasos llegará
+  en una siguiente fase.
 
 ### Niveles
 
@@ -40,7 +45,7 @@ El flujo es siempre: **¿quién juega? → ¿qué app? → sección**.
 
 ---
 
-## 🧸 PequeWorld — para niños que aún no leen
+## 🧸 Peque Aprende — para niños que aún no leen
 
 Todo funciona con **imagen grande + voz**: ninguna interacción exige leer.
 
@@ -57,7 +62,7 @@ Todo funciona con **imagen grande + voz**: ninguna interacción exige leer.
 | 🧴 Rutinas | 7 | 16 |
 | 🙋 Mi cuerpo | 9 | 18 |
 | 👨‍👩‍👧 Familia | 8 | 14 |
-| ↔️ Opuestos | — | 12 (siempre en par: grande ↔ pequeño) |
+| ↔️ Opuestos | 5 | 12 (siempre en par: grande ↔ pequeño) |
 
 Cada sección tiene los mismos tres modos:
 **👀 Ver** (reconocer y oír) · **🎤 Practicar** (decirlo al micrófono, en orden
@@ -73,7 +78,8 @@ Seis pasos. Nada aparece si el niño todavía no tiene las letras para leerlo.
    **cómo se llama** y, si es continua, **cómo suena**.
 3. **Sílabas** — **una tarjeta grande por sílaba**, cada una aislada. Es el paso
    que automatiza la lectura: ver `po` y decir /po/ sin pensarlo.
-4. **Formo palabras** — 40 palabras montadas sílaba a sílaba, de izquierda a derecha.
+4. **Formo palabras** — 40 palabras montadas sílaba a sílaba, de izquierda a derecha;
+   inicialmente solo usa sílabas abiertas ya enseñadas.
 5. **Mis palabras** — solo las que el niño puede decodificar ahora, más su nombre.
 6. **Frases y cuentos** (Avanzado) — 10 frases con pregunta de comprensión.
 

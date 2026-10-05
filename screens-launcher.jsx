@@ -1,4 +1,4 @@
-// ─── SELECTOR DE APP (English Kids / PequeWorld) + App de PequeWorld ─
+// ─── SELECTOR DE APP (English Kids / Peque Aprende) + app infantil ─
 // Se muestra siempre después de elegir perfil, nunca se recuerda la
 // última app usada: el mismo perfil puede usar las dos.
 
@@ -42,8 +42,8 @@ function AppLauncher({ profile, onSelect, onSwitchProfile }) {
           }}>
             <span style={{ fontSize:'2.6rem' }}>🧸</span>
             <div>
-              <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.3rem' }}>PequeWorld</div>
-              <div style={{ fontSize:'0.78rem', opacity:0.9, fontWeight:700 }}>Números, colores y mucho más</div>
+              <div style={{ fontFamily:'Fredoka One,cursive', fontSize:'1.3rem' }}>Peque Aprende</div>
+              <div style={{ fontSize:'0.78rem', opacity:0.9, fontWeight:700 }}>Mis primeros descubrimientos</div>
             </div>
           </button>
         </div>
@@ -63,8 +63,8 @@ function PequeWorldApp({ profile, onExitApp, onSwitchProfile }) {
     savePequeState(profile.id, ns);
   };
 
-  // Reanuda la música (si estaba activada) al entrar en PequeWorld —
-  // se dispara dentro de un gesto real del usuario (tocar "PequeWorld"
+  // Reanuda la música (si estaba activada) al entrar en Peque Aprende —
+  // se dispara dentro de un gesto real del usuario (tocar "Peque Aprende"
   // en el selector), lo que cumple la política de autoplay del navegador.
   React.useEffect(() => {
     if (pequeState.musicOn) pequeStartMusic(pequeState.musicTrackId, pequeState.musicVolume);

@@ -211,7 +211,7 @@ function TopBar({ state, onSwitchProfile, onExitApp }) {
           <span style={{ fontFamily:'Fredoka One,cursive', color: pl.color, fontSize:'0.95rem' }}>{state.xp}</span>
         </div>
         {onExitApp && (
-          <button onClick={onExitApp} title="Cambiar app" style={{
+          <button onClick={onExitApp} title="Cambiar app" aria-label="Cambiar app" style={{
             background:'rgba(255,255,255,0.8)', border:'2px solid rgba(255,255,255,0.9)',
             borderRadius:12, padding:0, cursor:'pointer', width:38, height:38,
             display:'flex', alignItems:'center', justifyContent:'center',
@@ -219,7 +219,7 @@ function TopBar({ state, onSwitchProfile, onExitApp }) {
           }}>🔄</button>
         )}
         {onSwitchProfile ? (
-          <button onClick={onSwitchProfile} title="Cambiar perfil" style={{
+          <button onClick={onSwitchProfile} title="Cambiar perfil" aria-label="Cambiar perfil" style={{
             background:'rgba(255,255,255,0.8)', border:'2px solid rgba(255,255,255,0.9)',
             borderRadius:12, padding:0, cursor:'pointer', width:38, height:38,
             display:'flex', alignItems:'center', justifyContent:'center',

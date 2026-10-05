@@ -134,6 +134,14 @@ function LearnScreen({ state, onStateChange }) {
     setSelectedItem(item); setFeedback(null);
     setIsListening(false); setIsCountdown(false);
     speak(item);
+    // Explorar debe funcionar también en dispositivos sin micrófono: elegir
+    // una tarjeta presenta imagen, palabra y audio sin convertir la ruta en
+    // un examen oral obligatorio.
+    if (!getDailyRoute(state).activities.learn) {
+      const daily = recordDailyActivity(state, 'learn');
+      if (daily.justCompleted) launchStars(20);
+      onStateChange(daily.state);
+    }
   };
 
   const startRepeat = () => {
@@ -183,8 +191,9 @@ function LearnScreen({ state, onStateChange }) {
           learnedWords: { ...state.learnedWords, [selectedItem.en]: true },
           ...srs,
         };
-        ns.unlockedBadges = checkBadges(ns);
-        onStateChange(ns);
+        const daily = recordDailyActivity(ns, 'learn');
+        if (daily.justCompleted) launchStars(20);
+        onStateChange(daily.state);
       } else {
         setFeedback({ type:'bad', text:`🙊 ¡Casi! "${alts[0] || ''}" — ¡otra vez!` });
       }
@@ -388,8 +397,9 @@ function WriteScreen({ state, onStateChange }) {
         learnedWords: { ...state.learnedWords, [item.en]: true },
         ...srs,
       };
-      ns.unlockedBadges = checkBadges(ns);
-      onStateChange(ns);
+      const daily = recordDailyActivity(ns, 'write');
+      if (daily.justCompleted) launchStars(20);
+      onStateChange(daily.state);
       setTimeout(() => pickItem(), 1800);
     } else {
       setStreak(0);
@@ -548,10 +558,10 @@ function QuizScreen({ state, onStateChange }) {
     const allItems = CATEGORIES[levelId].flatMap(c => c.items.map(it => ({ ...it, catColor: c.color })));
     const nonPhrases = allItems.filter(it => !it.p);
     const pool = nonPhrases.length >= QUIZ_LEN ? nonPhrases : allItems;
-    const shuffled = [...pool].sort(() => Math.random() - .5).slice(0, QUIZ_LEN);
+    const shuffled = shuffleItems(pool).slice(0, QUIZ_LEN);
     const qs = shuffled.map(item => {
-      const others = pool.filter(i => i.en !== item.en).sort(() => Math.random() - .5).slice(0, 3);
-      return { item, opts: [...others, item].sort(() => Math.random() - .5) };
+      const others = shuffleItems(pool.filter(i => i.en !== item.en)).slice(0, 3);
+      return { item, opts: shuffleItems([...others, item]) };
     });
     setQuestions(qs); setQIdx(0); setScore(0); setChosen(null); setShowAns(false);
     setPhase('playing');
@@ -581,8 +591,9 @@ function QuizScreen({ state, onStateChange }) {
           perfectQuizzes: state.perfectQuizzes + (newScore === QUIZ_LEN ? 1 : 0),
           ...srs,
         };
-        ns.unlockedBadges = checkBadges(ns);
-        onStateChange(ns);
+        const daily = recordDailyActivity(ns, 'quiz');
+        if (daily.justCompleted) launchStars(20);
+        onStateChange(daily.state);
         setScore(newScore); setPhase('result');
       } else {
         if (correct) {

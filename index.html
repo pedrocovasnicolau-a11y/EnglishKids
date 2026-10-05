@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>English Kids</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>English Kids &amp; Peque Aprende</title>
 
 <!-- PWA -->
 <link rel="manifest" href="manifest.json">
@@ -11,7 +11,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="English Kids">
+<meta name="apple-mobile-web-app-title" content="English & Peque">
 <link rel="apple-touch-icon" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
@@ -47,6 +47,18 @@
   @keyframes sunPulse   { 0%,100%{box-shadow:0 0 40px #ffd93daa,0 0 80px #ffb34755} 50%{box-shadow:0 0 60px #ffd93ddd,0 0 120px #ffb34799} }
   @keyframes slideIn    { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:translateX(0)} }
   @keyframes floatFlower{ 0%,100%{transform:translateY(0) rotate(-5deg)} 50%{transform:translateY(-8px) rotate(5deg)} }
+  button:focus-visible, input:focus-visible, [role="button"]:focus-visible {
+    outline: 3px solid #1d4ed8 !important;
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 </style>
 </head>
 <body>
@@ -75,7 +87,7 @@
 const { useState, useEffect } = React;
 
 // ─── RAÍZ: perfil (quién juega) → selector de app → English Kids
-// o PequeWorld. El perfil se elige siempre primero y nunca se salta
+// o Peque Aprende. El perfil se elige siempre primero y nunca se salta
 // directo a la última app usada: el mismo niño puede usar las dos.
 function RootApp() {
   const [profilesData,    setProfilesDataRaw]  = useState(loadProfiles);
@@ -97,19 +109,6 @@ function RootApp() {
     setProfilesData(updated);
   };
 
-  // Streak tracking: run when a profile becomes active (para cualquiera de las dos apps)
-  useEffect(() => {
-    if (!activeProfile) return;
-    const today = new Date().toDateString();
-    if (activeProfile.lastDate !== today) {
-      const yesterday = new Date(Date.now() - 86400000).toDateString();
-      const newStreak = activeProfile.lastDate === yesterday ? (activeProfile.streak || 0) + 1 : 1;
-      const ns = { ...activeProfile, lastDate: today, streak: newStreak };
-      ns.unlockedBadges = checkBadges(ns);
-      updateActiveProfile(ns);
-    }
-  }, [activeProfileId]);
-
   const switchProfile = () => {
     setActiveProfileId(null);
     setSelectedApp(null);
@@ -120,7 +119,7 @@ function RootApp() {
     return (
       <ProfileSelector
         profilesData={profilesData}
-        title="English Kids & PequeWorld"
+        title="English Kids & Peque Aprende"
         icon="🎈"
         onSelect={(id) => { setActiveProfileId(id); setSelectedApp(null); }}
         onProfilesChange={setProfilesData}
@@ -135,7 +134,7 @@ function RootApp() {
     );
   }
 
-  // 3) PequeWorld
+  // 3) Peque Aprende
   if (selectedApp === 'pequeworld') {
     return (
       <PequeWorldApp
