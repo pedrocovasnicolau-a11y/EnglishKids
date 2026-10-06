@@ -39,10 +39,13 @@ La versión incorporada a staging contaba «Explora» y aumentaba la racha al
 seleccionar una sola tarjeta. También marcaba «Juega» al terminar el quiz con
 cero aciertos. La corrección exige reconocer una imagen tras escuchar la palabra
 o repetirla correctamente, escribir una palabra y terminar un quiz con algún
-acierto. La alternativa visual permite completar la ruta sin micrófono.
+acierto. La alternativa visual permite completar la ruta sin micrófono: el
+reto oculta las tarjetas y pregunta por una palabra distinta de la que se
+acababa de explorar.
 
 **Cierre:** confirmar en staging que seleccionar tarjetas o acabar un quiz con
-cero aciertos no avanza la ruta ni la racha, que las tres acciones válidas sí
+cero aciertos no avanza la ruta ni la racha, que el reto visual no deja copiar
+la tarjeta visible, que las tres acciones válidas sí
 la completan y que los 25 XP se conceden una sola vez por día y perfil.
 
 ## Evolutivo E-03 — Imágenes para comprensión
