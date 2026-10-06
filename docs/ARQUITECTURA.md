@@ -156,11 +156,12 @@ Estado de Peque Aprende (`pequeDefaultState()`):
 
 Cada perfil de English Kids guarda `dailyProgress` (fecha, tres actividades y
 recompensa) y `dailyRoutesCompleted`. La ruta presenta tres experiencias
-distintas: acertar una palabra oralmente, escribir una palabra y terminar un
-quiz. `recordDailyActivity()` es el único punto que registra estas acciones:
-actualiza la racha solo en la primera actividad significativa del día y concede
-25 XP una única vez al completar las tres. Abrir la aplicación nunca aumenta la
-racha.
+distintas: reconocer una palabra entre imágenes después de escucharla (sin
+necesidad de micrófono) o repetirla correctamente, escribir una palabra y
+terminar un quiz de diez preguntas con al menos un acierto. Seleccionar una
+tarjeta solo la muestra y la pronuncia; no completa «Explora» ni aumenta la
+racha. `recordDailyActivity()` registra el primer acierto del día, actualiza
+la racha una sola vez y concede 25 XP una única vez al completar las tres.
 
 **Desbloqueo de letras**: `pequeMarkSyllableHeard(state, letra, sílaba)`. Al
 registrar las 5 sílabas de una letra, desbloquea la siguiente
