@@ -1,5 +1,10 @@
 # Auditoría técnica, funcional y pedagógica
 
+> Cierre 2026-10-06 · E-02 validado en staging: una tarjeta y un quiz de 0/10
+> no avanzan la ruta ni la racha; el reto oculta las tarjetas; tres actividades
+> válidas completan 3/3 y conceden el cofre de 25 XP una sola vez. El detalle
+> de la comprobación está en `ROADMAP.md`. Estado: «Completado».
+
 > Actualización 2026-10-06 · E-02: en staging, seleccionar una tarjeta bastaba
 > para completar «Explora» y aumentar la racha; un quiz con cero aciertos
 > también completaba «Juega». El reto de reconocimiento debe ocultar la
