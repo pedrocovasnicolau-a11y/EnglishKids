@@ -1,7 +1,7 @@
 {
-  "name": "English Kids",
-  "short_name": "English Kids",
-  "description": "Aprende inglés jugando — para niños de 3 a 10 años",
+  "name": "English Kids & Peque Aprende",
+  "short_name": "English & Peque",
+  "description": "Inglés y primeros aprendizajes para niños de 3 a 10 años",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",

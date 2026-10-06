@@ -1,4 +1,4 @@
-# Diseño técnico — English Kids & PequeWorld
+# Diseño técnico — English Kids & Peque Aprende
 
 Documento de referencia para retomar el proyecto sin releerlo entero.
 Reglas cortas de trabajo: `CLAUDE.md` (raíz).
@@ -7,14 +7,16 @@ Reglas cortas de trabajo: `CLAUDE.md` (raíz).
 
 ## 1. Visión general
 
-PWA estática servida por GitHub Pages. **Sin build, sin bundler, sin npm.**
+PWA estática publicada oficialmente con Vercel desde GitHub. **Sin build, sin
+bundler, sin npm.** GitHub conserva el código y el historial; los entornos y el
+proceso de publicación se documentan en `OPERACION_Y_DESPLIEGUE.md`.
 React 18 UMD + Babel standalone se cargan por CDN y transpilan el JSX **en el
 navegador** en cada arranque.
 
 ```
 index.html ──► carga por orden:
    data.js                  (datos English Kids + perfiles + almacenamiento)
-   data-pequeworld.js       (datos PequeWorld + audio + progreso)
+   data-pequeworld.js       (datos Peque Aprende + audio + progreso)
    components.jsx           (EmojiImg, SkyBackground, nav, AppErrorBoundary)
    screens-home.jsx         English Kids: inicio
    screens-learn.jsx        English Kids: Aprender / Escribir / Quiz / Logros
@@ -24,7 +26,7 @@ index.html ──► carga por orden:
    screens-pequeworld-shared.jsx   Ver/Practicar/Concurso + micro + quiz
    screens-pequeworld.jsx          Categorías + inicio + ajustes + PequeShape
    screens-pequeworld-leer.jsx     Módulo "Aprendo a leer"
-   screens-launcher.jsx     Selector de app + enrutado de PequeWorld
+   screens-launcher.jsx     Selector de app + enrutado de Peque Aprende
    <script> final           RootApp + EnglishKidsApp + montaje
 ```
 
@@ -35,7 +37,7 @@ resto lo consume como global. **Si no lo exportas ahí, no existe.**
 
 Consecuencia importante: cada `<script>` comparte el *scope léxico global*, así
 que un `const` de nivel superior puede chocar con otro fichero. De ahí el
-prefijo `peque` / `PEQUE_` / `Peque` en todo lo de PequeWorld.
+prefijo `peque` / `PEQUE_` / `Peque` en todo lo de Peque Aprende.
 
 `components.jsx` es el único sitio donde se hace
 `const { useState, useEffect, useRef, useCallback } = React;`. En los demás
@@ -53,7 +55,7 @@ AppErrorBoundary                    components.jsx
     ├── EnglishKidsApp              index.html
     │   ├── TopBar / BottomNav      components.jsx
     │   └── Home|Learn|Write|Quiz|Duo|Songs|Badges
-    └── PequeWorldApp               screens-launcher.jsx
+    └── PequeWorldApp               screens-launcher.jsx (nombre técnico conservado)
         ├── PequeHome                       menú de secciones + nivel
         ├── PequeNumbersScreen              pantalla propia (dígito + conteo)
         ├── PequeColorsScreen               pantalla propia (manchas de color)
@@ -84,9 +86,11 @@ CATEGORIES  // { [levelId]: [ { id, label, icon, color, items:[...] } ] }
             // item = { en, es, e (código emoji), ex (frase ejemplo), tip?, numeral? }
 SONGS, BADGES, AVATARS
 ```
-666 ítems: starter 107 · basic 132 · intermediate 248 · advanced 179.
+700 tarjetas: starter 127 · basic 146 · intermediate 248 · advanced 179.
+Hay 688 términos ingleses distintos; la interfaz mide progreso sobre términos,
+no sobre tarjetas repetidas deliberadamente en contexto.
 
-### PequeWorld — `data-pequeworld.js`
+### Peque Aprende — `data-pequeworld.js`
 
 Cada categoría es un array plano de ítems con `level:'inicio'|'avanzado'`.
 `avanzado` **incluye** lo de `inicio` (currículo en espiral):
@@ -140,13 +144,26 @@ Dos almacenamientos independientes, ambos indexados por `profile.id`:
 | `pequeworld_progress_v2` | `{ [profileId]: estadoPequeWorld }` |
 | `app_errors` | últimos 10 errores capturados por el error boundary |
 
-Estado de PequeWorld (`pequeDefaultState()`):
+Estado de Peque Aprende (`pequeDefaultState()`):
 ```js
 { level, musicOn, musicVolume, musicTrackId, popupSeconds,
   unlockedConsonants: ['m'],   // progreso de lectura
   syllablesHeard: { m:['ma',...] },  // exposición individual por sílaba
   syllablesRead: [], visitedSections: [], wordsBuilt: [], stickers: [], quizStars: {} }
 ```
+
+### Ruta diaria de English Kids
+
+Cada perfil de English Kids guarda `dailyProgress` (fecha, tres actividades y
+recompensa) y `dailyRoutesCompleted`. La ruta presenta tres experiencias
+distintas: reconocer una palabra entre imágenes después de escucharla (sin
+necesidad de micrófono) o repetirla correctamente, escribir una palabra y
+terminar un quiz de diez preguntas con al menos un acierto. Seleccionar una
+tarjeta solo la muestra y la pronuncia; no completa «Explora» ni aumenta la
+racha. El reto visual elige una palabra y una imagen distintas de la tarjeta seleccionada y
+oculta la cuadrícula y el texto mientras se responde. `recordDailyActivity()`
+registra el primer acierto del día, actualiza
+la racha una sola vez y concede 25 XP una única vez al completar las tres.
 
 **Desbloqueo de letras**: `pequeMarkSyllableHeard(state, letra, sílaba)`. Al
 registrar las 5 sílabas de una letra, desbloquea la siguiente
@@ -156,7 +173,7 @@ registrar las 5 sílabas de una letra, desbloquea la siguiente
 
 ## 4. Los tres modos (`screens-pequeworld-shared.jsx`)
 
-Toda sección de PequeWorld ofrece los mismos tres modos, para que el niño no
+Toda sección de Peque Aprende ofrece los mismos tres modos, para que el niño no
 tenga que aprender una interfaz nueva en cada categoría:
 
 | Modo | Componente | Qué entrena |
@@ -207,7 +224,7 @@ pequePlayItemCue(item)      dice el NOMBRE y luego el sonido real / onomatopeya
 
 - `CACHE = 'english-kids-vN'` — **hay que subir N en cada cambio de fichero
   cacheado**, o los móviles siguen con la versión vieja.
-- `PRECACHE` = app shell + CDN. `PRECACHE_ASSETS` = fotos y audio de PequeWorld.
+- `PRECACHE` = app shell + CDN. `PRECACHE_ASSETS` = fotos y audio de Peque Aprende.
 - Estrategias: *network-first* para el documento (evita quedarse pillado en una
   versión antigua) y para Twemoji/fonts; *cache-first* para el resto.
 - `index.html` registra el SW con `updateViaCache:'none'` y llama a
@@ -241,7 +258,7 @@ Dos cosas imprescindibles en el script de prueba:
    asignar `window.speechSynthesis = {...}` no funciona (es un getter de solo
    lectura) y provoca errores falsos.
 
-Recorrer: perfil → PequeWorld → cada sección × cada modo → módulo Leo × cada
+Recorrer: perfil → Peque Aprende → cada sección × cada modo → módulo Leo × cada
 fase, escuchando `pageerror` y `console.error` (ignorando 404 de Twemoji).
 
 ---

@@ -1,8 +1,15 @@
-# CLAUDE.md — English Kids & PequeWorld
+# CLAUDE.md — English Kids & Peque Aprende
 
 Contexto para trabajar en este repo sin tener que re-analizarlo desde cero.
 Diseño técnico detallado: **`docs/ARQUITECTURA.md`**.
 Auditoría y pendientes: **`docs/AUDITORIA.md`**.
+Operación y despliegue: **`docs/OPERACION_Y_DESPLIEGUE.md`**.
+Evolutivos acordados: **`docs/ROADMAP.md`**.
+Decisiones vigentes: **`docs/DECISIONES.md`**.
+
+Este archivo es una guía técnica breve para modificar código. La información de
+producto, operación y planificación pertenece a los documentos anteriores; no
+la dupliques aquí.
 
 ## Qué es
 
@@ -10,10 +17,10 @@ Dos apps educativas en una sola PWA, con perfiles de niño compartidos:
 
 | App | Idioma | Edad | Contenido |
 |-----|--------|------|-----------|
-| **English Kids** | inglés | 3–10 | 666 palabras/frases en 4 niveles |
-| **PequeWorld** | español | 3–5 | Vocabulario por categorías + módulo "Aprendo a leer" |
+| **English Kids** | inglés | 3–10 | 700 tarjetas / 688 términos distintos en 4 niveles |
+| **Peque Aprende** | español | 3–5 | Conceptos iniciales + módulo "Aprendo a leer" |
 
-**PequeWorld es para niños que aún no leen.** Ninguna interacción puede
+**Peque Aprende es para niños que aún no leen.** Ninguna interacción puede
 depender de leer texto: siempre hay imagen grande + voz. El texto que
 aparece es para el niño que empieza a leer o para el adulto que acompaña.
 
@@ -28,7 +35,7 @@ aparece es para el niño que empieza a leer o para el adulto que acompaña.
    superior es *global*. Nunca redeclares `const { useState } = React` fuera de
    `components.jsx` (choca). En los ficheros `screens-pequeworld*` usa
    `React.useState` / `React.useEffect` directamente.
-4. **Nombres con prefijo**. Todo lo de PequeWorld va con `peque` / `PEQUE_` /
+4. **Nombres con prefijo**. Todo lo de Peque Aprende va con `peque` / `PEQUE_` /
    `Peque`. Un `const navBtn` suelto colisiona entre ficheros.
 5. **Orden de carga** fijado en `index.html`: `data.js` → `data-pequeworld.js`
    → `components.jsx` → pantallas → `screens-launcher.jsx`.
@@ -55,7 +62,7 @@ agente: hay que servir React/Babel desde `node_modules` en una copia de
 
 ## Convenciones de contenido
 
-- **Niveles de PequeWorld**: `inicio` (3–4) y `avanzado` (4–5). `avanzado` es un
+- **Niveles de Peque Aprende**: `inicio` (3–4) y `avanzado` (4–5). `avanzado` es un
   **superconjunto** de `inicio` (currículo en espiral): se filtra con
   `pequeByLevel(items, level)` y cada ítem lleva `level:'inicio'|'avanzado'`.
   **Toda categoría nueva debe tener contenido en los dos niveles.**

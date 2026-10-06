@@ -1,4 +1,4 @@
-# Música de fondo de PequeWorld
+# Música de fondo de Peque Aprende
 
 ## Recibidas y activas en Ajustes
 ✅ fondo1.mp3, fondo2.mp3, fondo3.mp3, fondo4.mp3, fondo6.mp3

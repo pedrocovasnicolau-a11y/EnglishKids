@@ -1,4 +1,4 @@
-# Fotos reales de PequeWorld
+# Fotos reales de Peque Aprende
 
 Coloca aquí las fotos con estos nombres exactos (formato JPG o PNG,
 sujeto centrado, fondo simple, sin texto ni marcas de agua).

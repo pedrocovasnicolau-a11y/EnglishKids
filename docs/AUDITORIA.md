@@ -1,5 +1,24 @@
 # Auditoría técnica, funcional y pedagógica
 
+> Cierre 2026-10-06 · E-02 validado en staging: una tarjeta y un quiz de 0/10
+> no avanzan la ruta ni la racha; el reto oculta las tarjetas; tres actividades
+> válidas completan 3/3 y conceden el cofre de 25 XP una sola vez. El detalle
+> de la comprobación está en `ROADMAP.md`. Estado: «Completado».
+
+> Actualización 2026-10-06 · E-02: en staging, seleccionar una tarjeta bastaba
+> para completar «Explora» y aumentar la racha; un quiz con cero aciertos
+> también completaba «Juega». El reto de reconocimiento debe ocultar la
+> tarjeta para impedir acertar copiando la imagen. La corrección y su cierre están
+> en `ROADMAP.md`. E-02 vuelve a «En corrección» hasta validarlo en staging.
+
+> Actualización 2026-09-30: el producto infantil se llama ahora **Peque Aprende**.
+> Esta auditoría conserva el nombre anterior cuando describe el estado histórico.
+> Se corrigieron después el vocabulario no decodificable señalado en §2.7, los
+> duplicados accidentales de English Kids y la disponibilidad de Opuestos en
+> Iniciación.
+> También se incorporó una ruta diaria de tres experiencias variadas en English
+> Kids; la racha se basa desde entonces en actividad de aprendizaje real.
+
 Fecha: 2026-09-20 · Alcance: todo el repo, con foco en **PequeWorld** y en si
 su módulo de lectura sirve de verdad para que un niño de 3–4 años aprenda a leer.
 

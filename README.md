@@ -1,33 +1,67 @@
-# 🌍 English Kids & 🧸 PequeWorld
+# 🌍 English Kids & 🧸 Peque Aprende
 
 Dos apps educativas en una sola PWA, con perfiles de niño compartidos.
 
 | App | Idioma | Edad | Qué hace |
 |-----|--------|------|----------|
-| 🌍 **English Kids** | inglés | 3–10 | 700 palabras, frases y diálogos en 4 niveles |
-| 🧸 **PequeWorld** | español | 3–5 | Vocabulario por categorías + **Aprendo a leer** |
+| 🌍 **English Kids** | inglés | 3–10 | 700 tarjetas y 688 términos distintos en 4 niveles |
+| 🧸 **Peque Aprende** | español | 3–5 | Conceptos iniciales en español + **Aprendo a leer** |
 
 El flujo es siempre: **¿quién juega? → ¿qué app? → sección**.
 
 ## 📚 Documentación
 
-- **`CLAUDE.md`** — reglas de trabajo en el repo (léelo antes de tocar código).
-- **`docs/ARQUITECTURA.md`** — diseño técnico: ficheros, modelo de datos,
-  audio, PWA y cómo verificar cambios.
-- **`docs/AUDITORIA.md`** — auditoría técnica, funcional y pedagógica, con lo
-  corregido y lo pendiente por prioridad.
+La documentación vive en el repositorio para que el producto no dependa de
+resúmenes de conversación. Cada documento tiene una responsabilidad concreta:
+
+```text
+README.md
+  Presentación del producto, enlaces públicos y mapa de documentación.
+
+CLAUDE.md
+  Guía técnica breve para quien modifica el código.
+
+docs/
+  ARQUITECTURA.md
+    Diseño técnico, datos, audio, PWA y verificación.
+  OPERACION_Y_DESPLIEGUE.md
+    Entornos Vercel, flujo de ramas, validación, publicación, rollback y caché.
+  ROADMAP.md
+    Evolutivos E-01 a E-10, estado, alcance, prioridad y orden de ejecución.
+  DECISIONES.md
+    Decisiones de producto y tecnología que no deben reabrirse en cada cambio.
+  AUDITORIA.md
+    Hallazgos técnicos, funcionales y pedagógicos, con prioridades.
+```
+
+Empieza por **`README.md`** para orientarte; antes de modificar código, lee
+**`CLAUDE.md`**. Para publicar o preparar una versión, sigue
+**`docs/OPERACION_Y_DESPLIEGUE.md`**.
+
+## 🌐 Entornos publicados
+
+| Entorno | Rama | URL | Uso |
+|---|---|---|---|
+| Producción | `main` | [learningkids-gold.vercel.app](https://learningkids-gold.vercel.app) | Versión disponible para uso real. |
+| Staging | `staging` | [learningkids-git-staging-pedro-36d3.vercel.app](https://learningkids-git-staging-pedro-36d3.vercel.app) | Validación funcional y UX antes de producción. |
 
 ---
 
 ## 🌍 English Kids — funcionalidades
 
-- **📚 Aprender** — 700 palabras y frases en 4 niveles, con pronunciación
+- **📚 Aprender** — 700 tarjetas de palabras y frases en 4 niveles, con pronunciación
   (velocidad de voz adaptada al nivel) y micrófono para repetir.
 - **✏️ Escribir** — escribe la palabra con pistas progresivas.
 - **🎯 Quiz** — 10 preguntas por ronda, por imagen o por audio.
 - **🆚 Modo Dúo** — 2 jugadores con niveles independientes.
-- **🎵 Canciones** · **🏆 35 logros** desbloqueables.
-- Repaso espaciado: las palabras falladas vuelven a salir.
+- **🎵 Canciones** · **🏆 38 logros** desbloqueables.
+- **🧭 Ruta diaria** — superar un reto de escucha e imagen o repetir bien una palabra,
+  escribir una palabra y terminar un quiz con algún acierto. Al completar las
+  tres acciones se abre un cofre de **25 XP**; la racha cuenta solo días con
+  una actividad de aprendizaje comprobada.
+- Progreso de consolidación: una palabra se marca como dominada tras tres
+  aciertos en días distintos. La planificación adaptativa de repasos llegará
+  en una siguiente fase.
 
 ### Niveles
 
@@ -40,7 +74,7 @@ El flujo es siempre: **¿quién juega? → ¿qué app? → sección**.
 
 ---
 
-## 🧸 PequeWorld — para niños que aún no leen
+## 🧸 Peque Aprende — para niños que aún no leen
 
 Todo funciona con **imagen grande + voz**: ninguna interacción exige leer.
 
@@ -57,7 +91,7 @@ Todo funciona con **imagen grande + voz**: ninguna interacción exige leer.
 | 🧴 Rutinas | 7 | 16 |
 | 🙋 Mi cuerpo | 9 | 18 |
 | 👨‍👩‍👧 Familia | 8 | 14 |
-| ↔️ Opuestos | — | 12 (siempre en par: grande ↔ pequeño) |
+| ↔️ Opuestos | 5 | 12 (siempre en par: grande ↔ pequeño) |
 
 Cada sección tiene los mismos tres modos:
 **👀 Ver** (reconocer y oír) · **🎤 Practicar** (decirlo al micrófono, en orden
@@ -73,7 +107,8 @@ Seis pasos. Nada aparece si el niño todavía no tiene las letras para leerlo.
    **cómo se llama** y, si es continua, **cómo suena**.
 3. **Sílabas** — **una tarjeta grande por sílaba**, cada una aislada. Es el paso
    que automatiza la lectura: ver `po` y decir /po/ sin pensarlo.
-4. **Formo palabras** — 40 palabras montadas sílaba a sílaba, de izquierda a derecha.
+4. **Formo palabras** — 40 palabras montadas sílaba a sílaba, de izquierda a derecha;
+   inicialmente solo usa sílabas abiertas ya enseñadas.
 5. **Mis palabras** — solo las que el niño puede decodificar ahora, más su nombre.
 6. **Frases y cuentos** (Avanzado) — 10 frases con pregunta de comprensión.
 
@@ -84,14 +119,15 @@ no por pulsar un botón.
 
 ## 📱 Instalar en Android (PWA)
 
-1. Abre **Chrome** y ve a la URL de GitHub Pages del proyecto.
+1. Abre **Chrome** y ve a la URL de producción de Vercel.
 2. Menú (⋮) → **«Añadir a pantalla de inicio»**.
 
 ## 🌐 Publicar
 
-**Settings → Pages → Source: main branch / root.**
-Al cambiar cualquier fichero, sube `CACHE` en `sw.js` o los móviles seguirán con
-la versión antigua.
+La publicación oficial se realiza desde Vercel: `main` actualiza producción y
+`staging` sirve como entorno de prueba. El proceso completo —incluido cómo
+validar, volver atrás y renovar la caché de la PWA— está en
+**`docs/OPERACION_Y_DESPLIEGUE.md`**.
 
 ## 🛠️ Tecnologías
 

@@ -1,4 +1,4 @@
-// ─── PEQUEWORLD — pantallas de contenido (números, colores, formas,
+// ─── PEQUE APRENDE — pantallas de contenido (números, colores, formas,
 // animales, frutas, emociones, rutinas) + inicio + ajustes ────────
 // Convención: usar React.useState/useEffect directamente (nunca
 // redeclarar `const { useState } = React` aquí — ya lo hace
@@ -288,7 +288,7 @@ function PequeNumbersScreen({ level, onBack, onVisit }) {
   );
 }
 
-// ─── INICIO DE PEQUEWORLD (menú grande de iconos + nivel) ─────────
+// ─── INICIO DE PEQUE APRENDE (menú grande de iconos + nivel) ──────
 // `advancedOnly` marca las secciones que solo aparecen en Avanzado:
 // son las que introducen contenido nuevo de verdad (no una versión
 // ampliada de una sección que ya existe en Iniciación).
@@ -303,7 +303,7 @@ const PEQUE_SECTIONS = [
   { id:'rutinas',   label:'Rutinas',   icon:'🧴', color:'#8b5cf6' },
   { id:'cuerpo',    label:'Mi cuerpo', icon:'🙋', color:'#0ea5e9' },
   { id:'familia',   label:'Familia',   icon:'👨‍👩‍👧', color:'#f43f5e' },
-  { id:'opuestos',  label:'Opuestos',  icon:'↔️', color:'#a855f7', advancedOnly:true },
+  { id:'opuestos',  label:'Opuestos',  icon:'↔️', color:'#a855f7' },
 ];
 
 // Cuántos elementos ofrece cada sección en el nivel dado — se muestra en
@@ -340,10 +340,10 @@ function PequeHome({ profile, level, onChangeLevel, onOpenSection, onChangeApp, 
         <div style={{ flex:1, fontFamily:'Fredoka One,cursive', fontSize:'1.4rem', color:'#333' }}>
           ¡Hola, {profile.name}!
         </div>
-        <button onClick={onSwitchProfile} title="Cambiar perfil" style={{
+        <button onClick={onSwitchProfile} title="Cambiar perfil" aria-label="Cambiar perfil" style={{
           width:44, height:44, borderRadius:14, border:'none', background:'rgba(255,255,255,0.85)',
           fontSize:'1.2rem', cursor:'pointer', boxShadow:'0 2px 8px rgba(0,0,0,0.08)' }}>👤</button>
-        <button onClick={onChangeApp} title="Cambiar app" style={{
+        <button onClick={onChangeApp} title="Cambiar app" aria-label="Cambiar app" style={{
           width:44, height:44, borderRadius:14, border:'none', background:'rgba(255,255,255,0.85)',
           fontSize:'1.2rem', cursor:'pointer', boxShadow:'0 2px 8px rgba(0,0,0,0.08)' }}>🔄</button>
       </div>

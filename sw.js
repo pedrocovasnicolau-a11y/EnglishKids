@@ -1,5 +1,5 @@
-// ─── English Kids Service Worker v3 ─────────────────────────────
-const CACHE = 'english-kids-v9';
+// ─── English Kids & Peque Aprende Service Worker v4 ──────────────
+const CACHE = 'english-kids-v12';
 
 const PRECACHE = [
   './',
@@ -25,7 +25,7 @@ const PRECACHE = [
   'https://unpkg.com/@babel/standalone@7.29.0/babel.min.js',
 ];
 
-// Contenido propio de PequeWorld. Sin precachearlo, la primera vez que
+// Contenido propio de Peque Aprende. Sin precachearlo, la primera vez que
 // se abre la app sin red no hay fotos ni sonidos de animales: justo el
 // contenido por el que un niño de 3 años entra en la sección.
 const PRECACHE_ASSETS = [
