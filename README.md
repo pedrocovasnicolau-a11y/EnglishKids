@@ -27,7 +27,7 @@ docs/
   OPERACION_Y_DESPLIEGUE.md
     Entornos Vercel, flujo de ramas, validación, publicación, rollback y caché.
   ROADMAP.md
-    Evolutivos realizados, siguientes tandas y alcance excluido.
+    Inventario completo de evolutivos acordados, prioridad, tandas y alcance excluido.
   DECISIONES.md
     Decisiones de producto y tecnología que no deben reabrirse en cada cambio.
   AUDITORIA.md
