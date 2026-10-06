@@ -40,8 +40,8 @@ seleccionar una sola tarjeta. También marcaba «Juega» al terminar el quiz con
 cero aciertos. La corrección exige reconocer una imagen tras escuchar la palabra
 o repetirla correctamente, escribir una palabra y terminar un quiz con algún
 acierto. La alternativa visual permite completar la ruta sin micrófono: el
-reto oculta las tarjetas y pregunta por una palabra distinta de la que se
-acababa de explorar.
+reto oculta las tarjetas y pregunta por una palabra y una imagen distintas de
+las que se acababan de explorar.
 
 **Cierre:** confirmar en staging que seleccionar tarjetas o acabar un quiz con
 cero aciertos no avanza la ruta ni la racha, que el reto visual no deja copiar
