@@ -21,7 +21,7 @@ si cambia el funcionamiento.
 | Ref. | Evolutivo | Estado | Alcance resumido |
 |---|---|---|---|
 | E-01 | Fundamentos pedagógicos y de contenido | Completado | Nombre Peque Aprende, vocabulario inglés depurado, lectura inicial, opuestos, accesibilidad y aleatoriedad. |
-| E-02 | Ruta diaria, motivación y progreso | En corrección | Evitar que una sola tarjeta o un quiz sin aciertos hagan progresar la ruta; revalidar en staging. |
+| E-02 | Ruta diaria, motivación y progreso | Completado | Reto de escucha, escritura y quiz con acierto; recompensa única y racha validadas en staging. |
 | E-03 | Imágenes para comprensión | Pendiente | Imágenes educativas claras en lugar de emojis, logos o iconos ambiguos. |
 | E-04 | Currículo y vocabulario | Pendiente | Auditoría curricular de palabras, categorías, edades, niveles y lagunas. |
 | E-05 | Consolidación y repaso adaptativo | Pendiente | Distinguir dominio real y reintroducir contenido fallado. |
@@ -33,7 +33,7 @@ si cambia el funcionamiento.
 
 ## Evolutivo E-02 — Ruta diaria, motivación y progreso
 
-**Estado: en corrección · prioridad alta antes de nuevos evolutivos.**
+**Estado: completado · validado en staging el 2026-10-06.**
 
 La versión incorporada a staging contaba «Explora» y aumentaba la racha al
 seleccionar una sola tarjeta. También marcaba «Juega» al terminar el quiz con
@@ -43,10 +43,13 @@ acierto. La alternativa visual permite completar la ruta sin micrófono: el
 reto oculta las tarjetas y pregunta por una palabra y una imagen distintas de
 las que se acababan de explorar.
 
-**Cierre:** confirmar en staging que seleccionar tarjetas o acabar un quiz con
-cero aciertos no avanza la ruta ni la racha, que el reto visual no deja copiar
-la tarjeta visible, que las tres acciones válidas sí
-la completan y que los 25 XP se conceden una sola vez por día y perfil.
+**Validación de cierre en staging:** seleccionar una tarjeta y terminar un quiz
+con 0/10 dejaron la ruta en 0/3, la racha en cero y el XP en cero. El reto
+visual ocultó las tarjetas. Tras acertar el reconocimiento, escribir una
+palabra y terminar un quiz con 1/10, la ruta llegó a 3/3 y la racha a un día.
+El saldo pasó de 8 a 38 XP al terminar el quiz: 5 XP por el acierto y 25 XP
+por el cofre. Otra respuesta escrita correcta añadió solo sus 8 XP, sin
+repetir el cofre. La recompensa se concede una vez por día y perfil.
 
 ## Evolutivo E-03 — Imágenes para comprensión
 
