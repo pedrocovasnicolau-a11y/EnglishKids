@@ -7,7 +7,9 @@ Reglas cortas de trabajo: `CLAUDE.md` (raíz).
 
 ## 1. Visión general
 
-PWA estática servida por GitHub Pages. **Sin build, sin bundler, sin npm.**
+PWA estática publicada oficialmente con Vercel desde GitHub. **Sin build, sin
+bundler, sin npm.** GitHub conserva el código y el historial; los entornos y el
+proceso de publicación se documentan en `OPERACION_Y_DESPLIEGUE.md`.
 React 18 UMD + Babel standalone se cargan por CDN y transpilan el JSX **en el
 navegador** en cada arranque.
 

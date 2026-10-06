@@ -3,6 +3,13 @@
 Contexto para trabajar en este repo sin tener que re-analizarlo desde cero.
 Diseño técnico detallado: **`docs/ARQUITECTURA.md`**.
 Auditoría y pendientes: **`docs/AUDITORIA.md`**.
+Operación y despliegue: **`docs/OPERACION_Y_DESPLIEGUE.md`**.
+Evolutivos acordados: **`docs/ROADMAP.md`**.
+Decisiones vigentes: **`docs/DECISIONES.md`**.
+
+Este archivo es una guía técnica breve para modificar código. La información de
+producto, operación y planificación pertenece a los documentos anteriores; no
+la dupliques aquí.
 
 ## Qué es
 

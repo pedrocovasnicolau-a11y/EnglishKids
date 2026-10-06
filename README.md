@@ -11,11 +11,39 @@ El flujo es siempre: **¿quién juega? → ¿qué app? → sección**.
 
 ## 📚 Documentación
 
-- **`CLAUDE.md`** — reglas de trabajo en el repo (léelo antes de tocar código).
-- **`docs/ARQUITECTURA.md`** — diseño técnico: ficheros, modelo de datos,
-  audio, PWA y cómo verificar cambios.
-- **`docs/AUDITORIA.md`** — auditoría técnica, funcional y pedagógica, con lo
-  corregido y lo pendiente por prioridad.
+La documentación vive en el repositorio para que el producto no dependa de
+resúmenes de conversación. Cada documento tiene una responsabilidad concreta:
+
+```text
+README.md
+  Presentación del producto, enlaces públicos y mapa de documentación.
+
+CLAUDE.md
+  Guía técnica breve para quien modifica el código.
+
+docs/
+  ARQUITECTURA.md
+    Diseño técnico, datos, audio, PWA y verificación.
+  OPERACION_Y_DESPLIEGUE.md
+    Entornos Vercel, flujo de ramas, validación, publicación, rollback y caché.
+  ROADMAP.md
+    Evolutivos realizados, siguientes tandas y alcance excluido.
+  DECISIONES.md
+    Decisiones de producto y tecnología que no deben reabrirse en cada cambio.
+  AUDITORIA.md
+    Hallazgos técnicos, funcionales y pedagógicos, con prioridades.
+```
+
+Empieza por **`README.md`** para orientarte; antes de modificar código, lee
+**`CLAUDE.md`**. Para publicar o preparar una versión, sigue
+**`docs/OPERACION_Y_DESPLIEGUE.md`**.
+
+## 🌐 Entornos publicados
+
+| Entorno | Rama | URL | Uso |
+|---|---|---|---|
+| Producción | `main` | [learningkids-gold.vercel.app](https://learningkids-gold.vercel.app) | Versión disponible para uso real. |
+| Staging | `staging` | [learningkids-git-staging-pedro-36d3.vercel.app](https://learningkids-git-staging-pedro-36d3.vercel.app) | Validación funcional y UX antes de producción. |
 
 ---
 
@@ -90,14 +118,15 @@ no por pulsar un botón.
 
 ## 📱 Instalar en Android (PWA)
 
-1. Abre **Chrome** y ve a la URL de GitHub Pages del proyecto.
+1. Abre **Chrome** y ve a la URL de producción de Vercel.
 2. Menú (⋮) → **«Añadir a pantalla de inicio»**.
 
 ## 🌐 Publicar
 
-**Settings → Pages → Source: main branch / root.**
-Al cambiar cualquier fichero, sube `CACHE` en `sw.js` o los móviles seguirán con
-la versión antigua.
+La publicación oficial se realiza desde Vercel: `main` actualiza producción y
+`staging` sirve como entorno de prueba. El proceso completo —incluido cómo
+validar, volver atrás y renovar la caché de la PWA— está en
+**`docs/OPERACION_Y_DESPLIEGUE.md`**.
 
 ## 🛠️ Tecnologías
 
