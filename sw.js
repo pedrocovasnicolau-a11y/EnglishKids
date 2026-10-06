@@ -1,5 +1,5 @@
 // ─── English Kids & Peque Aprende Service Worker v4 ──────────────
-const CACHE = 'english-kids-v11';
+const CACHE = 'english-kids-v12';
 
 const PRECACHE = [
   './',
