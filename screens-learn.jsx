@@ -141,11 +141,11 @@ function LearnScreen({ state, onStateChange }) {
   const startRecognition = () => {
     // El objetivo no es la tarjeta que acaba de verse; la cuadrícula se oculta
     // durante el reto para que no se resuelva copiando la imagen o el texto.
-    const target = shuffleItems(cat.items).find(item => item.en !== selectedItem?.en);
-    if (!target) return;
     // Las frases pueden compartir emoji. Cada opción debe tener una imagen
     // distinta; para números, el dígito dibujado identifica la opción.
     const visualKey = candidate => candidate.numeral ? `n:${candidate.numeral}` : `e:${candidate.e}`;
+    const target = shuffleItems(cat.items).find(item => item.en !== selectedItem?.en && visualKey(item) !== visualKey(selectedItem));
+    if (!target) return;
     const seenVisuals = new Set([visualKey(target)]);
     const seenWords = new Set([target.en]);
     const alternatives = shuffleItems(cat.items).filter(candidate => {
