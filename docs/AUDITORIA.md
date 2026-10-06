@@ -1,5 +1,11 @@
 # Auditoría técnica, funcional y pedagógica
 
+> Actualización 2026-10-06 · E-02: en staging, seleccionar una tarjeta bastaba
+> para completar «Explora» y aumentar la racha; un quiz con cero aciertos
+> también completaba «Juega». El reto de reconocimiento debe ocultar la
+> tarjeta para impedir acertar copiando la imagen. La corrección y su cierre están
+> en `ROADMAP.md`. E-02 vuelve a «En corrección» hasta validarlo en staging.
+
 > Actualización 2026-09-30: el producto infantil se llama ahora **Peque Aprende**.
 > Esta auditoría conserva el nombre anterior cuando describe el estado histórico.
 > Se corrigieron después el vocabulario no decodificable señalado en §2.7, los

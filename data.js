@@ -1019,12 +1019,12 @@ function updateWordSRS(state, wordKey) {
 // ══════════════════════════════════════════════════════════════
 // RUTA DIARIA
 // ══════════════════════════════════════════════════════════════
-// La racha se registra al realizar una acción de aprendizaje, no al abrir
-// la app. Así la métrica representa práctica real y no una pulsación.
+// La racha se registra tras una respuesta acertada o práctica completada,
+// no al abrir la app ni al seleccionar una tarjeta.
 const DAILY_ROUTE_STEPS = [
-  { id:'learn', icon:'🔎', label:'Explora',   desc:'Descubre una palabra con imagen y sonido' },
+  { id:'learn', icon:'🔎', label:'Explora',   desc:'Escucha y reconoce una palabra, o repítela correctamente' },
   { id:'write', icon:'✏️', label:'Practica',  desc:'Escribe una palabra correctamente' },
-  { id:'quiz',  icon:'🎯', label:'Juega',     desc:'Termina un quiz de 10 preguntas' },
+  { id:'quiz',  icon:'🎯', label:'Juega',     desc:'Termina un quiz de 10 preguntas con algún acierto' },
 ];
 
 function getLocalDateKey(date = new Date()) {

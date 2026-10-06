@@ -21,7 +21,7 @@ si cambia el funcionamiento.
 | Ref. | Evolutivo | Estado | Alcance resumido |
 |---|---|---|---|
 | E-01 | Fundamentos pedagógicos y de contenido | Completado | Nombre Peque Aprende, vocabulario inglés depurado, lectura inicial, opuestos, accesibilidad y aleatoriedad. |
-| E-02 | Ruta diaria, motivación y progreso | Completado | Tres acciones, recompensa única, racha por aprendizaje real y progreso local por perfil. |
+| E-02 | Ruta diaria, motivación y progreso | En corrección | Evitar que una sola tarjeta o un quiz sin aciertos hagan progresar la ruta; revalidar en staging. |
 | E-03 | Imágenes para comprensión | Pendiente | Imágenes educativas claras en lugar de emojis, logos o iconos ambiguos. |
 | E-04 | Currículo y vocabulario | Pendiente | Auditoría curricular de palabras, categorías, edades, niveles y lagunas. |
 | E-05 | Consolidación y repaso adaptativo | Pendiente | Distinguir dominio real y reintroducir contenido fallado. |
@@ -30,6 +30,23 @@ si cambia el funcionamiento.
 | E-08 | Perfiles locales | Pendiente | Alta de perfiles, identidad visual y copia de seguridad local opcional. |
 | E-09 | Calidad técnica | Pendiente continuo | Validadores, pruebas de recorridos y comprobaciones automáticas proporcionadas. |
 | E-10 | Flujo de publicación y gobernanza | Pendiente continuo | Protección de `main`, PRs, staging y publicación controlada. |
+
+## Evolutivo E-02 — Ruta diaria, motivación y progreso
+
+**Estado: en corrección · prioridad alta antes de nuevos evolutivos.**
+
+La versión incorporada a staging contaba «Explora» y aumentaba la racha al
+seleccionar una sola tarjeta. También marcaba «Juega» al terminar el quiz con
+cero aciertos. La corrección exige reconocer una imagen tras escuchar la palabra
+o repetirla correctamente, escribir una palabra y terminar un quiz con algún
+acierto. La alternativa visual permite completar la ruta sin micrófono: el
+reto oculta las tarjetas y pregunta por una palabra y una imagen distintas de
+las que se acababan de explorar.
+
+**Cierre:** confirmar en staging que seleccionar tarjetas o acabar un quiz con
+cero aciertos no avanza la ruta ni la racha, que el reto visual no deja copiar
+la tarjeta visible, que las tres acciones válidas sí
+la completan y que los 25 XP se conceden una sola vez por día y perfil.
 
 ## Evolutivo E-03 — Imágenes para comprensión
 
