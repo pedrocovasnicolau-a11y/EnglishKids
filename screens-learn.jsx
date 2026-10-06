@@ -107,6 +107,7 @@ function LearnScreen({ state, onStateChange }) {
   const [catId, setCatId]           = React.useState(CATEGORIES.starter[0].id);
   const [selectedItem, setSelectedItem] = React.useState(null);
   const [recognitionOptions, setRecognitionOptions] = React.useState([]);
+  const [challengeTarget, setChallengeTarget] = React.useState(null);
   const [feedback, setFeedback]     = React.useState(null);
   const [isListening, setIsListening] = React.useState(false);
   const [isCountdown, setIsCountdown] = React.useState(false);
@@ -134,11 +135,19 @@ function LearnScreen({ state, onStateChange }) {
     if (selectedItem?.en === item.en) { speak(item); return; }
     setSelectedItem(item); setFeedback(null);
     setIsListening(false); setIsCountdown(false);
+    speak(item);
+  };
+
+  const startRecognition = () => {
+    // El objetivo no es la tarjeta que acaba de verse; la cuadrícula se oculta
+    // durante el reto para que no se resuelva copiando la imagen o el texto.
+    const target = shuffleItems(cat.items).find(item => item.en !== selectedItem?.en);
+    if (!target) return;
     // Las frases pueden compartir emoji. Cada opción debe tener una imagen
     // distinta; para números, el dígito dibujado identifica la opción.
     const visualKey = candidate => candidate.numeral ? `n:${candidate.numeral}` : `e:${candidate.e}`;
-    const seenVisuals = new Set([visualKey(item)]);
-    const seenWords = new Set([item.en]);
+    const seenVisuals = new Set([visualKey(target)]);
+    const seenWords = new Set([target.en]);
     const alternatives = shuffleItems(cat.items).filter(candidate => {
       const key = visualKey(candidate);
       if (seenVisuals.has(key) || seenWords.has(candidate.en)) return false;
@@ -146,17 +155,22 @@ function LearnScreen({ state, onStateChange }) {
       seenWords.add(candidate.en);
       return true;
     }).slice(0, 2);
-    setRecognitionOptions(shuffleItems([item, ...alternatives]));
-    speak(item);
+    if (alternatives.length < 2) return;
+    setFeedback(null);
+    setRecognitionOptions(shuffleItems([target, ...alternatives]));
+    setChallengeTarget(target);
+    speak(target);
   };
 
   const checkRecognition = (option) => {
-    if (!selectedItem) return;
-    if (option.en !== selectedItem.en) {
+    if (!challengeTarget) return;
+    if (option.en !== challengeTarget.en) {
       setFeedback({ type:'bad', text:'Escucha otra vez y prueba otra imagen.' });
-      speak(selectedItem);
+      speak(challengeTarget);
       return;
     }
+    setChallengeTarget(null);
+    setRecognitionOptions([]);
     setFeedback({ type:'good', text:'¡Has reconocido la palabra! 🌟' });
     const daily = recordDailyActivity(state, 'learn');
     if (daily.justCompleted) launchStars(20);
@@ -247,7 +261,7 @@ function LearnScreen({ state, onStateChange }) {
       <div style={{ padding:'10px 12px 0', flexShrink:0 }}>
         <div style={{ display:'flex', gap:6, background:'rgba(255,255,255,0.7)', borderRadius:14, padding:4 }}>
           {LEVELS.map(lv => (
-            <button key={lv.id} onClick={()=>{ setLevelId(lv.id); setCatId(CATEGORIES[lv.id][0].id); setSelectedItem(null); setRecognitionOptions([]); setFeedback(null); }} style={{
+            <button key={lv.id} onClick={()=>{ setLevelId(lv.id); setCatId(CATEGORIES[lv.id][0].id); setSelectedItem(null); setRecognitionOptions([]); setChallengeTarget(null); setFeedback(null); }} style={{
               flex:1, padding:'7px 2px', borderRadius:10, border:'none',
               background: lv.id===levelId ? lv.color : 'transparent',
               color: lv.id===levelId ? '#fff' : '#666',
@@ -269,7 +283,7 @@ function LearnScreen({ state, onStateChange }) {
       {/* Category tabs */}
       <div style={{ display:'flex', gap:7, padding:'4px 12px 8px', overflowX:'auto', flexShrink:0, scrollbarWidth:'none' }}>
         {cats.map(c => (
-          <button key={c.id} onClick={()=>{ setCatId(c.id); setSelectedItem(null); setRecognitionOptions([]); setFeedback(null); }} style={{
+          <button key={c.id} onClick={()=>{ setCatId(c.id); setSelectedItem(null); setRecognitionOptions([]); setChallengeTarget(null); setFeedback(null); }} style={{
             padding:'6px 14px', borderRadius:50, border:`2px solid ${c.id===catId ? c.color : 'rgba(0,0,0,0.08)'}`,
             background: c.id===catId ? c.color : 'rgba(255,255,255,0.8)',
             color: c.id===catId ? '#fff' : '#555',
@@ -279,8 +293,32 @@ function LearnScreen({ state, onStateChange }) {
         ))}
       </div>
 
+      {challengeTarget && (
+        <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center',
+          justifyContent:'center', gap:16, padding:20, textAlign:'center' }}>
+          <div style={{ fontSize:'1rem', fontWeight:900, color:'#2563eb' }}>
+            🔊 Escucha la palabra y toca su imagen
+          </div>
+          <div style={{ display:'flex', justifyContent:'center', gap:10, flexWrap:'wrap' }}>
+            {recognitionOptions.map(option => (
+              <button key={option.en} onClick={() => checkRecognition(option)}
+                aria-label={`Elegir imagen de ${option.es}`} style={{
+                  width:86, minHeight:80, border:'2px solid #bfdbfe', borderRadius:16,
+                  background:'#eff6ff', cursor:'pointer', display:'flex',
+                  alignItems:'center', justifyContent:'center'
+                }}><EmojiOrNumeral item={option} size={54} /></button>
+            ))}
+          </div>
+          {feedback && <div style={{ fontWeight:900, color:fColor[feedback.type]||'#333' }}>{feedback.text}</div>}
+          <div style={{ display:'flex', gap:8 }}>
+            <ActionBtn color="#4d96ff" onClick={() => speak(challengeTarget)} label="🔊 Escuchar otra vez" />
+            <ActionBtn color="#888" onClick={() => { setChallengeTarget(null); setFeedback(null); }} label="Volver" />
+          </div>
+        </div>
+      )}
+
       {/* Grid */}
-      <div style={{ flex:1, overflowY:'auto', padding:'4px 10px 10px',
+      {!challengeTarget && <div style={{ flex:1, overflowY:'auto', padding:'4px 10px 10px',
         display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(110px,1fr))', gap:10, alignContent:'start' }}>
         {cat.items.map((item, idx) => {
           const isSel    = selectedItem?.en === item.en;
@@ -314,10 +352,10 @@ function LearnScreen({ state, onStateChange }) {
             </button>
           );
         })}
-      </div>
+      </div>}
 
       {/* Action panel */}
-      {selectedItem && (
+      {selectedItem && !challengeTarget && (
         <div style={{ flexShrink:0, background:'rgba(255,255,255,0.94)', backdropFilter:'blur(16px)',
           borderTop:'2px solid rgba(255,255,255,0.8)', padding:'10px 14px 14px',
           boxShadow:'0 -4px 20px rgba(0,0,0,0.08)' }}>
@@ -355,24 +393,10 @@ function LearnScreen({ state, onStateChange }) {
 
           {isCountdown && <div style={{ textAlign:'center', marginBottom:6, fontFamily:'Fredoka One,cursive', fontSize:'2rem', color:'#6bcb77' }}>{countdown}</div>}
           {feedback && <div style={{ textAlign:'center', fontWeight:900, fontSize:'0.95rem', color:fColor[feedback.type]||'#333', marginBottom:8, minHeight:24 }}>{feedback.text}</div>}
-          {!getDailyRoute(state).activities.learn && recognitionOptions.length >= 3 && (
-            <div style={{ marginBottom:10, textAlign:'center' }}>
-              <div style={{ fontSize:'0.78rem', fontWeight:900, color:'#2563eb', marginBottom:6 }}>
-                🔊 Escucha y toca la imagen de {selectedItem.en}
-              </div>
-              <div style={{ display:'flex', justifyContent:'center', gap:8 }}>
-                {recognitionOptions.map(option => (
-                  <button key={option.en} onClick={() => checkRecognition(option)}
-                    aria-label={`Elegir imagen de ${option.es}`} style={{
-                      width:72, minHeight:66, border:'2px solid #bfdbfe', borderRadius:14,
-                      background:'#eff6ff', cursor:'pointer', display:'flex', alignItems:'center', justifyContent:'center'
-                    }}><EmojiOrNumeral item={option} size={48} /></button>
-                ))}
-              </div>
-            </div>
-          )}
           <div style={{ display:'flex', gap:8 }}>
             <ActionBtn color="#4d96ff" onClick={()=>speak(selectedItem)} label="🔊 Escuchar" />
+            {!getDailyRoute(state).activities.learn && hasSynth &&
+              <ActionBtn color="#2563eb" onClick={startRecognition} label="🎯 Reto visual" />}
             {hasSpeechRec && <ActionBtn color="#6bcb77" onClick={startRepeat} disabled={isListening||isCountdown} label={isListening ? <MicWaves/> : '🎤 ¡Repite!'} />}
           </div>
         </div>

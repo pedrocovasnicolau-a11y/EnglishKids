@@ -55,7 +55,7 @@ Empieza por **`README.md`** para orientarte; antes de modificar código, lee
 - **🎯 Quiz** — 10 preguntas por ronda, por imagen o por audio.
 - **🆚 Modo Dúo** — 2 jugadores con niveles independientes.
 - **🎵 Canciones** · **🏆 38 logros** desbloqueables.
-- **🧭 Ruta diaria** — reconocer una palabra por su imagen o repetirla bien,
+- **🧭 Ruta diaria** — superar un reto de escucha e imagen o repetir bien una palabra,
   escribir una palabra y terminar un quiz con algún acierto. Al completar las
   tres acciones se abre un cofre de **25 XP**; la racha cuenta solo días con
   una actividad de aprendizaje comprobada.
