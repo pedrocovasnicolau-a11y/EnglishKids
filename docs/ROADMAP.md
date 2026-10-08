@@ -22,8 +22,8 @@ si cambia el funcionamiento.
 |---|---|---|---|
 | E-01 | Fundamentos pedagógicos y de contenido | Completado | Nombre Peque Aprende, vocabulario inglés depurado, lectura inicial, opuestos, accesibilidad y aleatoriedad. |
 | E-02 | Ruta diaria, motivación y progreso | Completado | Reto de escucha, escritura y quiz con acierto; recompensa única y racha validadas en staging. |
-| E-03 | Imágenes para comprensión | En validación | Imágenes educativas claras en lugar de emojis, logos o iconos ambiguos. |
-| E-04 | Currículo y vocabulario | En validación | Auditoría curricular de palabras, categorías, edades, niveles y lagunas. |
+| E-03 | Imágenes para comprensión | Completado | Cuatro atlas educativos integrados y validados en staging. |
+| E-04 | Currículo y vocabulario | Completado | Inventario curricular revisado y decisión de distribución documentada. |
 | E-05 | Consolidación y repaso adaptativo | Pendiente | Distinguir dominio real y reintroducir contenido fallado. |
 | E-06 | Progreso entendible para niños | Pendiente | Objetivos, colecciones, hitos y avance comprensible por categoría. |
 | E-07 | UX infantil | Pendiente | Navegación, tamaño táctil, feedback, ayudas y carga cognitiva. |
@@ -53,7 +53,7 @@ repetir el cofre. La recompensa se concede una vez por día y perfil.
 
 ## Evolutivo E-03 — Imágenes para comprensión
 
-**Estado: en validación · prioridad alta.**
+**Estado: completado · validado en staging el 2026-10-08.**
 
 Crear un sistema coherente de imágenes educativas y sustituir visuales
 ambiguos. Se priorizan emociones, rutinas, familia, cuerpo, opuestos y acciones
@@ -63,15 +63,21 @@ Kids.
 **Cierre:** existe una guía visual y una primera colección prioritaria de
 imágenes inequívocas, ligeras para la PWA y comprobadas en tarjetas reales.
 
+**Validación de cierre en staging:** se verificaron los recortes de cuerpo,
+opuestos y las 16 rutinas de Avanzado, además del concurso visual. Los cuatro
+atlas cargaron correctamente y no hubo errores de consola. La caché PWA pasó a
+`english-kids-v13` e incorpora los cuatro recursos.
+
 ## Evolutivo E-04 — Currículo y vocabulario
 
-**Estado: en validación · prioridad alta.**
+**Estado: completado · validado en staging el 2026-10-08.**
 
 Auditar categorías, palabras, edades y niveles de ambas apps; identificar
 lagunas, duplicados, exceso de complejidad y orden de introducción.
 
-**Cierre:** hay un inventario curricular revisado y los cambios de distribución
-por nivel están aprobados antes de alterar masivamente el contenido.
+**Cierre:** hay un inventario curricular revisado y la decisión de conservar la
+distribución actual, sin mover contenido masivamente, queda documentada. E-05
+definirá el repaso de 21–100 con datos de uso.
 
 ## Evolutivo E-05 — Consolidación y repaso adaptativo
 
@@ -135,10 +141,9 @@ push directo y comprobar que producción solo recibe cambios validados.
 
 ## Orden de ejecución acordado
 
-1. **Siguiente: E-03 y E-04.** Comprensión visual y revisión curricular.
-2. **Después: E-05 y E-06.** Consolidación, repaso y progreso infantil.
-3. **Posteriormente: E-07 y E-08.** UX infantil y perfiles locales.
-4. **Siempre en paralelo: E-09 y E-10.** Calidad técnica y gobernanza de
+1. **Siguiente: E-05 y E-06.** Consolidación, repaso y progreso infantil.
+2. **Después: E-07 y E-08.** UX infantil y perfiles locales.
+3. **Siempre en paralelo: E-09 y E-10.** Calidad técnica y gobernanza de
    publicación.
 
 No se generarán de golpe cientos de imágenes. Primero se valida un sistema y
