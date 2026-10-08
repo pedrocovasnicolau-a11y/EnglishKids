@@ -378,7 +378,7 @@ Propuestas, de menor a mayor esfuerzo:
 
 ---
 
-## Actualización 2026-10-08 — E-03 y E-04 en validación
+## Cierre 2026-10-08 — E-03 y E-04 validados en staging
 
 Se revisó el currículo completo de ambas apps y se dejó el inventario en
 `INVENTARIO_CURRICULAR.md`. La distribución actual por edades es consistente;
@@ -388,6 +388,7 @@ de English Kids queda señalado para que E-05 decida su repaso con datos reales.
 La primera colección visual incorpora cuatro láminas optimizadas (495 KB en
 total) y las conecta a tarjetas de cuerpo, familia, opuestos y rutinas. Las
 tarjetas de cuerpo y familia de English Kids reutilizan las mismas referencias.
-El criterio de cierre pendiente es validar en la URL de staging: carga de los
-recortes, reconocimiento visual en concurso, caché offline y ausencia de
-errores de consola. La guía y el mapa de assets están en `GUIA_VISUAL.md`.
+En staging se verificaron los recortes de cuerpo, los pares de opuestos, las
+16 rutinas de Avanzado y un concurso visual, sin errores de consola. La caché
+PWA cambió a `english-kids-v13` y declara los cuatro atlas para precarga. La
+guía y el mapa de assets están en `GUIA_VISUAL.md`.
