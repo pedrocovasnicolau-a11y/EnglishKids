@@ -375,3 +375,19 @@ Propuestas, de menor a mayor esfuerzo:
 - Revisión visual por captura de: menú en ambos niveles, Letras con las
   tarjetas de sílaba, la fase Sílabas, Animales en Practicar y en Concurso,
   Formas (SVG) y Opuestos.
+
+---
+
+## Actualización 2026-10-08 — E-03 y E-04 en validación
+
+Se revisó el currículo completo de ambas apps y se dejó el inventario en
+`INVENTARIO_CURRICULAR.md`. La distribución actual por edades es consistente;
+no se ha movido contenido masivamente por volumen. El bloque de números 21–100
+de English Kids queda señalado para que E-05 decida su repaso con datos reales.
+
+La primera colección visual incorpora cuatro láminas optimizadas (495 KB en
+total) y las conecta a tarjetas de cuerpo, familia, opuestos y rutinas. Las
+tarjetas de cuerpo y familia de English Kids reutilizan las mismas referencias.
+El criterio de cierre pendiente es validar en la URL de staging: carga de los
+recortes, reconocimiento visual en concurso, caché offline y ausencia de
+errores de consola. La guía y el mapa de assets están en `GUIA_VISUAL.md`.

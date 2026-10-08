@@ -22,8 +22,8 @@ si cambia el funcionamiento.
 |---|---|---|---|
 | E-01 | Fundamentos pedagógicos y de contenido | Completado | Nombre Peque Aprende, vocabulario inglés depurado, lectura inicial, opuestos, accesibilidad y aleatoriedad. |
 | E-02 | Ruta diaria, motivación y progreso | Completado | Reto de escucha, escritura y quiz con acierto; recompensa única y racha validadas en staging. |
-| E-03 | Imágenes para comprensión | Pendiente | Imágenes educativas claras en lugar de emojis, logos o iconos ambiguos. |
-| E-04 | Currículo y vocabulario | Pendiente | Auditoría curricular de palabras, categorías, edades, niveles y lagunas. |
+| E-03 | Imágenes para comprensión | En validación | Imágenes educativas claras en lugar de emojis, logos o iconos ambiguos. |
+| E-04 | Currículo y vocabulario | En validación | Auditoría curricular de palabras, categorías, edades, niveles y lagunas. |
 | E-05 | Consolidación y repaso adaptativo | Pendiente | Distinguir dominio real y reintroducir contenido fallado. |
 | E-06 | Progreso entendible para niños | Pendiente | Objetivos, colecciones, hitos y avance comprensible por categoría. |
 | E-07 | UX infantil | Pendiente | Navegación, tamaño táctil, feedback, ayudas y carga cognitiva. |
@@ -53,7 +53,7 @@ repetir el cofre. La recompensa se concede una vez por día y perfil.
 
 ## Evolutivo E-03 — Imágenes para comprensión
 
-**Estado: pendiente · prioridad alta.**
+**Estado: en validación · prioridad alta.**
 
 Crear un sistema coherente de imágenes educativas y sustituir visuales
 ambiguos. Se priorizan emociones, rutinas, familia, cuerpo, opuestos y acciones
@@ -65,7 +65,7 @@ imágenes inequívocas, ligeras para la PWA y comprobadas en tarjetas reales.
 
 ## Evolutivo E-04 — Currículo y vocabulario
 
-**Estado: pendiente · prioridad alta.**
+**Estado: en validación · prioridad alta.**
 
 Auditar categorías, palabras, edades y niveles de ambas apps; identificar
 lagunas, duplicados, exceso de complejidad y orden de introducción.

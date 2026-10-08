@@ -180,35 +180,43 @@ const PEQUE_EMOTIONS = [
 
 // ─── RUTINAS ──────────────────────────────────────────────────────
 const PEQUE_ROUTINES = [
-  { id:'despertarse', es:'Despertarse',        emoji:'23f0',  photo:'rutina_despertarse.jpg', level:'inicio' },
-  { id:'desayunar',   es:'Desayunar',          emoji:'1f95e', photo:'rutina_desayunar.jpg',   level:'inicio' },
-  { id:'dientes',     es:'Lavarse los dientes',emoji:'1f9b7', photo:'rutina_dientes.jpg',     level:'inicio' },
-  { id:'vestirse',    es:'Vestirse',           emoji:'1f455', photo:'rutina_vestirse.jpg',    level:'inicio' },
-  { id:'jugar',       es:'Jugar',              emoji:'1f9f8', photo:'rutina_jugar.jpg',       level:'inicio' },
-  { id:'banarse',     es:'Bañarse',            emoji:'1f6c1', photo:'rutina_banarse.jpg',     level:'inicio' },
-  { id:'dormir',      es:'Dormir',             emoji:'1f634', photo:'rutina_dormir.jpg',      level:'inicio' },
-  { id:'manos',       es:'Lavarse las manos',  emoji:'1f9fc', photo:null, level:'avanzado' },
-  { id:'colegio',     es:'Ir al colegio',      emoji:'1f392', photo:null, level:'avanzado' },
-  { id:'comer',       es:'Comer',              emoji:'1f37d', photo:null, level:'avanzado' },
-  { id:'merendar',    es:'Merendar',           emoji:'1f36a', photo:null, level:'avanzado' },
-  { id:'cenar',       es:'Cenar',              emoji:'1f35b', photo:null, level:'avanzado' },
-  { id:'recoger',     es:'Recoger los juguetes', emoji:'1f9f9', photo:null, level:'avanzado' },
-  { id:'cuento',      es:'Leer un cuento',     emoji:'1f4d6', photo:null, level:'avanzado' },
-  { id:'ayudar',      es:'Ayudar en casa',     emoji:'1f9f9', photo:null, level:'avanzado' },
-  { id:'parque',      es:'Ir al parque',       emoji:'1f3de', photo:null, level:'avanzado' },
+  { id:'despertarse', es:'Despertarse',        emoji:'23f0',  visual:pequeAtlas('atlas_rutinas.jpg',4,4,0,0), level:'inicio' },
+  { id:'desayunar',   es:'Desayunar',          emoji:'1f95e', visual:pequeAtlas('atlas_rutinas.jpg',4,4,1,0), level:'inicio' },
+  { id:'dientes',     es:'Lavarse los dientes',emoji:'1f9b7', visual:pequeAtlas('atlas_rutinas.jpg',4,4,2,0), level:'inicio' },
+  { id:'vestirse',    es:'Vestirse',           emoji:'1f455', visual:pequeAtlas('atlas_rutinas.jpg',4,4,3,0), level:'inicio' },
+  { id:'jugar',       es:'Jugar',              emoji:'1f9f8', visual:pequeAtlas('atlas_rutinas.jpg',4,4,0,1), level:'inicio' },
+  { id:'banarse',     es:'Bañarse',            emoji:'1f6c1', visual:pequeAtlas('atlas_rutinas.jpg',4,4,1,1), level:'inicio' },
+  { id:'dormir',      es:'Dormir',             emoji:'1f634', visual:pequeAtlas('atlas_rutinas.jpg',4,4,2,1), level:'inicio' },
+  { id:'manos',       es:'Lavarse las manos',  emoji:'1f9fc', visual:pequeAtlas('atlas_rutinas.jpg',4,4,3,1), level:'avanzado' },
+  { id:'colegio',     es:'Ir al colegio',      emoji:'1f392', visual:pequeAtlas('atlas_rutinas.jpg',4,4,0,2), level:'avanzado' },
+  { id:'comer',       es:'Comer',              emoji:'1f37d', visual:pequeAtlas('atlas_rutinas.jpg',4,4,1,2), level:'avanzado' },
+  { id:'merendar',    es:'Merendar',           emoji:'1f36a', visual:pequeAtlas('atlas_rutinas.jpg',4,4,2,2), level:'avanzado' },
+  { id:'cenar',       es:'Cenar',              emoji:'1f35b', visual:pequeAtlas('atlas_rutinas.jpg',4,4,3,2), level:'avanzado' },
+  { id:'recoger',     es:'Recoger los juguetes', emoji:'1f9f9', visual:pequeAtlas('atlas_rutinas.jpg',4,4,0,3), level:'avanzado' },
+  { id:'cuento',      es:'Leer un cuento',     emoji:'1f4d6', visual:pequeAtlas('atlas_rutinas.jpg',4,4,1,3), level:'avanzado' },
+  { id:'ayudar',      es:'Ayudar en casa',     emoji:'1f9f9', visual:pequeAtlas('atlas_rutinas.jpg',4,4,2,3), level:'avanzado' },
+  { id:'parque',      es:'Ir al parque',       emoji:'1f3de', visual:pequeAtlas('atlas_rutinas.jpg',4,4,3,3), level:'avanzado' },
 ];
+
+// ─── LÁMINAS VISUALES ─────────────────────────────────────────────
+// Un atlas agrupa varias escenas de la misma familia semántica. Cada tarjeta
+// usa su celda, así mantenemos una imagen específica por concepto sin añadir
+// decenas de descargas pequeñas a la PWA.
+function pequeAtlas(file, columns, rows, col, row) {
+  return { src:`assets/pequeworld/img/${file}`, columns, rows, col, row };
+}
 
 // ─── CUERPO ───────────────────────────────────────────────────────
 const PEQUE_BODY = [
-  { id:'cabeza',  es:'Cabeza',  emoji:'1f9d2', photo:null, level:'inicio' },
-  { id:'ojos',    es:'Ojos',    emoji:'1f440', photo:null, level:'inicio' },
-  { id:'boca',    es:'Boca',    emoji:'1f444', photo:null, level:'inicio' },
-  { id:'nariz',   es:'Nariz',   emoji:'1f443', photo:null, level:'inicio' },
-  { id:'orejas',  es:'Orejas',  emoji:'1f442', photo:null, level:'inicio' },
-  { id:'manos',   es:'Manos',   emoji:'1f590', photo:null, level:'inicio' },
-  { id:'pies',    es:'Pies',    emoji:'1f9b6', photo:null, level:'inicio' },
-  { id:'pelo',    es:'Pelo',    emoji:'1f9b1', photo:null, level:'inicio' },
-  { id:'dientes', es:'Dientes', emoji:'1f9b7', photo:null, level:'inicio' },
+  { id:'cabeza',  es:'Cabeza',  emoji:'1f9d2', visual:pequeAtlas('atlas_cuerpo.jpg',3,3,0,0), level:'inicio' },
+  { id:'ojos',    es:'Ojos',    emoji:'1f440', visual:pequeAtlas('atlas_cuerpo.jpg',3,3,1,0), level:'inicio' },
+  { id:'boca',    es:'Boca',    emoji:'1f444', visual:pequeAtlas('atlas_cuerpo.jpg',3,3,2,0), level:'inicio' },
+  { id:'nariz',   es:'Nariz',   emoji:'1f443', visual:pequeAtlas('atlas_cuerpo.jpg',3,3,0,1), level:'inicio' },
+  { id:'orejas',  es:'Orejas',  emoji:'1f442', visual:pequeAtlas('atlas_cuerpo.jpg',3,3,1,1), level:'inicio' },
+  { id:'manos',   es:'Manos',   emoji:'1f590', visual:pequeAtlas('atlas_cuerpo.jpg',3,3,2,1), level:'inicio' },
+  { id:'pies',    es:'Pies',    emoji:'1f9b6', visual:pequeAtlas('atlas_cuerpo.jpg',3,3,0,2), level:'inicio' },
+  { id:'pelo',    es:'Pelo',    emoji:'1f9b1', visual:pequeAtlas('atlas_cuerpo.jpg',3,3,1,2), level:'inicio' },
+  { id:'dientes', es:'Dientes', emoji:'1f9b7', visual:pequeAtlas('atlas_cuerpo.jpg',3,3,2,2), level:'inicio' },
   { id:'barriga', es:'Barriga', emoji:'1f9cd', photo:null, level:'avanzado' },
   { id:'brazo',   es:'Brazo',   emoji:'1f4aa', photo:null, level:'avanzado' },
   { id:'pierna',  es:'Pierna',  emoji:'1f9b5', photo:null, level:'avanzado' },
@@ -222,14 +230,14 @@ const PEQUE_BODY = [
 
 // ─── FAMILIA ──────────────────────────────────────────────────────
 const PEQUE_FAMILY = [
-  { id:'mama',     es:'Mamá',     emoji:'1f469', photo:null, level:'inicio' },
-  { id:'papa',     es:'Papá',     emoji:'1f468', photo:null, level:'inicio' },
-  { id:'bebe',     es:'Bebé',     emoji:'1f476', photo:null, level:'inicio' },
-  { id:'hermano',  es:'Hermano',  emoji:'1f466', photo:null, level:'inicio' },
-  { id:'hermana',  es:'Hermana',  emoji:'1f467', photo:null, level:'inicio' },
-  { id:'abuela',   es:'Abuela',   emoji:'1f475', photo:null, level:'inicio' },
-  { id:'abuelo',   es:'Abuelo',   emoji:'1f474', photo:null, level:'inicio' },
-  { id:'familia',  es:'Familia',  emoji:'1f46a', photo:null, level:'inicio' },
+  { id:'mama',     es:'Mamá',     emoji:'1f469', visual:pequeAtlas('atlas_familia.jpg',4,2,0,0), level:'inicio' },
+  { id:'papa',     es:'Papá',     emoji:'1f468', visual:pequeAtlas('atlas_familia.jpg',4,2,1,0), level:'inicio' },
+  { id:'bebe',     es:'Bebé',     emoji:'1f476', visual:pequeAtlas('atlas_familia.jpg',4,2,2,0), level:'inicio' },
+  { id:'hermano',  es:'Hermano',  emoji:'1f466', visual:pequeAtlas('atlas_familia.jpg',4,2,3,0), level:'inicio' },
+  { id:'hermana',  es:'Hermana',  emoji:'1f467', visual:pequeAtlas('atlas_familia.jpg',4,2,0,1), level:'inicio' },
+  { id:'abuela',   es:'Abuela',   emoji:'1f475', visual:pequeAtlas('atlas_familia.jpg',4,2,1,1), level:'inicio' },
+  { id:'abuelo',   es:'Abuelo',   emoji:'1f474', visual:pequeAtlas('atlas_familia.jpg',4,2,2,1), level:'inicio' },
+  { id:'familia',  es:'Familia',  emoji:'1f46a', visual:pequeAtlas('atlas_familia.jpg',4,2,3,1), level:'inicio' },
   { id:'tia',      es:'Tía',      emoji:'1f469', photo:null, level:'avanzado' },
   { id:'tio',      es:'Tío',      emoji:'1f468', photo:null, level:'avanzado' },
   { id:'prima',    es:'Prima',    emoji:'1f467', photo:null, level:'avanzado' },
@@ -241,12 +249,12 @@ const PEQUE_FAMILY = [
 // ─── OPUESTOS (pares; el par se muestra junto para que el
 // contraste sea lo que se aprende, no la palabra aislada) ─────────
 const PEQUE_OPPOSITES = [
-  { id:'grande_pequeno', es:'Grande y pequeño', a:{ es:'Grande', emoji:'1f418' }, b:{ es:'Pequeño', emoji:'1f42d' }, emoji:'1f418', level:'inicio' },
-  { id:'arriba_abajo',   es:'Arriba y abajo',   a:{ es:'Arriba', emoji:'2b06' },  b:{ es:'Abajo', emoji:'2b07' },    emoji:'2b06',  level:'inicio' },
-  { id:'dia_noche',      es:'Día y noche',      a:{ es:'Día', emoji:'2600' },     b:{ es:'Noche', emoji:'1f319' },   emoji:'2600',  level:'inicio' },
-  { id:'frio_caliente',  es:'Frío y caliente',  a:{ es:'Frío', emoji:'1f976' },   b:{ es:'Caliente', emoji:'1f975' },emoji:'1f976', level:'inicio' },
-  { id:'contento_triste',es:'Contento y triste',a:{ es:'Contento', emoji:'1f600'},b:{ es:'Triste', emoji:'1f622' },  emoji:'1f600', level:'inicio' },
-  { id:'lleno_vacio',    es:'Lleno y vacío',    a:{ es:'Lleno', emoji:'1f95b' },  b:{ es:'Vacío', emoji:'1f943' },   emoji:'1f95b', level:'avanzado' },
+  { id:'grande_pequeno', es:'Grande y pequeño', a:{ es:'Grande', emoji:'1f418' }, b:{ es:'Pequeño', emoji:'1f42d' }, emoji:'1f418', visual:pequeAtlas('atlas_opuestos.jpg',2,3,0,0), level:'inicio' },
+  { id:'arriba_abajo',   es:'Arriba y abajo',   a:{ es:'Arriba', emoji:'2b06' },  b:{ es:'Abajo', emoji:'2b07' },    emoji:'2b06',  visual:pequeAtlas('atlas_opuestos.jpg',2,3,1,0), level:'inicio' },
+  { id:'dia_noche',      es:'Día y noche',      a:{ es:'Día', emoji:'2600' },     b:{ es:'Noche', emoji:'1f319' },   emoji:'2600',  visual:pequeAtlas('atlas_opuestos.jpg',2,3,0,1), level:'inicio' },
+  { id:'frio_caliente',  es:'Frío y caliente',  a:{ es:'Frío', emoji:'1f976' },   b:{ es:'Caliente', emoji:'1f975' },emoji:'1f976', visual:pequeAtlas('atlas_opuestos.jpg',2,3,1,1), level:'inicio' },
+  { id:'contento_triste',es:'Contento y triste',a:{ es:'Contento', emoji:'1f600'},b:{ es:'Triste', emoji:'1f622' },  emoji:'1f600', visual:pequeAtlas('atlas_opuestos.jpg',2,3,0,2), level:'inicio' },
+  { id:'lleno_vacio',    es:'Lleno y vacío',    a:{ es:'Lleno', emoji:'1f95b' },  b:{ es:'Vacío', emoji:'1f943' },   emoji:'1f95b', visual:pequeAtlas('atlas_opuestos.jpg',2,3,1,2), level:'avanzado' },
   { id:'rapido_lento',   es:'Rápido y lento',   a:{ es:'Rápido', emoji:'1f406' }, b:{ es:'Lento', emoji:'1f40c' },   emoji:'1f406', level:'avanzado' },
   { id:'dentro_fuera',   es:'Dentro y fuera',   a:{ es:'Dentro', emoji:'1f4e5' }, b:{ es:'Fuera', emoji:'1f4e4' },   emoji:'1f4e5', level:'avanzado' },
   { id:'limpio_sucio',   es:'Limpio y sucio',   a:{ es:'Limpio', emoji:'2728' },  b:{ es:'Sucio', emoji:'1f9a0' },   emoji:'2728',  level:'avanzado' },

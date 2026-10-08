@@ -108,13 +108,18 @@ pequeByLevel(items, level)   // 'inicio' → filtra; 'avanzado' → todo
 | `PEQUE_FRUITS` | 10 / 20 | — |
 | `PEQUE_EMOTIONS` | 6 / 14 | `photo` |
 | `PEQUE_ROUTINES` | 7 / 16 | `photo` |
-| `PEQUE_BODY` | 9 / 18 | — |
-| `PEQUE_FAMILY` | 8 / 14 | — |
-| `PEQUE_OPPOSITES` | 5 / 12 | `a` / `b` (el par se muestra junto) |
+| `PEQUE_BODY` | 9 / 18 | `visual` para el núcleo inicial |
+| `PEQUE_FAMILY` | 8 / 14 | `visual` para el núcleo inicial |
+| `PEQUE_OPPOSITES` | 5 / 12 | `a` / `b` y `visual` para los pares iniciales |
 
 Contrato de ítem que consume `PequeImage`, en este orden de prioridad:
-`shape` → SVG · `photo` → `<img>` de `assets/pequeworld/img/` · `a`+`b` → par
-de opuestos · `emoji` → Twemoji.
+`shape` → SVG · `visual` → celda de atlas JPEG · `photo` → `<img>` de
+`assets/pequeworld/img/` · `a`+`b` → par de opuestos · `emoji` → Twemoji.
+
+`visual` tiene `{ src, columns, rows, col, row }`: una lámina reutilizable se
+recorta por celda en la tarjeta. La misma convención funciona en `data.js` para
+las tarjetas de cuerpo y familia de English Kids mediante `EmojiOrNumeral`.
+El catálogo, pesos y criterios están en `GUIA_VISUAL.md`.
 
 ### Módulo de lectura
 
@@ -224,7 +229,7 @@ pequePlayItemCue(item)      dice el NOMBRE y luego el sonido real / onomatopeya
 
 - `CACHE = 'english-kids-vN'` — **hay que subir N en cada cambio de fichero
   cacheado**, o los móviles siguen con la versión vieja.
-- `PRECACHE` = app shell + CDN. `PRECACHE_ASSETS` = fotos y audio de Peque Aprende.
+- `PRECACHE` = app shell + CDN. `PRECACHE_ASSETS` = fotos, láminas y audio de Peque Aprende.
 - Estrategias: *network-first* para el documento (evita quedarse pillado en una
   versión antigua) y para Twemoji/fonts; *cache-first* para el resto.
 - `index.html` registra el SW con `updateViaCache:'none'` y llama a
