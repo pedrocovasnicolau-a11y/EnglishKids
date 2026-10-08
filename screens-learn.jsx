@@ -143,7 +143,9 @@ function LearnScreen({ state, onStateChange }) {
     // durante el reto para que no se resuelva copiando la imagen o el texto.
     // Las frases pueden compartir emoji. Cada opción debe tener una imagen
     // distinta; para números, el dígito dibujado identifica la opción.
-    const visualKey = candidate => candidate.numeral ? `n:${candidate.numeral}` : `e:${candidate.e}`;
+    const visualKey = candidate => candidate.visual
+      ? `v:${candidate.visual.src}:${candidate.visual.col}:${candidate.visual.row}`
+      : candidate.numeral ? `n:${candidate.numeral}` : `e:${candidate.e}`;
     const target = shuffleItems(cat.items).find(item => item.en !== selectedItem?.en && visualKey(item) !== visualKey(selectedItem));
     if (!target) return;
     const seenVisuals = new Set([visualKey(target)]);

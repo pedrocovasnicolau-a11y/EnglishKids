@@ -28,7 +28,8 @@ function PequeModeTabs({ mode, onChange, color, showPractice = true, showQuiz = 
 // Panel grande que aparece al tocar un elemento de la rejilla en modo Ver
 function PequeFeaturedPanel({ item, color, onImageTap, subtitle }) {
   if (!item) return null;
-  const clickable = !!(item.photo && onImageTap);
+  const hasVisual = !!(item.photo || item.visual);
+  const clickable = !!(item.photo && !item.visual && onImageTap);
   return (
     <div style={{ padding:'10px 16px 8px', textAlign:'center', flexShrink:0 }}>
       <div onClick={() => clickable && onImageTap(item)} style={{
@@ -36,7 +37,7 @@ function PequeFeaturedPanel({ item, color, onImageTap, subtitle }) {
         borderRadius:38, background:`${color}20`, boxShadow:`0 6px 22px ${color}33`,
         cursor: clickable ? 'pointer' : 'default', position:'relative'
       }}>
-        <PequeImage item={item} size={item.photo ? 154 : 118} />
+        <PequeImage item={item} size={hasVisual ? 154 : 118} />
         {clickable && (
           <span style={{ position:'absolute', bottom:4, right:4, width:28, height:28, borderRadius:'50%',
             background:'rgba(255,255,255,0.9)', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'0.9rem' }}>🔍</span>
@@ -64,7 +65,7 @@ function PequePopupImage({ item, durationMs = 2000, onDone }) {
       <div style={{ width:'min(78vw, 320px)', height:'min(78vw, 320px)', borderRadius:44,
         background:'#fff', display:'flex', alignItems:'center', justifyContent:'center',
         boxShadow:'0 20px 60px rgba(0,0,0,0.35)', animation:'popIn .25s ease' }}>
-        <PequeImage item={item} size={item.photo ? 290 : 210} />
+        <PequeImage item={item} size={(item.photo || item.visual) ? 290 : 210} />
       </div>
     </div>
   );

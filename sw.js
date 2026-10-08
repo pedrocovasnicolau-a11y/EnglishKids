@@ -1,5 +1,5 @@
 // ─── English Kids & Peque Aprende Service Worker v4 ──────────────
-const CACHE = 'english-kids-v12';
+const CACHE = 'english-kids-v13';
 
 const PRECACHE = [
   './',
@@ -29,6 +29,10 @@ const PRECACHE = [
 // se abre la app sin red no hay fotos ni sonidos de animales: justo el
 // contenido por el que un niño de 3 años entra en la sección.
 const PRECACHE_ASSETS = [
+  './assets/pequeworld/img/atlas_cuerpo.jpg',
+  './assets/pequeworld/img/atlas_familia.jpg',
+  './assets/pequeworld/img/atlas_opuestos.jpg',
+  './assets/pequeworld/img/atlas_rutinas.jpg',
   './assets/pequeworld/img/animal_caballo.jpg',
   './assets/pequeworld/img/animal_cerdo.jpg',
   './assets/pequeworld/img/animal_gallina.jpg',
@@ -43,13 +47,6 @@ const PRECACHE_ASSETS = [
   './assets/pequeworld/img/emocion_sorprendido.jpg',
   './assets/pequeworld/img/emocion_tranquilo.jpg',
   './assets/pequeworld/img/emocion_triste.jpg',
-  './assets/pequeworld/img/rutina_banarse.jpg',
-  './assets/pequeworld/img/rutina_desayunar.jpg',
-  './assets/pequeworld/img/rutina_despertarse.jpg',
-  './assets/pequeworld/img/rutina_dientes.jpg',
-  './assets/pequeworld/img/rutina_dormir.jpg',
-  './assets/pequeworld/img/rutina_jugar.jpg',
-  './assets/pequeworld/img/rutina_vestirse.jpg',
   './assets/pequeworld/audio/animals/sonido_caballo.mp3',
   './assets/pequeworld/audio/animals/sonido_cerdo.mp3',
   './assets/pequeworld/audio/animals/sonido_gallina.mp3',

@@ -49,6 +49,7 @@ function PequeShape({ item, size = 80 }) {
 function PequeImage({ item, size = 80 }) {
   if (!item) return null;
   if (item.shape) return <PequeShape item={item} size={size * 0.92} />;
+  if (item.visual) return <AtlasImage visual={item.visual} alt={item.es} size={size} />;
   if (item.photo) {
     return (
       <img src={`assets/pequeworld/img/${item.photo}`} alt={item.es}

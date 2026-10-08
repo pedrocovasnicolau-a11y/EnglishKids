@@ -23,6 +23,26 @@ function EmojiImg({ code, size = 72, style = {} }) {
   );
 }
 
+// Una lámina contiene varias ilustraciones relacionadas. Recortarla en la
+// propia tarjeta evita descargar una foto por palabra sin volver al emoji
+// ambiguo. `visual` identifica la celda en una cuadrícula regular.
+function AtlasImage({ visual, alt, size = 72 }) {
+  const columns = visual.columns || 1;
+  const rows = visual.rows || 1;
+  const col = visual.col || 0;
+  const row = visual.row || 0;
+  const x = columns === 1 ? 0 : (col / (columns - 1)) * 100;
+  const y = rows === 1 ? 0 : (row / (rows - 1)) * 100;
+  return (
+    <div role="img" aria-label={alt} style={{
+      width:size, height:size, flexShrink:0, borderRadius:size * 0.12,
+      backgroundImage:`url(${visual.src})`, backgroundRepeat:'no-repeat',
+      backgroundSize:`${columns * 100}% ${rows * 100}%`,
+      backgroundPosition:`${x}% ${y}%`, display:'block'
+    }} />
+  );
+}
+
 // Muestra el número real (item.numeral) en vez de un emoji genérico
 // para tarjetas de números — el emoji 🔢 es idéntico para todos los
 // números y no ayuda al niño a identificar cuál es cuál.
@@ -36,6 +56,7 @@ function EmojiOrNumeral({ item, size = 72 }) {
       </div>
     );
   }
+  if (item && item.visual) return <AtlasImage visual={item.visual} alt={item.en || item.es} size={size} />;
   return <EmojiImg code={item.e} size={size} />;
 }
 
@@ -285,4 +306,4 @@ class AppErrorBoundary extends React.Component {
 }
 
 // Expose globals
-Object.assign(window, { EmojiImg, EmojiOrNumeral, launchStars, ActionBtn, MicWaves, SkyBackground, Cloud, BottomNav, TopBar, AppErrorBoundary });
+Object.assign(window, { EmojiImg, AtlasImage, EmojiOrNumeral, launchStars, ActionBtn, MicWaves, SkyBackground, Cloud, BottomNav, TopBar, AppErrorBoundary });

@@ -32,6 +32,10 @@ docs/
     Decisiones de producto y tecnología que no deben reabrirse en cada cambio.
   AUDITORIA.md
     Hallazgos técnicos, funcionales y pedagógicos, con prioridades.
+  GUIA_VISUAL.md
+    Reglas de imagen educativa, colección prioritaria y cómo ampliarla.
+  INVENTARIO_CURRICULAR.md
+    Revisión de edades, niveles, categorías y decisiones de distribución.
 ```
 
 Empieza por **`README.md`** para orientarte; antes de modificar código, lee
@@ -77,6 +81,9 @@ Empieza por **`README.md`** para orientarte; antes de modificar código, lee
 ## 🧸 Peque Aprende — para niños que aún no leen
 
 Todo funciona con **imagen grande + voz**: ninguna interacción exige leer.
+La primera colección visual sustituye emojis ambiguos en cuerpo, familia,
+opuestos y rutinas avanzadas; las mismas imágenes de cuerpo y familia refuerzan
+el vocabulario de iniciación de English Kids.
 
 **Dos niveles en espiral** — Avanzado *añade* contenido sin quitar el conocido:
 
