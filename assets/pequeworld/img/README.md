@@ -1,27 +1,27 @@
-# Fotos reales de Peque Aprende
+# Imágenes de Peque Aprende
 
-Coloca aquí las fotos con estos nombres exactos (formato JPG o PNG,
-sujeto centrado, fondo simple, sin texto ni marcas de agua).
-En cuanto un archivo exista con este nombre, sustituye automáticamente
-al emoji provisional que usa la app hoy — no hace falta tocar código,
-solo pedir que se active la referencia en `data-pequeworld.js`.
+Las fotos y láminas de este directorio se usan en tarjetas reales de la PWA.
+Deben tener sujeto o acción centrados, fondo simple, sin texto, sin marcas y
+con un contraste que se entienda a tamaño de tarjeta.
 
-## Animales (`animal_<nombre>.jpg`) — 16
-✅ perro, gato, vaca, caballo, oveja, cerdo, gallina, pato
-⬜ leon, pajaro, elefante, mono, oso, conejo, pez, tortuga
+## Colección prioritaria E-03
 
-## Frutas (`fruta_<nombre>.jpg`) — 10
-⬜ manzana, platano, naranja, fresa, uva, sandia, pera, cereza, limon, pina
+| Archivo | Uso | Peso |
+|---|---|---:|
+| `atlas_cuerpo.jpg` | Cuerpo, 9 conceptos de iniciación | 106 KB |
+| `atlas_familia.jpg` | Familia, 8 conceptos de iniciación | 109 KB |
+| `atlas_opuestos.jpg` | Opuestos, 5 pares de iniciación y lleno/vacío | 121 KB |
+| `atlas_rutinas.jpg` | 16 rutinas y acciones, iniciación y avanzado | 159 KB |
 
-## Colores — objeto representativo (`color_<nombre>.jpg`) — 10
-⬜ rojo, azul, amarillo, verde, naranja, rosa, morado, blanco, negro, marron
+Cada atlas se recorta por celda mediante el campo `visual` de los datos. Está
+precacheado en `sw.js` y se descarga una sola vez por instalación.
 
-## Rutinas — foto del propio niño recomendada (`rutina_<nombre>.jpg`) — 7
-✅ despertarse, desayunar, dientes, vestirse, jugar, banarse, dormir
+## Fotos existentes
 
-## Emociones — foto del propio niño recomendada (`emocion_<nombre>.jpg`) — 6
-✅ feliz, triste, enfadado, sorprendido, con_miedo, tranquilo
+- Animales: perro, gato, vaca, caballo, oveja, cerdo, gallina y pato.
+- Emociones de iniciación: feliz, triste, enfadado, sorprendido, con miedo y
+  tranquilo.
 
-**Total: 49 fotos · 21 recibidas, 28 pendientes.**
-
-Números y formas se quedan con ilustración/emoji (no necesitan foto).
+Las siguientes ampliaciones deben seguir `docs/GUIA_VISUAL.md`; no basta con
+copiar un emoji ni con añadir un archivo sin asignarlo a una tarjeta y a la
+caché offline.
